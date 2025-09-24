@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="description" content="Enter guests and appetite—DinnerMath estimates chicken wing drumettes to buy in pieces and pounds, with size options, pricing, and planning notes.">
+<title>Chicken Wings (Drumettes) Quantity Calculator — How Many per Person (Pieces & Pounds)</title>
+<style>
+/* ---- Mobile-safe base (v1.4) ---- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; overflow-x: hidden; }
+img, svg, canvas, video { max-width: 100%; height: auto; display: block; }
+input, select, textarea, button { width: 100%; max-width: 100%; min-width: 0; }
+table, .wide-block { max-width: 100%; display: block; overflow-x: auto; }
+:root{
+  --ink:#0b2a3a; --ink-2:#13506a; --wash:#eaf6fb; --paper:#ffffff; --line:#d7e8ef;
+  --accent:#2f8db3; --ok:#1d6b3a; --warn:#b35b2f; --shadow:0 6px 20px rgba(11,42,58,.08);
+  --radius:18px;
+}
+html,body{background:var(--wash);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+.wrap{width:100%;max-width:480px;margin:0 auto;padding:16px}
+@media (min-width:640px){.wrap{max-width:720px;padding:20px}}
+@media (min-width:980px){.wrap{max-width:980px;padding:28px 16px 56px}}
+header{margin:0 0 18px}
+header h1{font-size:clamp(22px,3.2vw,34px);margin:0 0 8px;color:var(--ink-2);letter-spacing:.2px}
+header p{margin:0;color:#274757}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+.stack{display:grid;gap:14px}
+section{margin:18px 0}
+h2{font-size:clamp(18px,2.5vw,22px);margin:0 0 8px;color:var(--ink-2)}
+.grid{display:grid;gap:12px}
+@media(min-width:760px){.grid{grid-template-columns:repeat(12,1fr)}}
+.field{display:flex;flex-direction:column;gap:6px;background:#f7fbfd;border:1px solid var(--line);border-radius:12px;padding:10px}
+label{font-weight:600;font-size:.95rem}
+input[type="number"],select,input[type="text"]{border:1px solid #cfe3eb;border-radius:10px;padding:9px 10px;background:#fff;font-size:1rem;outline:none}
+input[type="number"]:focus,select:focus{border-color:var(--accent)}
+.row-12{grid-column:span 12}
+.row-6{grid-column:span 12}@media(min-width:760px){.row-6{grid-column:span 6}}
+.row-4{grid-column:span 12}@media(min-width:760px){.row-4{grid-column:span 4}}
+.help{font-size:.88rem;color:#3a6070}
+.btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer}
+.btn.secondary{background:#fff;color:var(--accent)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.result{display:grid;gap:10px;background:#f6fbfe;border:1px dashed #b7d7e6;border-radius:16px;padding:14px}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:12px}
+.kv b{font-size:1.05rem}
+.muted{color:#4c6b7a;font-size:.9rem}
+.callout{border-left:4px solid var(--ok);background:#f2fbf5;padding:10px 12px;border-radius:10px}
+details{border:1px solid var(--line);border-radius:12px;background:#fff;margin:10px 0}
+summary{cursor:pointer;padding:10px 14px;font-weight:700;color:var(--ink-2)}
+details[open] summary{border-bottom:1px solid var(--line)}
+details .ans{padding:10px 14px 12px;color:#2a4b5a}
+.disclaimer{font-size:.85rem;color:#567789;margin-top:10px}
+.price-grid{display:grid;gap:10px}
+@media(min-width:760px){.price-grid{grid-template-columns:repeat(12,1fr)}}
+.pill{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;background:#eef7fb;border:1px solid var(--line);font-size:.92rem}
+.map-links{display:flex;flex-wrap:wrap;gap:10px}
+.hr{height:1px;background:var(--line);margin:10px 0}
+.footnote{font-size:.85rem;color:#648396}
+
+/* Mobile embed height handled in Wix (4827px template). */
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Chicken Wings (Drumettes) Quantity Calculator — How Many per Person (Pieces & Pounds)</h1>
+      <p>Enter your guest mix and appetite. DinnerMath estimates drumettes to buy—both pieces and pounds—adjusted for size, event length, and leftovers.</p>
+    </header>
+
+    <!-- INPUTS -->
+    <section class="card stack" id="inputs">
+      <h2>Inputs</h2>
+      <div class="grid">
+        <div class="field row-4"><label for="adults">Adults</label><input id="adults" type="number" min="0" step="1" value="12" /></div>
+        <div class="field row-4"><label for="teens">Teens</label><input id="teens" type="number" min="0" step="1" value="2" /></div>
+        <div class="field row-4"><label for="kids">Kids</label><input id="kids" type="number" min="0" step="1" value="2" /></div>
+
+        <div class="field row-6">
+          <label for="mode">Course mode</label>
+          <select id="mode">
+            <option value="main" selected>Main course (wings are the main focus)</option>
+            <option value="mixed">Mixed menu (1–2 other mains)</option>
+            <option value="appetizers">Appetizers (grazing / party platters)</option>
+          </select>
+          <div class="help">Switch this if wings are part of a larger spread or appetizer-only.</div>
+        </div>
+
+        <div class="field row-6">
+          <label for="size">Drumette size</label>
+          <select id="size">
+            <option value="12">Small (~12 pieces per pound)</option>
+            <option value="10" selected>Medium (~10 pieces per pound)</option>
+            <option value="8">Large (~8 pieces per pound)</option>
+          </select>
+          <div class="help">Pieces-per-pound drives the pounds output (8–12 pieces ≈ 1 pound raw).</div>
+        </div>
+
+        <div class="field row-4"><label for="appetite">Appetite</label>
+          <select id="appetite">
+            <option value="0.9">Light</option>
+            <option value="1.0" selected>Typical</option>
+            <option value="1.2">Hungry</option>
+          </select>
+        </div>
+        <div class="field row-4"><label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">1–2 hours</option>
+            <option value="1.0" selected>2–3 hours</option>
+            <option value="1.08">3–4 hours</option>
+            <option value="1.15">4–5 hours</option>
+          </select>
+        </div>
+        <div class="field row-4"><label for="leftovers">Leftovers</label>
+          <select id="leftovers">
+            <option value="1.0" selected>No</option>
+            <option value="1.07">Some leftovers</option>
+            <option value="1.12">Extra leftovers</option>
+          </select>
+        </div>
+
+        <div class="field row-12"><label for="notes">Notes (optional)</label>
+          <input id="notes" type="text" placeholder="e.g., flavors; other mains; platter style" />
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="calcBtn">Calculate</button>
+        <button class="btn secondary" id="resetBtn" type="button">Reset</button>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="card stack" id="results" aria-live="polite">
+      <h2>Results</h2>
+      <div class="result">
+        <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
+        <div class="kv"><span>Drumettes (pieces) to buy</span><b id="outPieces">—</b></div>
+        <div class="kv"><span>Total raw pounds</span><b id="outPounds">—</b></div>
+        <div class="kv"><span>Approximate 50-piece trays</span><b id="outTrays">—</b></div>
+        <div class="muted" id="explain">Enter details and click Calculate.</div>
+      </div>
+
+      <div class="map-links" style="margin-top:10px">
+        <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/chicken+wings+near+me">Find chicken wings near me</a>
+        <a class="pill" target="_blank" rel="noopener" href="https://www.google.com/maps/search/butcher+shop+near+me">Butcher shops</a>
+        <a class="pill" target="_blank" rel="noopener" href="https://www.google.com/maps/search/grocery+store+near+me">Grocery stores</a>
+      </div>
+      <div class="footnote">Rule of thumb: medium drumettes average ~10 pieces per pound; cooked yield ~70–75% of raw weight.</div>
+    </section>
+
+    <!-- PRICING (optional) -->
+    <section class="card stack" id="pricing">
+      <h2>Pricing (optional)</h2>
+      <div class="price-grid">
+        <div class="field row-4"><label for="price">Price per pound (USD)</label><input id="price" type="number" min="0" step="0.01" value="3.49"></div>
+        <div class="field row-4"><label for="tax">Tax percent</label><input id="tax" type="number" min="0" step="0.1" value="0"></div>
+        <div class="field row-4"><label for="fees">Fees or other percent</label><input id="fees" type="number" min="0" step="0.1" value="0"></div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="priceBtn">Estimate cost</button>
+        <button class="btn secondary" id="clearPriceBtn" type="button">Clear</button>
+      </div>
+      <div class="result" id="priceBlock" style="display:none;margin-top:10px">
+        <div class="kv"><span>Estimated total</span><b id="outTotal">$—</b></div>
+        <div class="kv"><span>Per person</span><b id="outPerPerson">$—</b></div>
+        <div class="muted">Pricing is approximate and varies by market and season.</div>
+      </div>
+    </section>
+
+    <!-- QUICK NOTES -->
+    <section class="card stack" id="notesBlock">
+      <h2>Quick Notes</h2>
+      <ul class="stack" style="margin:0;padding-left:18px">
+        <li><b>Baseline servings:</b> As a main course, plan about <b>8 drumettes per adult-equivalent</b>. Mixed menu ≈ <b>6</b>; appetizers ≈ <b>4</b>.</li>
+        <li><b>Pieces per pound:</b> Small ≈ 12 per pound; Medium ≈ 10; Large ≈ 8. The size selector updates the pounds automatically.</li>
+        <li><b>Event length & appetite:</b> Longer events and hungrier crowds increase portions slightly.</li>
+        <li><b>Leftovers:</b> Add 7–12% for next-day meals using the Leftovers control.</li>
+        <li><b>Counts:</b> Teens = 0.8 of an adult; kids = 0.5 of an adult.</li>
+        <li><b>Scope:</b> Quantities only—no cooking or food-safety guidance.</li>
+      </ul>
+      <div class="disclaimer">Estimates only for event planning — no cooking, storage, or food-safety advice.</div>
+    </section>
+
+    <!-- FAQS -->
+    <section class="card stack" id="faqs">
+      <h2>FAQs</h2>
+
+      <details>
+        <summary>How many chicken wing drumettes per person?</summary>
+        <div class="ans">
+          For a main course, plan about <b>8 drumettes per adult-equivalent</b>. For a mixed menu use ~6, and for appetizers use ~4 per adult-equivalent. Adjust appetite, length, and leftovers as needed.
+        </div>
+      </details>
+
+      <details>
+        <summary>How do pieces translate to pounds?</summary>
+        <div class="ans">
+          Use the size selector: <b>Small ≈ 12 pieces per pound</b>, <b>Medium ≈ 10</b>, <b>Large ≈ 8</b>. The calculator converts the total pieces to pounds automatically.
+        </div>
+      </details>
+
+      <details>
+        <summary>Does this account for cooked yield?</summary>
+        <div class="ans">
+          Yes indirectly. Portions are based on pieces per adult-equivalent; pounds are estimated from pieces-per-pound averages. Cooked yield (70–75%) is an FYI only and not required for planning pieces.
+        </div>
+      </details>
+
+      <details>
+        <summary>What if drumettes are part of a big buffet?</summary>
+        <div class="ans">
+          Choose <b>Mixed menu</b> or <b>Appetizers</b> to reduce the wings share, or set appetite to “Light.”
+        </div>
+      </details>
+
+      <details>
+        <summary>Can I estimate trays?</summary>
+        <div class="ans">
+          Yes. We show an approximate count of <b>50-piece trays</b> based on your total pieces. Round up for service convenience.
+        </div>
+      </details>
+
+      <div class="hr"></div>
+      <div class="footnote">Averages vary by supplier; confirm piece sizes and counts-per-pound with your market.</div>
+    </section>
+  </div>
+
+<script>
+(function(){
+  const $ = (sel)=>document.querySelector(sel);
+  const val = (sel, def=0)=>{ const v = parseFloat($(sel).value); return isFinite(v) ? v : def; };
+
+  const TEEN_EQ = 0.8, KID_EQ = 0.5;
+
+  function baselinePieces(mode){
+    if(mode==='appetizers') return 4;   // pieces per AE
+    if(mode==='mixed') return 6;
+    return 8; // main
+  }
+
+  function calculate(){
+    const A = Math.max(0, val('#adults',0));
+    const T = Math.max(0, val('#teens',0));
+    const K = Math.max(0, val('#kids',0));
+    const AE = A + TEEN_EQ*T + KID_EQ*K;
+    const guests = A + T + K;
+
+    const mode = $('#mode').value;
+    const appetite = val('#appetite',1.0);
+    const length   = val('#length',1.0);
+    const leftovers= val('#leftovers',1.0);
+
+    const sizePiecesPerLb = val('#size',10); // 8,10,12
+    const perAE = baselinePieces(mode) * appetite * length * leftovers;
+
+    const totalPieces = Math.ceil(AE * perAE);
+    const totalPounds = totalPieces / sizePiecesPerLb;
+    const trays50 = totalPieces / 50;
+
+    $('#outGuests').textContent = guests.toFixed(0);
+    $('#outPieces').textContent = totalPieces.toFixed(0);
+    $('#outPounds').textContent = totalPounds.toFixed(1) + ' pounds';
+    $('#outTrays').textContent  = trays50.toFixed(1);
+    $('#explain').textContent   = 'Based on ' + baselinePieces(mode) + ' pieces per adult-equivalent (' + mode + '). Adjust appetite/length/leftovers as needed.';
+    return { totalPounds, guests };
+  }
+
+  function money(n){
+    return isFinite(n) ? new Intl.NumberFormat(undefined,{style:'currency',currency:'USD'}).format(n) : '$—';
+  }
+
+  function priceTotals(){
+    const { totalPounds, guests } = calculate();
+    const price = Math.max(0, val('#price',0));
+    const tax   = Math.max(0, val('#tax',0))/100;
+    const fees  = Math.max(0, val('#fees',0))/100;
+
+    const subtotal = totalPounds * price;
+    const total = subtotal * (1 + tax + fees);
+    const per = guests>0 ? total/guests : NaN;
+
+    $('#outTotal').textContent = money(total);
+    $('#outPerPerson').textContent = money(per);
+    $('#priceBlock').style.display = 'block';
+  }
+
+  function clearPrices(){
+    $('#price').value='3.49'; $('#tax').value='0'; $('#fees').value='0';
+    $('#outTotal').textContent = '$—';
+    $('#outPerPerson').textContent = '$—';
+    $('#priceBlock').style.display = 'none';
+  }
+
+  function resetAll(){
+    $('#adults').value='12'; $('#teens').value='2'; $('#kids').value='2';
+    $('#mode').value='main'; $('#size').value='10';
+    $('#appetite').value='1.0'; $('#length').value='1.0'; $('#leftovers').value='1.0';
+    $('#notes').value='';
+    clearPrices();
+  }
+
+  $('#calcBtn').addEventListener('click', calculate);
+  $('#resetBtn').addEventListener('click', ()=>{ resetAll(); calculate(); });
+  $('#priceBtn').addEventListener('click', priceTotals);
+  $('#clearPriceBtn').addEventListener('click', clearPrices);
+
+  // init
+  calculate();
+})();
+</script>
+</body>
+</html>
