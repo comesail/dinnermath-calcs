@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Shrimp Quantity Calculator — How Many per Person (Counts per Pound & Sizes)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Quickly size shrimp for boils, appetizers, or mains. Enter guests and appetite—DinnerMath returns pounds to buy and an approximate shrimp count by size.">
+  <link rel="stylesheet" href="css/dinnermath.css"><!-- same shared CSS as Blue Crab -->
+</head>
+<body>
+  <h1 class="dm-h1">Shrimp Quantity Calculator — How Many per Person (Counts per Pound & Sizes)</h1>
+
+  <main id="dm-app" class="dm-app" data-food="shrimp"></main>
+
+  <script src="js/vendor.min.js"></script>           <!-- same shared vendor bundle -->
+  <script src="js/dinnermath.runtime.js"></script>   <!-- same shared runtime -->
+
+  <!-- SHRIMP CONFIG ONLY (keep layout/structure identical) -->
+  <script>
+    window.DINNERMATH = window.DINNERMATH || {};
+    DINNERMATH.page = {
+      foodKey: "shrimp",
+      foodLabel: "Shrimp",
+      h1: "Shrimp Quantity Calculator — How Many per Person (Counts per Pound & Sizes)",
+      sizePresets: [
+        { label: "U10 (under 10 per lb)", mid: 9 },
+        { label: "10–15 per lb",          mid: 12.5 },
+        { label: "16–20 per lb",          mid: 18 },
+        { label: "21–25 per lb",          mid: 23 },
+        { label: "26–30 per lb",          mid: 28 },
+        { label: "31–35 per lb",          mid: 33 },
+        { label: "36–40 per lb",          mid: 38 },
+        { label: "41–50 per lb",          mid: 45 },
+        { label: "51–60 per lb",          mid: 55 },
+        { label: "60–70 per lb",          mid: 65 }
+      ],
+      copy: {
+        introShort: "Enter guests, appetite, and shrimp size to get pounds to buy and an approximate shrimp count—great for boils, appetizers, or mains."
+      }
+    };
+  </script>
+
+  <script src="js/dinnermath.mount.js"></script>     <!-- same shared mount/init -->
+</body>
+</html>
