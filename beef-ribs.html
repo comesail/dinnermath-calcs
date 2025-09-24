@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="description" content="Enter guests and appetite—DinnerMath estimates beef ribs to buy in pounds and bones, with options for plate (short) ribs or back ribs.">
+<title>Beef Ribs Quantity Calculator — How Many per Person (Pounds & Bones)</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow-x:hidden;background:#eaf6fb;color:#0b2a3a;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+.wrap{width:100%;max-width:480px;margin:0 auto;padding:16px}
+@media(min-width:640px){.wrap{max-width:720px;padding:20px}}
+@media(min-width:980px){.wrap{max-width:980px;padding:28px 16px 56px}}
+:root{--ink2:#13506a;--paper:#fff;--line:#d7e8ef;--accent:#2f8db3;--shadow:0 6px 20px rgba(11,42,58,.08);--radius:18px}
+header{margin:0 0 18px}
+header h1{font-size:clamp(22px,3.2vw,34px);margin:0 0 8px;color:var(--ink2)}
+header p{margin:0;color:#274757}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+.stack{display:grid;gap:14px}
+h2{font-size:clamp(18px,2.5vw,22px);margin:0 0 8px;color:var(--ink2)}
+.grid{display:grid;gap:12px}
+@media(min-width:760px){.grid{grid-template-columns:repeat(12,1fr)}}
+.field{display:flex;flex-direction:column;gap:6px;background:#f7fbfd;border:1px solid var(--line);border-radius:12px;padding:10px}
+label{font-weight:600;font-size:.95rem}
+input[type=number],select{border:1px solid #cfe3eb;border-radius:10px;padding:9px 10px;background:#fff;font-size:1rem}
+.row-4{grid-column:span 12}@media(min-width:760px){.row-4{grid-column:span 4}}
+.row-6{grid-column:span 12}@media(min-width:760px){.row-6{grid-column:span 6}}
+.row-12{grid-column:span 12}
+.btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer}
+.btn.secondary{background:#fff;color:var(--accent)}
+.result{display:grid;gap:10px;background:#f6fbfe;border:1px dashed #b7d7e6;border-radius:16px;padding:14px}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:12px}
+.kv b{font-size:1.05rem}
+.muted{color:#4c6b7a;font-size:.9rem}
+details{border:1px solid var(--line);border-radius:12px;background:#fff;margin:10px 0}
+summary{cursor:pointer;padding:10px 14px;font-weight:700;color:#13506a}
+details[open] summary{border-bottom:1px solid var(--line)}
+details .ans{padding:10px 14px 12px;color:#2a4b5a}
+.map-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.footnote,.disclaimer{font-size:.85rem;color:#567789;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Beef Ribs Quantity Calculator — How Many per Person (Pounds & Bones)</h1>
+    <p>Enter your guest mix and appetite. DinnerMath estimates beef ribs to buy in pounds and bones—adjusted for rib type, event length, and leftovers.</p>
+  </header>
+
+  <!-- INPUTS -->
+  <section class="card stack" id="inputs">
+    <h2>Inputs</h2>
+    <div class="grid">
+      <div class="field row-4"><label for="adults">Adults</label><input id="adults" type="number" min="0" step="1" value="10"></div>
+      <div class="field row-4"><label for="teens">Teens</label><input id="teens" type="number" min="0" step="1" value="2"></div>
+      <div class="field row-4"><label for="kids">Kids</label><input id="kids" type="number" min="0" step="1" value="2"></div>
+
+      <div class="field row-6">
+        <label for="type">Rib type</label>
+        <select id="type">
+          <option value="plate" selected>Plate (short plate / “dino” ribs)</option>
+          <option value="back">Back ribs</option>
+        </select>
+        <div class="help">Plate ribs have big meaty bones; back ribs are lighter and bonier.</div>
+      </div>
+
+      <div class="field row-6">
+        <label for="appetite">Appetite</label>
+        <select id="appetite"><option value="0.9">Light</option><option value="1.0" selected>Typical</option><option value="1.2">Hungry</option></select>
+      </div>
+
+      <div class="field row-6">
+        <label for="length">Event length</label>
+        <select id="length"><option value="0.95">1–2 hours</option><option value="1.0" selected>2–3 hours</option><option value="1.08">3–4 hours</option><option value="1.15">4–5 hours</option></select>
+      </div>
+
+      <div class="field row-6">
+        <label for="leftovers">Leftovers</label>
+        <select id="leftovers"><option value="1.0" selected>No</option><option value="1.07">Some leftovers</option><option value="1.12">Extra leftovers</option></select>
+      </div>
+
+      <div class="field row-12"><label for="notes">Notes (optional)</label><input id="notes" type="text" placeholder="e.g., 3-bone plates; other mains; sides"></div>
+    </div>
+    <div class="actions"><button class="btn" id="calcBtn">Calculate</button><button class="btn secondary" id="resetBtn" type="button">Reset</button></div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="card stack" id="results" aria-live="polite">
+    <h2>Results</h2>
+    <div class="result">
+      <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
+      <div class="kv"><span>Total pounds of beef ribs</span><b id="outPounds">—</b></div>
+      <div class="kv"><span>Total bones</span><b id="outBones">—</b></div>
+      <div class="muted" id="explain">Enter details and click Calculate.</div>
+    </div>
+    <div class="map-links">
+      <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/beef+ribs+near+me">Find beef ribs near me</a>
+      <a class="btn secondary" target="_blank" rel="noopener" href="https://www.google.com/maps/search/butcher+shop+near+me">Butcher shops</a>
+    </div>
+    <div class="footnote">Typical plate-rib bone ≈ 1.5–2.5 lb raw; back-rib bone ≈ 0.6–1.0 lb raw (very variable).</div>
+  </section>
+
+  <!-- QUICK NOTES -->
+  <section class="card stack">
+    <h2>Quick Notes</h2>
+    <ul style="margin:0;padding-left:18px">
+      <li><b>Baseline per adult-equivalent:</b> Plate ribs ~<b>1 bone</b> (≈2 lb raw). Back ribs ~<b>2 bones</b> (≈1.5 lb raw).</li>
+      <li><b>High bone weight:</b> Beef ribs are bone-forward; plan generously and round up.</li>
+      <li><b>Leftovers:</b> Add 7–12% if you want next-day meals.</li>
+      <li><b>Counts:</b> Teens = 0.8 adult; kids = 0.5 adult.</li>
+    </ul>
+    <div class="disclaimer">Estimates only for planning — no cooking or food-safety advice.</div>
+  </section>
+
+  <!-- FAQS -->
+  <section class="card stack">
+    <h2>FAQs</h2>
+    <details><summary>How many beef ribs per person?</summary><div class="ans">For plate ribs, plan about <b>1 bone per adult-equivalent</b>. For back ribs, plan about <b>2 bones per adult-equivalent</b> (they’re smaller and bonier).</div></details>
+    <details><summary>How do bones translate to pounds?</summary><div class="ans">Plate rib bones often weigh 1.5–2.5 lb each raw; back rib bones ~0.6–1.0 lb each raw. The calculator converts bones to total pounds using these averages.</div></details>
+    <details><summary>What about mixed menus?</summary><div class="ans">If ribs share the plate with other mains, choose Light appetite or shorten event length to reduce portions.</div></details>
+    <details><summary>Should I round up?</summary><div class="ans">Yes—bone sizes vary widely. Rounding up avoids running short.</div></details>
+    <div class="footnote">Confirm cut and expected bone size with your butcher.</div>
+  </section>
+</div>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s);
+  const val=(s,d=0)=>{const x=parseFloat($(s).value);return isFinite(x)?x:d;};
+  const TEEN=0.8, KID=0.5;
+
+  function assumptions(type){
+    // returns {bonesPerAE, poundsPerBone}
+    if(type==='plate') return { bonesPerAE:1.0, poundsPerBone:2.0 };   // 1 big bone ≈ 2 lb raw
+    return { bonesPerAE:2.0, poundsPerBone:0.75 };                     // 2 smaller bones ≈ 0.75 lb each
+  }
+
+  function calc(){
+    const A=val('#adults'),T=val('#teens'),K=val('#kids');
+    const AE=A+TEEN*T+KID*K, guests=A+T+K;
+    const type=$('#type').value, appetite=val('#appetite',1), length=val('#length',1), leftovers=val('#leftovers',1);
+
+    const { bonesPerAE, poundsPerBone } = assumptions(type);
+    const bonesTotal = Math.ceil(AE * bonesPerAE * appetite * length * leftovers);
+    const poundsTotal = bonesTotal * poundsPerBone;
+
+    $('#outGuests').textContent=guests.toFixed(0);
+    $('#outBones').textContent=bonesTotal.toFixed(0);
+    $('#outPounds').textContent=poundsTotal.toFixed(1)+' pounds';
+    $('#explain').textContent='Based on '+(type==='plate'?'~1 plate rib per AE':'~2 back ribs per AE')+'. Adjust appetite/length/leftovers as needed.';
+  }
+
+  function resetAll(){
+    $('#adults').value='10';$('#teens').value='2';$('#kids').value='2';
+    $('#type').value='plate';$('#appetite').value='1.0';$('#length').value='1.0';$('#leftovers').value='1.0';$('#notes').value='';
+    calc();
+  }
+
+  $('#calcBtn').addEventListener('click',calc);
+  $('#resetBtn').addEventListener('click',resetAll);
+  calc();
+})();
+</script>
+</body>
+</html>
