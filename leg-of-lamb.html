@@ -121,3 +121,74 @@ details .ans{padding:10px 14px 12px;color:#2a4b5a}
   <section class="card stack" id="notesBlock">
     <h2>Quick Notes</h2>
     <ul class="stack" style="margin:0;padding-left:18px">
+      <li><b>Baseline cooked portion:</b> ~8 ounces (0.5 lb) per adult-equivalent.</li>
+      <li><b>Yield:</b> Bone-in ~65% cooked yield; boneless ~75%.</li>
+      <li><b>Service style:</b> Carving stations feel generous—consider a small leftovers buffer.</li>
+      <li><b>Counts:</b> Teens = 0.8 adult; kids = 0.5 adult.</li>
+    </ul>
+    <div class="disclaimer">Estimates only for planning — no cooking or food-safety advice.</div>
+  </section>
+
+  <!-- FAQS -->
+  <section class="card stack" id="faqs">
+    <h2>FAQs</h2>
+    <details><summary>How much leg of lamb per person?</summary><div class="ans">Plan about <b>0.5 lb cooked per adult-equivalent</b>. With ~65% cooked yield (bone-in), that’s around <b>0.75 lb raw</b> per adult-equivalent.</div></details>
+    <details><summary>Bone-in or boneless?</summary><div class="ans">Boneless yields more cooked meat per pound but costs more. Choose the style that matches what you are buying so the yield is accurate.</div></details>
+    <details><summary>Buffet vs plated?</summary><div class="ans">Plated mains stick to the baseline. Buffets with many sides can reduce appetite or event length to scale down.</div></details>
+    <details><summary>Should I round up?</summary><div class="ans">Yes—yields and carve losses vary. Rounding up avoids running short.</div></details>
+    <div class="footnote">Confirm trim and expected yield with your butcher.</div>
+  </section>
+</div>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s);
+  const val=(s,d=0)=>{const x=parseFloat($(s).value);return isFinite(x)?x:d;};
+  const TEEN=0.8, KID=0.5;
+
+  function calc(){
+    const A=val('#adults'), T=val('#teens'), K=val('#kids');
+    const AE = A + TEEN*T + KID*K;
+    const appetite=val('#appetite',1), length=val('#length',1), leftovers=val('#leftovers',1);
+    const yieldCooked = val('#style',0.65);
+
+    const cookedPerAE = 0.5; // lb cooked per AE
+    const cookedTotal = AE * cookedPerAE * appetite * length * leftovers;
+    const rawTotal = cookedTotal / yieldCooked;
+
+    $('#outGuests').textContent = (A+T+K).toFixed(0);
+    $('#outCooked').textContent = cookedTotal.toFixed(1) + ' pounds (cooked)';
+    $('#outRaw').textContent    = rawTotal.toFixed(1) + ' pounds (raw)';
+    return { rawTotal, guests:(A+T+K) };
+  }
+
+  function money(n){ return isFinite(n)?new Intl.NumberFormat(undefined,{style:'currency',currency:'USD'}).format(n):'$—'; }
+  function priceTotals(){
+    const { rawTotal, guests } = calc();
+    const price=val('#price',0), tax=val('#tax',0)/100, fees=val('#fees',0)/100;
+    const total = rawTotal * price * (1+tax+fees);
+    const per   = guests>0 ? total/guests : NaN;
+    $('#outTotal').textContent = money(total);
+    $('#outPerPerson').textContent = money(per);
+    $('#priceBlock').style.display='block';
+  }
+
+  function resetAll(){
+    $('#adults').value='10';$('#teens').value='2';$('#kids').value='2';
+    $('#style').value='0.65';$('#appetite').value='1.0';$('#length').value='1.0';$('#leftovers').value='1.0';
+    $('#notes').value='';
+    $('#price').value='8.99';$('#tax').value='0';$('#fees').value='0';
+    $('#priceBlock').style.display='none';
+    calc();
+  }
+
+  $('#calcBtn').addEventListener('click',calc);
+  $('#resetBtn').addEventListener('click',resetAll);
+  $('#priceBtn').addEventListener('click',priceTotals);
+  $('#clearPriceBtn')?.addEventListener('click',()=>{ $('#priceBlock').style.display='none'; });
+
+  calc();
+})();
+</script>
+</body>
+</html>
