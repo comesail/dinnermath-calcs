@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="description" content="DinnerMath estimates pork tenderloin to buy in raw pounds, adjusted for appetite, event length, and leftovers.">
+<title>Pork Tenderloin Quantity Calculator — How Many per Person (Raw Pounds)</title>
+<style>
+/* same v1.4 framework styling as other calculators */
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow-x:hidden;background:#eaf6fb;color:#0b2a3a;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+.wrap{width:100%;max-width:480px;margin:0 auto;padding:16px}
+@media(min-width:640px){.wrap{max-width:720px;padding:20px}}
+@media(min-width:980px){.wrap{max-width:980px;padding:28px 16px 56px}}
+:root{--ink2:#13506a;--paper:#fff;--line:#d7e8ef;--accent:#2f8db3;--shadow:0 6px 20px rgba(11,42,58,.08);--radius:18px}
+header h1{font-size:clamp(22px,3.2vw,34px);margin:0 0 8px;color:var(--ink2)}
+header p{margin:0 0 16px;color:#274757}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin:0 0 18px}
+h2{font-size:clamp(18px,2.5vw,22px);margin:0 0 8px;color:var(--ink2)}
+.grid{display:grid;gap:12px}
+@media(min-width:760px){.grid{grid-template-columns:repeat(12,1fr)}}
+.field{display:flex;flex-direction:column;gap:6px;background:#f7fbfd;border:1px solid var(--line);border-radius:12px;padding:10px}
+label{font-weight:600;font-size:.95rem}
+input[type=number],select{border:1px solid #cfe3eb;border-radius:10px;padding:9px;background:#fff;font-size:1rem}
+.row-4{grid-column:span 12}@media(min-width:760px){.row-4{grid-column:span 4}}
+.row-6{grid-column:span 12}@media(min-width:760px){.row-6{grid-column:span 6}}
+.row-12{grid-column:span 12}
+.btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer}
+.btn.secondary{background:#fff;color:var(--accent)}
+.result{display:grid;gap:10px;background:#f6fbfe;border:1px dashed #b7d7e6;border-radius:16px;padding:14px}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:12px}
+.kv b{font-size:1.05rem}
+.muted{color:#4c6b7a;font-size:.9rem}
+details{border:1px solid var(--line);border-radius:12px;background:#fff;margin:10px 0}
+summary{cursor:pointer;padding:10px 14px;font-weight:700;color:#13506a}
+details .ans{padding:10px 14px;color:#2a4b5a}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>Pork Tenderloin Quantity Calculator — How Many per Person (Raw Pounds)</h1>
+<p>Enter your guest mix and appetite. DinnerMath estimates pork tenderloin in raw pounds—adjusted for event length and leftovers.</p>
+</header>
+
+<section class="card">
+<h2>Inputs</h2>
+<div class="grid">
+<div class="field row-4"><label>Adults</label><input id="adults" type="number" value="8"></div>
+<div class="field row-4"><label>Teens</label><input id="teens" type="number" value="2"></div>
+<div class="field row-4"><label>Kids</label><input id="kids" type="number" value="2"></div>
+<div class="field row-6"><label>Appetite</label><select id="appetite"><option value="0.9">Light</option><option value="1" selected>Typical</option><option value="1.2">Hungry</option></select></div>
+<div class="field row-6"><label>Event length</label><select id="length"><option value="0.95">1–2 hrs</option><option value="1" selected>2–3 hrs</option><option value="1.1">3–4 hrs</option><option value="1.15">4–5 hrs</option></select></div>
+<div class="field row-6"><label>Leftovers</label><select id="leftovers"><option value="1" selected>No</option><option value="1.07">Some</option><option value="1.12">Extra</option></select></div>
+</div>
+<button class="btn" onclick="calc()">Calculate</button>
+</section>
+
+<section class="card">
+<h2>Results</h2>
+<div class="result">
+<div class="kv"><span>Total guests</span><b id="outGuests">—</b></div>
+<div class="kv"><span>Pounds tenderloin needed</span><b id="outPounds">—</b></div>
+<div class="muted">Default ~6 oz cooked per adult-equivalent → ~0.6 lb raw.</div>
+</div>
+</section>
+
+<section class="card">
+<h2>Quick Notes</h2>
+<ul>
+<li>Baseline ~6 oz cooked (~0.6 lb raw) per adult-equivalent.</li>
+<li>Yield ~95% (little trim loss).</li>
+<li>Round up—tenderloins are sold whole (≈1 lb each).</li>
+<li>Teens = 0.8 adult; kids = 0.5 adult.</li>
+</ul>
+</section>
+
+<section class="card">
+<h2>FAQs</h2>
+<details><summary>How many tenderloins per person?</summary><div class="ans">A whole tenderloin is ~1 lb. That serves about 1.5 adult-equivalents as a main course.</div></details>
+<details><summary>Yield loss?</summary><div class="ans">Tenderloin has very little trim waste, ~95% yield cooked.</div></details>
+<details><summary>Buffet vs plated?</summary><div class="ans">Buffets often stretch further with sides; plated mains stick to the 6 oz cooked baseline.</div></details>
+</section>
+</div>
+<script>
+function calc(){
+ const A=+document.getElementById('adults').value||0;
+ const T=+document.getElementById('teens').value||0;
+ const K=+document.getElementById('kids').value||0;
+ const appetite=+document.getElementById('appetite').value;
+ const length=+document.getElementById('length').value;
+ const leftovers=+document.getElementById('leftovers').value;
+ const AE=A+0.8*T+0.5*K;
+ const perAE=0.6; // raw lb baseline
+ const total=AE*perAE*appetite*length*leftovers;
+ document.getElementById('outGuests').textContent=A+T+K;
+ document.getElementById('outPounds').textContent=total.toFixed(1)+' lb';
+}
+</script>
+</body>
+</html>
