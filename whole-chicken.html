@@ -37,4 +37,281 @@
   .row{display:flex;gap:10px;flex-wrap:wrap}
   .row > div{flex:1 1 150px}
 
-  .btn{display:inline-block;text-
+  .btn{display:inline-block;text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 14px}
+  .btn.primary{background:var(--brand);color:#fff;border-color:transparent}
+
+  .finder{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .finder a{flex:1 1 220px;text-align:center}
+
+  /* Mobile embed height guard (Wix Classic) */
+  @media (max-width:640px){.embed-guard{min-height:4827px}}
+
+  /* Accordion (Quick Notes & FAQ) */
+  .accordion{margin-top:16px}
+  .acc-item{border:1px solid var(--line);border-radius:12px;background:#fff;margin:10px 0;overflow:hidden}
+  .acc-btn{width:100%;text-align:left;padding:14px 16px;background:#fff;border:0;font-weight:700;cursor:pointer}
+  .acc-btn:focus{outline:2px solid #c9d8ff;outline-offset:2px}
+  .acc-body{max-height:0;overflow:hidden;transition:max-height .28s ease}
+  .acc-inner{padding:0 16px 14px;color:var(--muted);font-size:14px}
+  .acc-item.open .acc-body{max-height:500px}
+
+  .notes{font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="wrap embed-guard">
+
+  <!-- H1 -->
+  <h1>Whole Chicken Quantity Calculator — How Many per Person (Whole Birds & Pounds)</h1>
+
+  <!-- Intro (short, above the tool) -->
+  <p class="intro">Enter your guest mix, appetite, and event length. DinnerMath estimates how many whole chickens to buy and total raw pounds—so you shop with confidence and never run short.</p>
+
+  <!-- Calculator card -->
+  <section class="card" id="calc">
+    <div class="grid">
+      <div>
+        <label>Adults</label>
+        <input type="number" id="adults" min="0" value="8" />
+      </div>
+      <div>
+        <label>Teens</label>
+        <input type="number" id="teens" min="0" value="2" />
+      </div>
+      <div>
+        <label>Kids</label>
+        <input type="number" id="kids" min="0" value="2" />
+      </div>
+
+      <div>
+        <label>Appetite</label>
+        <select id="appetite">
+          <option value="0.9">Light</option>
+          <option value="1.0" selected>Average</option>
+          <option value="1.2">Hearty</option>
+        </select>
+      </div>
+      <div>
+        <label>Event length</label>
+        <select id="length">
+          <option value="0.95">Short (≤1.5 hours)</option>
+          <option value="1.0" selected>Standard (2–3 hours)</option>
+          <option value="1.1">Long (3–4+ hours)</option>
+        </select>
+      </div>
+      <div>
+        <label>Menu variety</label>
+        <select id="variety">
+          <option value="1.0" selected>Main focus (mostly chicken)</option>
+          <option value="0.85">With 1–2 other mains</option>
+          <option value="0.7">Large buffet / many mains</option>
+        </select>
+      </div>
+      <div>
+        <label>Leftovers buffer</label>
+        <select id="leftovers">
+          <option value="0">No leftovers</option>
+          <option value="0.07" selected>Some leftovers (+7%)</option>
+          <option value="0.12">Extra leftovers (+12%)</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Chicken size (raw)</label>
+        <select id="size">
+          <option value="3.5">Small (~3.5 pounds each)</option>
+          <option value="4.0" selected>Medium (~4.0 pounds each)</option>
+          <option value="4.5">Large (~4.5 pounds each)</option>
+        </select>
+        <div class="muted">Assumes whole raw chickens roasted and carved.</div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="result" id="result">
+      <h3>Your Whole Chicken Plan</h3>
+      <div class="kpi">
+        <div class="pill"><span class="muted">Whole chickens</span><b id="k_birds">—</b></div>
+        <div class="pill"><span class="muted">Total raw pounds</span><b id="k_lbs">—</b></div>
+        <div class="pill"><span class="muted">Estimated cost</span><b id="k_cost">—</b></div>
+      </div>
+      <div class="notes" id="assumptions" style="margin-top:8px"></div>
+    </div>
+
+    <div class="price">
+      <div class="row">
+        <div>
+          <label>Price per pound (USD)</label>
+          <input type="number" id="price" min="0" step="0.01" value="1.99"/>
+        </div>
+        <div>
+          <label>Tax percent</label>
+          <input type="number" id="tax" min="0" step="0.1" value="0"/>
+        </div>
+        <div>
+          <label>Fees or other percent</label>
+          <input type="number" id="fees" min="0" step="0.1" value="0"/>
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <div class="pill" style="flex:1">
+          <span class="muted">Estimated total</span>
+          <b id="k_total">$—</b>
+        </div>
+        <div class="pill" style="flex:1">
+          <span class="muted">Per person</span>
+          <b id="k_pp">$—</b>
+        </div>
+      </div>
+      <div class="finder">
+        <a class="btn primary" id="findNear" target="_blank" rel="noopener">Find whole chicken near me</a>
+        <a class="btn" href="https://www.google.com/maps/search/butcher+shops+near+me" target="_blank" rel="noopener">Butcher shops</a>
+        <a class="btn" href="https://www.google.com/maps/search/grocery+stores+near+me" target="_blank" rel="noopener">Grocery stores</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Notes -->
+  <section class="accordion" aria-label="Quick Notes">
+    <div class="acc-item open">
+      <button class="acc-btn" aria-expanded="true">Quick Notes</button>
+      <div class="acc-body" style="max-height:500px">
+        <div class="acc-inner">
+          <ul>
+            <li><b>Baseline:</b> About <b>3.0 adult-equivalent servings per whole 4.0-pound chicken</b> at average appetite and a standard event length.</li>
+            <li><b>Yield:</b> Whole birds include bone and skin. <b>Edible cooked meat is roughly 55–60%</b> of raw weight; the calculator already accounts for this at the servings level.</li>
+            <li><b>Leftovers:</b> Choose “Some leftovers” or “Extra leftovers” to add a buffer for next-day meals.</li>
+            <li><b>Menu variety:</b> If you are serving many mains, reduce the chicken share with the “Large buffet / many mains” setting.</li>
+            <li><b>Kids and teens:</b> Teens count as <b>0.8</b> of an adult; kids count as <b>0.5</b> of an adult by default.</li>
+            <li><b>Costs:</b> Enter your price per pound plus optional tax and fees to see totals and per-person cost.</li>
+            <li><b>Scope:</b> DinnerMath gives quantities only—<b>no cooking advice</b> or food-safety guidance.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="acc-item">
+      <button class="acc-btn" aria-expanded="false">Frequently Asked Questions</button>
+      <div class="acc-body">
+        <div class="acc-inner">
+          <p><b>How many whole chickens per person?</b><br/>
+          For a main course with average appetite, plan about <b>one whole 4.0-pound chicken for 3 adult-equivalent guests</b>. The calculator scales this by appetite, event length, variety, and leftovers.</p>
+
+          <p><b>What if my chickens are smaller or larger?</b><br/>
+          Choose the closest size (3.5, 4.0, or 4.5 pounds). The tool adjusts servings per bird—larger birds serve slightly more.</p>
+
+          <p><b>Does this include sides and appetizers?</b><br/>
+          Yes. If you are serving many sides or multiple mains, change “Menu variety” to reduce the chicken share. For a light appetizer-style tasting, also set appetite to “Light.”</p>
+
+          <p><b>Can I mix whole chickens with pieces?</b><br/>
+          Yes. Use this tool for the whole birds and a separate tool for pieces, or estimate pieces as additional mains and reduce menu variety here.</p>
+
+          <p><b>Is the weight raw or cooked?</b><br/>
+          The size selector uses <b>raw weight</b>. The servings model accounts for typical cooked yield from whole birds.</p>
+
+          <p><b>How do I budget?</b><br/>
+          Enter your price per pound (plus tax/fees if needed). The tool returns <b>estimated total</b> and <b>per-person</b> costs.</p>
+
+          <p><b>Leftovers—how much should I add?</b><br/>
+          “Some leftovers” adds about seven percent. “Extra leftovers” adds about twelve percent.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <p class="notes" style="margin-top:12px">
+    Notes: This tool estimates quantities only—no cooking advice or food safety guidance. Adjust for your guests and menu.
+  </p>
+
+</main>
+
+<script>
+(function(){
+  const $ = (id)=>document.getElementById(id);
+
+  const inputs = ["adults","teens","kids","appetite","length","variety","leftovers","size","price","tax","fees"];
+  inputs.forEach(id => $(id).addEventListener('input', recompute));
+  inputs.forEach(id => $(id).addEventListener('change', recompute));
+
+  function adultEquiv(a,t,k){ return (+a) + 0.8*(+t) + 0.5*(+k); }
+
+  // Servings per whole chicken (adult equivalents) by size.
+  // ~3.0 AE at 4.0 pounds; ~2.7 at 3.5; ~3.3 at 4.5.
+  function servingsPerBird(lb){
+    if (lb <= 3.5) return 2.7;
+    if (lb >= 4.5) return 3.3;
+    return 2.7 + (lb - 3.5) * ((3.3-2.7)/(4.5-3.5));
+  }
+
+  function numberFormat(n, digits=0){
+    const f = new Intl.NumberFormat(undefined,{maximumFractionDigits:digits, minimumFractionDigits:digits});
+    return f.format(n);
+  }
+  function money(n){
+    return isFinite(n) ? new Intl.NumberFormat(undefined,{style:'currency',currency:'USD'}).format(n) : '—';
+  }
+
+  function recompute(){
+    const a = +$("adults").value||0;
+    const t = +$("teens").value||0;
+    const k = +$("kids").value||0;
+
+    const appetite = +$("appetite").value;
+    const length   = +$("length").value;
+    const variety  = +$("variety").value;
+    const leftovers= +$("leftovers").value;
+    const size     = +$("size").value;
+
+    const price    = +$("price").value||0;
+    const taxPct   = (+$("tax").value||0)/100;
+    const feePct   = (+$("fees").value||0)/100;
+
+    let ae = adultEquiv(a,t,k);
+    let demand = ae * appetite * length * variety;
+    demand *= (1 + leftovers);
+
+    const spb = servingsPerBird(size);
+    const birds = Math.ceil( demand / spb );
+    const totalLbs = birds * size;
+
+    $("k_birds").textContent = isFinite(birds) ? numberFormat(birds) : "—";
+    $("k_lbs").textContent   = isFinite(totalLbs) ? numberFormat(totalLbs,1) + " pounds" : "—";
+
+    const subtotal = totalLbs * price;
+    const total = subtotal * (1 + taxPct + feePct);
+    const ppl = (a+t+k) || 0;
+    $("k_total").textContent = money(total);
+    $("k_pp").textContent    = ppl ? money(total / ppl) : "$—";
+
+    $("assumptions").textContent =
+      `Assumes about ${numberFormat(spb,1)} adult-equivalent servings per ${numberFormat(size,1)}-pound whole chicken at average appetite and a standard event. Adjust multipliers to fit your crowd.`;
+  }
+
+  // Finder map link
+  function setFinder(){
+    const q = encodeURIComponent("whole chicken near me");
+    $("findNear").href = "https://www.google.com/maps/search/" + q;
+  }
+
+  // Simple accordion behavior
+  function wireAccordion(){
+    document.querySelectorAll('.acc-item').forEach((item)=>{
+      const btn = item.querySelector('.acc-btn');
+      const body = item.querySelector('.acc-body');
+      btn.addEventListener('click', ()=>{
+        const open = item.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        body.style.maxHeight = open ? '500px' : '0';
+      });
+    });
+  }
+
+  setFinder();
+  wireAccordion();
+  recompute();
+})();
+</script>
+</body>
+</html>
