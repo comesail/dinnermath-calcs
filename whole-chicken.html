@@ -43,15 +43,7 @@
   .finder{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
   .finder a{flex:1 1 220px;text-align:center}
 
-  .keep{display:grid;gap:10px;grid-template-columns:repeat(3,1fr);margin-top:22px}
-  @media (max-width:900px){.keep{grid-template-columns:1fr 1fr}}
-  @media (max-width:640px){.keep{grid-template-columns:1fr}}
-  .keep h4{margin:0 0 6px}
-  .keep .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-  /* Hide KEEP PLANNING label on mobile */
-  @media (max-width:640px){.keep .label{display:none}}
-
-  /* Mobile embed height guard */
+  /* Mobile embed height guard (Wix Classic) */
   @media (max-width:640px){.embed-guard{min-height:4827px}}
 
   .notes{font-size:13px;color:var(--muted)}
@@ -171,17 +163,6 @@
     </div>
   </section>
 
-  <!-- Keep Planning -->
-  <section class="keep">
-    <div class="label">KEEP PLANNING</div>
-    <a class="btn" href="/pork-ribs-calculator">Pork Ribs</a>
-    <a class="btn" href="/chicken-wings-calculator">Chicken Wings (Drumettes)</a>
-    <a class="btn" href="/beef-brisket-calculator">Beef Brisket</a>
-    <a class="btn" href="/shrimp-calculator">Shrimp</a>
-    <a class="btn" href="/blue-crab-calculator">Blue Crabs</a>
-    <a class="btn" href="/snow-crab-legs-calculator">Snow Crab Legs</a>
-  </section>
-
   <p class="notes" style="margin-top:12px">
     Notes: This tool estimates quantities only—no cooking advice or food safety guidance. Adjust for your guests and menu.
   </p>
@@ -205,7 +186,6 @@
   function servingsPerBird(lb){
     if (lb <= 3.5) return 2.7;
     if (lb >= 4.5) return 3.3;
-    // linear between 3.5 and 4.5
     return 2.7 + (lb - 3.5) * ( (3.3-2.7) / (4.5-3.5) );
   }
 
@@ -233,10 +213,9 @@
     const taxPct   = (+$("tax").value||0)/100;
     const feePct   = (+$("fees").value||0)/100;
 
-    // Demand model (DinnerMath v1.4 style):
     let ae = adultEquiv(a,t,k);
     let demand = ae * appetite * length * variety;
-    demand *= (1 + leftovers); // buffer at the end
+    demand *= (1 + leftovers);
 
     const spb = servingsPerBird(size);
     const birds = Math.ceil( demand / spb );
@@ -245,19 +224,16 @@
     $("k_birds").textContent = isFinite(birds) ? numberFormat(birds) : "—";
     $("k_lbs").textContent   = isFinite(totalLbs) ? numberFormat(totalLbs,1) + " lb" : "—";
 
-    // costs
     const subtotal = totalLbs * price;
     const total = subtotal * (1 + taxPct + feePct);
     const ppl = (a+t+k) || 0;
     $("k_total").textContent = money(total);
     $("k_pp").textContent    = ppl ? money(total / ppl) : "$—";
 
-    // assumptions line
     $("assumptions").textContent =
       `Assumes ~${numberFormat(spb,1)} adult-equivalent servings per ${numberFormat(size,1)} lb whole chicken at average appetite and a standard event. Adjust multipliers to fit your crowd.`;
   }
 
-  // Finder map link
   function setFinder(){
     const q = encodeURIComponent("whole chicken near me");
     $("findNear").href = "https://www.google.com/maps/search/" + q;
