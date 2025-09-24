@@ -1,143 +1,416 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shrimp Quantity Calculator — How Many per Person (Counts per Pound & Sizes)</title>
-  <meta name="description" content="Quickly size shrimp for boils, appetizers, or mains. Enter guests and appetite—DinnerMath returns pounds to buy and an approximate shrimp count by size.">
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; line-height: 1.5; }
-    h1, h2, h3 { color: #003049; }
-    label { display: block; margin-top: 10px; }
-    input, select { margin-top: 4px; padding: 6px; width: 100%; }
-    button { margin-top: 15px; padding: 10px 20px; background: #0077b6; color: white; border: none; cursor: pointer; }
-    button:hover { background: #005f86; }
-    .result-box { background: #f1f1f1; padding: 15px; margin-top: 20px; border-radius: 8px; }
-    .dm-notes, .dm-faq { margin-top: 40px; }
-    .dm-notes ul { padding-left: 20px; }
-    .dm-faq h3 { margin-top: 20px; }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="description" content="Quickly size shrimp for boils, appetizers, or mains. Enter guests and appetite—DinnerMath returns pounds to buy and an approximate shrimp count by size.">
+<title>Shrimp Quantity Calculator — How Many per Person (Counts per Pound & Sizes)</title>
+<style>
+/* ---- Mobile-safe base ---- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; overflow-x: hidden; }
+
+/* Media should never overflow */
+img, svg, canvas, video { max-width: 100%; height: auto; display: block; }
+
+/* Form controls shouldn't force width */
+input, select, textarea, button {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Any wide blocks/tables scroll inside themselves instead of pushing the page */
+table, .wide-block { max-width: 100%; display: block; overflow-x: auto; }
+
+:root{
+  --ink:#0b2a3a;
+  --ink-2:#13506a;
+  --wash:#eaf6fb;
+  --paper:#ffffff;
+  --line:#d7e8ef;
+  --accent:#2f8db3;
+  --ok:#1d6b3a;
+  --warn:#b35b2f;
+  --shadow:0 6px 20px rgba(11,42,58,.08);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--wash);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+
+/* Mobile first */
+.wrap {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px;
+}
+@media (min-width: 640px){ .wrap { max-width: 720px; padding: 20px; } }
+@media (min-width: 980px){ .wrap { max-width: 980px; padding: 28px 16px 56px; } }
+
+header{margin:0 0 18px}
+header h1{font-size:clamp(22px,3.2vw,34px);margin:0 0 8px;color:var(--ink-2);letter-spacing:.2px}
+header p{margin:0;color:#274757}
+
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+.stack{display:grid;gap:14px}
+section{margin:18px 0}
+h2{font-size:clamp(18px,2.5vw,22px);margin:0 0 8px;color:var(--ink-2)}
+.grid{display:grid;gap:12px}
+@media(min-width:760px){ .grid{grid-template-columns:repeat(12,1fr)} }
+.field{display:flex;flex-direction:column;gap:6px;background:#f7fbfd;border:1px solid var(--line);border-radius:12px;padding:10px}
+label{font-weight:600;font-size:.95rem}
+input[type="number"],select,input[type="text"]{
+  border:1px solid #cfe3eb;border-radius:10px;padding:9px 10px;background:#fff;font-size:1rem;outline:none;
+}
+input[type="number"]:focus,select:focus{border-color:var(--accent)}
+.row-6{grid-column:span 12}@media(min-width:760px){.row-6{grid-column:span 6}}
+.row-4{grid-column:span 12}@media(min-width:760px){.row-4{grid-column:span 4}}
+.row-3{grid-column:span 12}@media(min-width:760px){.row-3{grid-column:span 3}}
+.help{font-size:.88rem;color:#3a6070}
+.btn{
+  appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;
+  border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer
+}
+.btn.secondary{background:#fff;color:var(--accent)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.result{
+  display:grid;gap:10px;background:#f6fbfe;border:1px dashed #b7d7e6;border-radius:16px;padding:14px
+}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:12px}
+.kv b{font-size:1.05rem}
+.muted{color:#4c6b7a;font-size:.9rem}
+.callout{border-left:4px solid var(--ok);background:#f2fbf5;padding:10px 12px;border-radius:10px}
+details{border:1px solid var(--line);border-radius:12px;background:#fff}
+summary{cursor:pointer;padding:10px 14px;font-weight:700;color:var(--ink-2)}
+details .ans{padding:0 14px 12px;color:#2a4b5a}
+.disclaimer{font-size:.85rem;color:#567789;margin-top:10px}
+.price-grid{display:grid;gap:10px}
+@media(min-width:760px){.price-grid{grid-template-columns:repeat(12,1fr)}}
+.pill{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;background:#eef7fb;border:1px solid var(--line);font-size:.92rem}
+.map-links{display:flex;flex-wrap:wrap;gap:10px}
+.hr{height:1px;background:var(--line);margin:10px 0}
+.footnote{font-size:.85rem;color:#648396}
+</style>
 </head>
 <body>
+  <div class="wrap">
+    <header>
+      <h1>Shrimp Quantity Calculator — How Many per Person (Counts per Pound &amp; Sizes)</h1>
+      <p>Tell us who’s coming and what shrimp size you’re serving. We’ll estimate pounds to buy and give you an approximate shrimp count — so you can plan boils, appetizers, or mains with confidence.</p>
+    </header>
 
-  <h1>Shrimp Quantity Calculator — How Many per Person (Counts per Pound & Sizes)</h1>
+    <!-- INPUTS -->
+    <section class="card stack" id="inputs">
+      <h2>Inputs</h2>
+      <div class="grid">
 
-  <p>Tell us who’s coming and what shrimp size you’re serving. We’ll estimate pounds to buy and give you an approximate shrimp count — so you can plan boils, appetizers, or mains with confidence.</p>
+        <div class="field row-4">
+          <label for="adults">Adults</label>
+          <input id="adults" type="number" min="0" step="1" value="20" />
+        </div>
+        <div class="field row-4">
+          <label for="teens">Teens</label>
+          <input id="teens" type="number" min="0" step="1" value="4" />
+        </div>
+        <div class="field row-4">
+          <label for="kids">Kids</label>
+          <input id="kids" type="number" min="0" step="1" value="4" />
+        </div>
 
-  <form id="calcForm">
-    <label>Number of Adults:
-      <input type="number" id="adults" value="4" min="0">
-    </label>
-    <label>Number of Kids/Teens:
-      <input type="number" id="kids" value="2" min="0">
-    </label>
-    <label>Event Length:
-      <select id="length">
-        <option value="short">Short (1–2 hrs)</option>
-        <option value="medium" selected>Medium (2–4 hrs)</option>
-        <option value="long">Long (4+ hrs)</option>
-      </select>
-    </label>
-    <label>Appetite Level:
-      <select id="appetite">
-        <option value="light">Light</option>
-        <option value="average" selected>Average</option>
-        <option value="heavy">Heavy</option>
-      </select>
-    </label>
-    <label>Shrimp Size:
-      <select id="size"></select>
-    </label>
-    <label>
-      <input type="checkbox" id="leftovers"> Add a leftovers buffer
-    </label>
-    <button type="button" onclick="calculate()">Calculate</button>
-  </form>
+        <div class="field row-6">
+          <label for="mode">Course mode</label>
+          <select id="mode">
+            <option value="main" selected>Shrimp as a main</option>
+            <option value="mixed">Mixed buffet (mains + sides)</option>
+            <option value="app">Appetizer/snack</option>
+          </select>
+          <div class="help">Main = shrimp is the star; Mixed = plenty of other mains/sides; Appetizer = short session.</div>
+        </div>
 
-  <div class="result-box" id="result"></div>
+        <div class="field row-6">
+          <label for="size">Shrimp size (counts per pound)</label>
+          <select id="size">
+            <option value="9">U10 (under 10 per lb)</option>
+            <option value="12.5">10–15 per lb</option>
+            <option value="18" selected>16–20 per lb</option>
+            <option value="23">21–25 per lb</option>
+            <option value="28">26–30 per lb</option>
+            <option value="33">31–35 per lb</option>
+            <option value="38">36–40 per lb</option>
+            <option value="45">41–50 per lb</option>
+            <option value="55">51–60 per lb</option>
+            <option value="65">60–70 per lb</option>
+          </select>
+          <div class="help">Counts per pound drive the piece estimate; we use the midpoint of the range.</div>
+        </div>
 
-  <section class="dm-notes">
-    <h2>Quick Notes</h2>
-    <ul>
-      <li><strong>Counts per pound drive the math:</strong> pick the shrimp size (e.g., 16–20 per pound) and we estimate total pounds and approximate pieces.</li>
-      <li><strong>Appetite + event length matter:</strong> heavier eaters and longer events increase the recommended amount.</li>
-      <li><strong>Serving style changes portions:</strong> appetizers need fewer pieces per person than mains; buffets land in the middle.</li>
-      <li><strong>Leftovers are optional:</strong> turn on a small buffer if you want a little extra “just in case.”</li>
-      <li><strong>Numbers are estimates:</strong> always check your store’s posted counts per pound—sizes can vary by brand and region.</li>
-    </ul>
-  </section>
+        <div class="field row-4">
+          <label for="appetite">Appetite</label>
+          <select id="appetite">
+            <option value="0.9">Light</option>
+            <option value="1.0" selected>Typical</option>
+            <option value="1.2">Hungry</option>
+          </select>
+        </div>
 
-  <section class="dm-faq">
-    <h2>Frequently Asked Questions</h2>
+        <div class="field row-4">
+          <label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">1–2 hours</option>
+            <option value="1.0" selected>2–3 hours</option>
+            <option value="1.08">3–4 hours</option>
+            <option value="1.15">4–5 hours</option>
+          </select>
+        </div>
 
-    <h3>How many pounds of shrimp per person?</h3>
-    <p>For shrimp as a main, plan roughly 8–12 ounces per adult (about ½–¾ pound raw). For appetizers, plan 3–5 ounces per adult. The calculator adjusts for appetite, event length, serving style, and whether you want leftovers.</p>
+        <div class="field row-4">
+          <label for="leftovers">Leftovers</label>
+          <select id="leftovers">
+            <option value="1.0" selected>No</option>
+            <option value="1.1">A little</option>
+            <option value="1.2">Next-day recipes</option>
+          </select>
+        </div>
 
-    <h3>What do “16–20 per pound” or “U10” mean?</h3>
-    <p>They’re counts per pound. “16–20” means about 16 to 20 shrimp weigh one pound. “U10” means “under 10 per pound,” which are very large shrimp. We use the midpoint of the size range for the math so the piece counts are easy to read.</p>
+        <div class="field row-6">
+          <label for="notes">Notes (optional)</label>
+          <input id="notes" type="text" placeholder="e.g., peel & eat; add corn & potatoes; 2 vegetarians" />
+        </div>
+      </div>
 
-    <h3>Shell-on vs. peeled—does it change the amount?</h3>
-    <p>Yes. Shells add weight and reduce the edible portion. If you’re buying shell-on but serving peeled, consider turning on a small leftovers/buffer to avoid running short.</p>
+      <div class="actions">
+        <button class="btn" id="calcBtn">Calculate</button>
+        <button class="btn secondary" id="resetBtn" type="button">Reset</button>
+      </div>
+    </section>
 
-    <h3>How many pieces is that per person?</h3>
-    <p>It depends on size. For 16–20 per pound, ½ pound is about 8–10 shrimp; ¾ pound is roughly 12–15. The calculator shows an approximate piece count for the size you select.</p>
+    <!-- RESULTS -->
+    <section class="card stack" id="results" aria-live="polite">
+      <h2>Results</h2>
+      <div class="result">
+        <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
+        <div class="kv"><span>Recommended pounds to buy (raw)</span><b id="outPounds">—</b></div>
+        <div class="kv"><span>Approximate shrimp count</span><b id="outPieces">—</b></div>
+        <div class="kv"><span>Per-person average (pieces)</span><b id="outPer">—</b></div>
+        <div class="muted" id="explain">Enter your details and click Calculate.</div>
+      </div>
 
-    <h3>Can I mix sizes or brands?</h3>
-    <p>Yes. If sizes vary, choose the closest posted range at your store. For mixed sizes, pick an average (for example, choose 16–20 if your mix falls around 15–22 per pound).</p>
+      <div class="map-links" style="margin-top:10px">
+        <a class="btn" target="_blank" rel="noopener"
+           href="https://www.google.com/maps/search/shrimp+near+me">Find shrimp near me</a>
+        <a class="pill" target="_blank" rel="noopener"
+           href="https://www.google.com/maps/search/seafood+market+near+me">Seafood markets</a>
+        <a class="pill" target="_blank" rel="noopener"
+           href="https://www.google.com/maps/search/grocery+store+near+me">Grocery stores</a>
+      </div>
 
-    <h3>Are results raw or cooked weight?</h3>
-    <p>The recommendations are raw purchase weight. Actual cooked yield varies with shells, cooking method, and moisture loss.</p>
-  </section>
+      <div class="footnote">Tip: Check posted counts per pound at your market; sizes vary by brand and region.</div>
+    </section>
 
-  <script>
-    // ——— SHRIMP size presets (counts per pound) ———
-    const SIZE_PRESETS = [
-      { label: "U10 (under 10 per lb)", mid: 9 },
-      { label: "10–15 per lb",          mid: 12.5 },
-      { label: "16–20 per lb",          mid: 18 },
-      { label: "21–25 per lb",          mid: 23 },
-      { label: "26–30 per lb",          mid: 28 },
-      { label: "31–35 per lb",          mid: 33 },
-      { label: "36–40 per lb",          mid: 38 },
-      { label: "41–50 per lb",          mid: 45 },
-      { label: "51–60 per lb",          mid: 55 },
-      { label: "60–70 per lb",          mid: 65 }
-    ];
+    <!-- PRICING (optional) -->
+    <section class="card stack" id="pricing">
+      <h2>Pricing (optional)</h2>
+      <div class="price-grid">
+        <div class="field row-3">
+          <label for="priceLb">Price per pound ($)</label>
+          <input id="priceLb" type="number" min="0" step="0.01" placeholder="e.g., 9.99" />
+        </div>
+        <div class="field row-3">
+          <label for="taxPct">Sales tax (%)</label>
+          <input id="taxPct" type="number" min="0" step="0.1" placeholder="0" />
+        </div>
+        <div class="field row-3">
+          <label for="fees">Fees / delivery ($)</label>
+          <input id="fees" type="number" min="0" step="0.01" placeholder="0.00" />
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="priceBtn">Estimate cost</button>
+        <button class="btn secondary" id="clearPriceBtn" type="button">Clear</button>
+      </div>
 
-    const sizeSelect = document.getElementById("size");
-    SIZE_PRESETS.forEach(s => {
-      const opt = document.createElement("option");
-      opt.value = s.mid;
-      opt.textContent = s.label;
-      sizeSelect.appendChild(opt);
-    });
+      <div class="result" id="priceBlock" style="display:none;margin-top:10px">
+        <div class="kv"><span>Estimated ingredient cost</span><b id="outCost">$—</b></div>
+        <div class="muted">We round up to a sensible purchase amount for easy shopping.</div>
+      </div>
+    </section>
 
-    function calculate() {
-      const adults = parseInt(document.getElementById("adults").value) || 0;
-      const kids = parseInt(document.getElementById("kids").value) || 0;
-      const length = document.getElementById("length").value;
-      const appetite = document.getElementById("appetite").value;
-      const size = parseFloat(document.getElementById("size").value);
-      const leftovers = document.getElementById("leftovers").checked;
+    <!-- QUICK NOTES -->
+    <section class="card stack" id="notesBlock">
+      <h2>Quick Notes</h2>
+      <ul class="stack" style="margin:0;padding-left:18px">
+        <li><strong>Counts per pound drive the math:</strong> choose the posted range (e.g., 16–20 per pound) and we estimate pounds and pieces.</li>
+        <li><strong>Appetite + event length matter:</strong> heavier eaters and longer events increase the recommended amount.</li>
+        <li><strong>Serving style changes portions:</strong> appetizers need fewer pieces per person than mains; buffets land in the middle.</li>
+        <li><strong>Leftovers are optional:</strong> turn on a small buffer if you want a little extra “just in case.”</li>
+        <li><strong>Estimates are for raw purchase weight:</strong> cooked yield varies with shell status and method.</li>
+      </ul>
+      <div class="disclaimer">Estimates only for event planning — no cooking, storage, or food-safety advice.</div>
+    </section>
 
-      let baseAdult = 0.5; // lbs per adult baseline
-      if (appetite === "light") baseAdult = 0.4;
-      if (appetite === "heavy") baseAdult = 0.7;
+    <!-- FAQS -->
+    <section class="card stack" id="faqs">
+      <h2>FAQs</h2>
 
-      if (length === "short") baseAdult *= 0.9;
-      if (length === "long") baseAdult *= 1.2;
+      <details>
+        <summary>How many pounds of shrimp per person?</summary>
+        <div class="ans">
+          For a shrimp main, plan roughly <b>8–12 ounces per adult</b> (about ½–¾ pound raw). For appetizers, plan <b>3–5 ounces per adult</b>. The calculator adjusts for appetite, event length, and leftovers.
+        </div>
+      </details>
 
-      let totalLbs = adults * baseAdult + kids * (baseAdult * 0.5);
-      if (leftovers) totalLbs *= 1.1;
+      <details>
+        <summary>What does “16–20 per pound” or “U10” mean?</summary>
+        <div class="ans">
+          Those are counts per pound. “16–20” means ~16 to 20 shrimp weigh one pound. “U10” means under 10 per pound (very large). We use the midpoint of your chosen range in the math.
+        </div>
+      </details>
 
-      const totalPieces = Math.round(totalLbs * size);
+      <details>
+        <summary>Do shells change the amount I should buy?</summary>
+        <div class="ans">
+          Yes. Shell-on adds weight. If you are buying shell-on but serving peeled, consider turning on a small leftovers buffer to ensure enough edible shrimp.
+        </div>
+      </details>
 
-      document.getElementById("result").innerHTML = `
-        <h2>Result</h2>
-        <p>Buy about <strong>${totalLbs.toFixed(1)} lbs</strong> of shrimp total.</p>
-        <p>That’s roughly <strong>${totalPieces}</strong> pieces (${document.getElementById("size").selectedOptions[0].text}).</p>
-      `;
+      <details>
+        <summary>How many pieces per person is that?</summary>
+        <div class="ans">
+          It depends on size. For 16–20 per pound, ½ lb is ~8–10 pieces; ¾ lb is ~12–15. The results show an approximate count for your chosen size.
+        </div>
+      </details>
+
+      <details>
+        <summary>Can I mix sizes or brands?</summary>
+        <div class="ans">
+          Yes. If sizes vary, pick the closest posted range. For mixed bags, choose an average (for example, 16–20 if your mix is 15–22).
+        </div>
+      </details>
+
+      <details>
+        <summary>Are results raw or cooked weight?</summary>
+        <div class="ans">
+          Results are raw purchase weight. Cooking loss depends on shell status and method, so finished yield will vary.
+        </div>
+      </details>
+
+      <div class="hr"></div>
+      <div class="footnote">General note: sizes and pricing vary by season and region; confirm with your seafood market.</div>
+    </section>
+  </div>
+
+<script>
+(function(){
+  const $ = sel => document.querySelector(sel);
+
+  function parseN(id, def=0){
+    const v = parseFloat($(id).value);
+    return isFinite(v) ? v : def;
+  }
+
+  // Baseline ounces per person before multipliers (raw purchase weight)
+  // Tuned to match guidance: mains ~8–12 oz adult; apps ~3–5 oz adult.
+  function baselines(mode){
+    if(mode==='main')  return {adult:10, teen:8, kid:6};  // shrimp as main
+    if(mode==='mixed') return {adult:7,  teen:6, kid:4};  // mixed buffet
+    return               {adult:4,  teen:3, kid:2};       // appetizer/snack
+  }
+
+  function calcTotals(){
+    const A = Math.max(0, parseN('#adults',0));
+    const T = Math.max(0, parseN('#teens',0));
+    const K = Math.max(0, parseN('#kids',0));
+    const guests = A + T + K;
+
+    const mode = $('#mode').value;
+    // sizeMid holds the midpoint count-per-pound (e.g., 18 for 16–20)
+    const sizeMid = parseN('#size', 18);
+
+    const appetite  = parseN('#appetite',1.0);
+    const length    = parseN('#length',1.0);
+    const leftovers = parseN('#leftovers',1.0);
+
+    const base = baselines(mode);
+
+    // Per-person ounces after multipliers
+    const adultOz = Math.max(0, base.adult * appetite * length * leftovers);
+    const teenOz  = Math.max(0, base.teen  * appetite * length * leftovers);
+    const kidOz   = Math.max(0, base.kid   * appetite * length * leftovers);
+
+    // Total ounces and pounds (raw)
+    const totalOz = (A*adultOz + T*teenOz + K*kidOz);
+    const totalLb = totalOz / 16;
+
+    // Pieces: pounds * (counts per pound midpoint)
+    const pieces = totalLb * sizeMid;
+
+    // Outputs
+    $('#outGuests').textContent = guests.toString();
+
+    const poundsRounded = Math.ceil(totalLb * 100) / 100;           // 2-decimal up
+    const poundsShop    = Math.ceil(poundsRounded * 4) / 4;         // to next 0.25 lb
+    $('#outPounds').textContent = guests>0 ? poundsShop.toFixed(2) + ' lb' : '—';
+
+    const piecesRounded = Math.round(pieces);
+    $('#outPieces').textContent = guests>0 ? piecesRounded.toLocaleString() + ' pieces' : '—';
+
+    const per = guests>0 ? (pieces / guests) : 0;
+    $('#outPer').textContent = guests>0 ? per.toFixed(1) + ' pieces/guest' : '—';
+
+    const modeTxt = {main:'Shrimp as a main', mixed:'Mixed buffet', app:'Appetizer/snack'}[mode];
+    const sizeTxt = $('#size').selectedOptions[0].text;
+    $('#explain').innerHTML = guests>0
+      ? `Based on <b>${modeTxt}</b>, size <b>${sizeTxt}</b>, appetite <b>${$('#appetite').selectedOptions[0].text}</b>, ` +
+        `length <b>${$('#length').selectedOptions[0].text}</b>, leftovers <b>${$('#leftovers').selectedOptions[0].text}</b>.`
+      : 'Enter your details and click Calculate.';
+
+    return { poundsShop, piecesRounded };
+  }
+
+  function money(n){ return isFinite(n) ? '$' + n.toFixed(2) : '$—'; }
+
+  function priceTotals(){
+    const { poundsShop } = calcTotals();
+    const pLb  = parseN('#priceLb',0);
+    const tax  = parseN('#taxPct',0) / 100;
+    const fees = parseN('#fees',0);
+
+    let cost = 0;
+    if (pLb>0){
+      cost = (poundsShop * pLb);
+      cost = cost + (cost*tax) + fees;
     }
-  </script>
+
+    $('#outCost').textContent = cost>0 ? money(cost) : '$—';
+    $('#priceBlock').style.display = (pLb>0) ? 'grid' : 'none';
+  }
+
+  $('#calcBtn').addEventListener('click', calcTotals);
+  $('#resetBtn').addEventListener('click', () => {
+    ['#adults','#teens','#kids'].forEach(id => $(id).value = 0);
+    $('#mode').value = 'main';
+    $('#size').value = '18'; // 16–20 per lb
+    $('#appetite').value = '1.0';
+    $('#length').value = '1.0';
+    $('#leftovers').value = '1.0';
+    $('#notes').value = '';
+    calcTotals();
+    ['#priceLb','#taxPct','#fees'].forEach(id => $(id).value='');
+    $('#priceBlock').style.display='none';
+  });
+
+  $('#priceBtn').addEventListener('click', priceTotals);
+  $('#clearPriceBtn').addEventListener('click',()=>{
+    ['#priceLb','#taxPct','#fees'].forEach(id => $(id).value='');
+    $('#priceBlock').style.display='none';
+  });
+
+  // initial compute
+  calcTotals();
+})();
+</script>
 </body>
 </html>
+
