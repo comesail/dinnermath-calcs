@@ -3,31 +3,27 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>DinnerMath — Corned Beef Brisket Quantity Calculator</title>
-  <meta name="description" content="Estimate corned beef brisket fast. DinnerMath returns raw pounds to buy and an approximate cooked yield by cut style, appetite, event length, and leftovers.">
-  <meta name="robots" content="noindex,nofollow">
+  <title>DinnerMath — Beef Brisket Quantity Calculator</title>
+  <meta name="description" content="How much beef brisket per person? DinnerMath estimates raw pounds to buy and cooked yield for mains or buffet, with pricing and quick presets for 10, 25, 50, 100 people.">
+  <meta name="robots" content="index,follow">
   <style>
     :root{
-      /* Clean gray/white/black theme */
-      --ink:#111827;      /* primary text */
-      --muted:#6b7280;    /* secondary text */
-      --line:#e5e7eb;     /* borders/dividers */
-      --bg:#f8fafc;       /* page background */
-      --pill:#374151;     /* pill text */
-      --card:#ffffff;     /* card background */
-      --accent:#111827;   /* button border/text */
+      --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc;
+      --pill:#374151; --card:#ffffff; --accent:#111827;
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0}
     body{
       background:var(--bg);
       font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;
-      color:var(--ink)
+      color:var(--ink);
     }
     .wrap{max-width:820px;margin:24px auto;padding:0 16px}
     .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+    .outline{border:2px solid var(--ink)}
     h1{font-size:22px;margin:0 0 8px}
     .lede{color:var(--muted);margin:0 0 16px}
+    h2{font-size:20px;margin:16px 0 8px}
     h3{font-size:18px;margin:0 0 12px}
     .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
@@ -37,21 +33,17 @@
     }
     .muted{color:var(--muted);font-size:12px}
     .fine{font-size:13px;color:#374151}
-    .result{border:2px solid var(--ink);border-radius:16px;padding:16px;margin-top:6px;background:#fff}
-    .big{font-size:24px;font-weight:800;line-height:1.2}
     .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-    .inline > span{display:inline-block}
+    .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .preset:hover{background:#f3f4f6}
     .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:var(--pill);background:#fff}
     .divider{height:1px;background:var(--line);margin:12px 0}
-    a.btn{
-      display:inline-block;border:1px solid var(--accent);border-radius:999px;
-      padding:10px 14px;font-weight:700;text-decoration:none;color:var(--accent)
-    }
-    a.btn:hover{background:#f3f4f6}
-    details{border-top:1px solid var(--line)}
-    summary{cursor:pointer;padding:10px 0;font-weight:700;list-style:none}
-    summary::-webkit-details-marker{display:none}
-    details > div{padding:0 0 10px 0}
+    /* Prominent Results */
+    .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+    .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .kv + .kv{margin-top:8px}
+    .kv b{font-size:1.05rem}
+    .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
     @media (max-width:720px){.row{grid-template-columns:1fr}}
   </style>
 </head>
@@ -60,218 +52,311 @@
 
     <!-- Header -->
     <div class="card" role="region" aria-label="Header">
-      <h1>Corned Beef Brisket Quantity Calculator — How Many Per Person (Raw vs Cooked Yield)</h1>
-      <p class="lede">Enter your guests and settings. We’ll estimate the <strong>raw brisket pounds</strong> to buy and the <strong>approximate cooked yield</strong> based on cut style, appetite, event length, and optional leftovers.</p>
+      <h1>Beef Brisket Quantity Calculator — Pounds per Person</h1>
+      <p class="lede">
+        Enter guests and settings (or tap a quick preset). We’ll estimate
+        <strong>raw brisket to buy</strong> and <strong>approximate cooked yield</strong>, then
+        show an optional <strong>cost estimate</strong>.
+      </p>
     </div>
 
     <!-- Inputs -->
-    <div class="card" role="region" aria-label="Guest mix and settings">
+    <div class="card" role="region" aria-label="Inputs">
       <h3>Inputs</h3>
-
       <div class="row" aria-label="Guests">
-        <div><label for="bbA">Adults</label><input id="bbA" type="number" min="0" step="1" value="20"></div>
-        <div><label for="bbT">Teens</label><input id="bbT" type="number" min="0" step="1" value="4"></div>
-        <div><label for="bbK">Kids</label><input id="bbK" type="number" min="0" step="1" value="4"></div>
+        <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="12"></div>
+        <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="6"></div>
+        <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="4"></div>
         <div>
-          <label for="bbMode">Course</label>
-          <select id="bbMode" aria-label="Course type">
+          <label for="course">Course mode</label>
+          <select id="course">
             <option value="main" selected>Main dish</option>
-            <option value="mixed">Mixed proteins</option>
-            <option value="app">Appetizers / sliders</option>
+            <option value="mixed">Mixed buffet</option>
+            <option value="app">Appetizer/snack</option>
           </select>
         </div>
       </div>
 
       <div class="row" aria-label="Context">
         <div>
-          <label for="bbAppetite">Appetite</label>
-          <select id="bbAppetite">
+          <label for="cut">Cut style</label>
+          <select id="cut">
+            <option value="flat" selected>Flat cut (about 40 percent shrink)</option>
+            <option value="point">Point cut (about 45 percent shrink)</option>
+          </select>
+          <div class="muted">We convert cooked ounces → raw pounds using the shrink for your cut.</div>
+        </div>
+        <div>
+          <label for="appetite">Appetite</label>
+          <select id="appetite">
             <option value="0.90">Light</option>
             <option value="1.00" selected>Typical</option>
-            <option value="1.20">Hungry</option>
+            <option value="1.20">Hearty</option>
           </select>
         </div>
         <div>
-          <label for="bbLength">Event length</label>
-          <select id="bbLength">
-            <option value="0.95">Short — ~1–2 hours</option>
-            <option value="1.00" selected>Standard — ~2–3 hours</option>
-            <option value="1.08">Long — ~3–4 hours</option>
-            <option value="1.15">Extended — ~4–5 hours</option>
+          <label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">Short — about 1 to 2 hours</option>
+            <option value="1.00" selected>Standard — about 2 to 3 hours</option>
+            <option value="1.08">Long — about 3 to 4 hours</option>
+            <option value="1.15">Extended — about 4 to 5 hours</option>
           </select>
         </div>
         <div>
-          <label for="bbLeftovers">Add leftovers</label>
-          <select id="bbLeftovers">
+          <label for="leftovers">Add leftovers</label>
+          <select id="leftovers">
             <option value="1.00" selected>No</option>
             <option value="1.10">+10%</option>
             <option value="1.20">+20%</option>
           </select>
         </div>
-        <div>
-          <label for="bbCut">Cut style</label>
-          <select id="bbCut">
-            <option value="flat" selected>Flat (leaner)</option>
-            <option value="point">Point (fattier)</option>
-          </select>
-          <div class="muted">Point shrinks slightly more during cooking.</div>
-        </div>
+      </div>
+
+      <!-- Presets + Reset -->
+      <div class="inline" style="margin-top:8px">
+        <span class="muted">Quick presets:</span>
+        <button class="preset" data-people="10" type="button">10</button>
+        <button class="preset" data-people="25" type="button">25</button>
+        <button class="preset" data-people="50" type="button">50</button>
+        <button class="preset" data-people="100" type="button">100</button>
+        <span class="muted">Presets set all as adults — tweak Teens/Children if needed.</span>
+        <div style="flex:1"></div>
+        <button id="dmReset" type="button" class="preset">Reset</button>
       </div>
     </div>
 
-    <!-- Pricing -->
+    <!-- Pricing (optional) -->
     <div class="card" role="region" aria-label="Pricing">
       <h3>Pricing (optional)</h3>
       <div class="row">
-        <div><label for="bbPriceLb">Price per pound ($)</label><input id="bbPriceLb" type="number" min="0" step="0.01" value=""></div>
-        <div><label for="bbTax">Tax %</label><input id="bbTax" type="number" min="0" step="0.1" value=""></div>
-        <div><label for="bbFees">Fees ($)</label><input id="bbFees" type="number" min="0" step="0.01" value=""></div>
+        <div><label for="priceLb">Unit price (US dollars per pound)</label><input id="priceLb" type="number" min="0" step="0.01" placeholder="e.g., 5.49"></div>
+        <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="e.g., 7.5"></div>
+        <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="e.g., 8.00"></div>
       </div>
+      <div class="muted">Cost = <em>rounded raw pounds</em> × price + tax + extra fees.</div>
     </div>
 
     <!-- Results -->
-    <div class="card" role="region" aria-label="Results" aria-live="polite" aria-atomic="true">
-      <h3>Results</h3>
-      <div class="result">
-        <div class="big" id="bbRawOut">—</div>
-        <div class="fine" id="bbExplain">Enter your guest mix to calculate.</div>
-        <div class="divider"></div>
-        <div class="inline">
-          <span class="pill" id="bbCookedOut">—</span>
-          <span class="pill" id="bbGuestsOut">—</span>
-          <span class="pill" id="bbModeOut">—</span>
-        </div>
-      </div>
+    <div class="card outline" role="region" aria-label="Results" aria-live="polite">
+      <h3 class="results-title">Results</h3>
+      <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
+      <div class="kv"><span>Raw brisket to buy (pounds, estimated)</span><b id="outRaw">—</b></div>
+      <div class="kv"><span>Approximate cooked yield (pounds)</span><b id="outCooked">—</b></div>
+      <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$—</b></div>
+      <div class="kv"><span>Tax and fees</span><b id="outAdds">$—</b></div>
+      <div class="kv"><span>Estimated total</span><b id="outTotal">$—</b></div>
+      <div class="kv"><span>Cost per person</span><b id="outPPP">$—</b></div>
+      <p class="muted" id="outExplain">Enter your guest mix to calculate.</p>
+    </div>
 
-      <div class="row" style="margin-top:12px">
-        <div class="card" style="margin:0">
-          <h3>Cost estimate</h3>
-          <div class="inline">
-            <div><label>Subtotal</label><div id="bbSubtotal" class="fine">$—</div></div>
-            <div><label>Tax + fees</label><div id="bbAdds" class="fine">$—</div></div>
-            <div><label>Estimated total</label><div id="bbTotalCost" class="fine">$—</div></div>
-            <div><label>Per person</label><div id="bbPPP" class="fine">$—</div></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-      <!-- Finder links -->
+    <!-- Finder -->
+    <div class="card finder" role="region" aria-label="Find near me">
       <div class="inline">
-        <a class="btn" href="#" onclick="try{window.open('https://www.google.com/maps/search/corned+beef+brisket+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/corned+beef+brisket+near+me';}return false;">Find corned beef brisket near me</a>
+        <a class="preset" href="#" onclick="try{window.open('https://www.google.com/maps/search/beef+brisket+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/beef+brisket+near+me';}return false;">Find beef brisket near me</a>
         <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/butcher+shop','_blank');}catch(e){location.href='https://www.google.com/maps/search/butcher+shop';}return false;">Butcher shops</a>
         <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/grocery+store','_blank');}catch(e){location.href='https://www.google.com/maps/search/grocery+store';}return false;">Grocery stores</a>
       </div>
-      <div class="muted" style="margin-top:8px">DinnerMath v1.4 (auto-calc)</div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.0 (auto-calc)</div>
     </div>
 
-    <!-- Quick Notes -->
-    <div class="card" role="region" aria-label="Quick Notes">
-      <h3>Quick Notes</h3>
+    <!-- FAQs (5 total) -->
+    <div class="card" role="region" aria-label="FAQs">
+      <h2>FAQs</h2>
+      <details open>
+        <summary>How much beef brisket per person?</summary>
+        <div class="fine">
+          As a main dish, plan about <strong>8 ounces cooked per adult</strong> (about 6.5 oz for teens and 4.8 oz for children).
+          For a mixed buffet, plan about <strong>6 ounces cooked per adult</strong>.
+          Appetizers are about <strong>3.5 ounces cooked per adult</strong>.
+        </div>
+      </details>
+      <details>
+        <summary>How do you calculate raw pounds to buy?</summary>
+        <div class="fine">
+          We estimate total cooked ounces from your guest mix and context (appetite, event length, leftovers), then divide by the cut’s yield
+          (flat about 60% yield; point about 55% yield) to get raw pounds. We round to the nearest quarter-pound for easy shopping.
+        </div>
+      </details>
+      <details>
+        <summary>Flat vs. point — which should I choose?</summary>
+        <div class="fine">
+          Flat is leaner and usually shrinks about 40 percent. Point is fattier and shrinks a bit more (about 45 percent) but is very tender.
+          Choose the cut you plan to buy and we adjust the math.
+        </div>
+      </details>
+      <details>
+        <summary>How much should I buy for 10, 25, 50, or 100 people?</summary>
+        <div class="fine">
+          For a main with typical appetite and flat cut, rough guides are:
+          <strong>10 people ≈ 8–9 lb raw</strong>, <strong>25 people ≈ 20–23 lb</strong>, <strong>50 people ≈ 40–46 lb</strong>, <strong>100 people ≈ 80–92 lb</strong>.
+          Use the calculator for your exact mix and settings.
+        </div>
+      </details>
+      <details>
+        <summary>Does the estimate include sides?</summary>
+        <div class="fine">
+          No—weights shown are for the meat only. Add sides separately. If your menu is side-heavy, pick “Mixed buffet” to scale portions down.
+        </div>
+      </details>
+    </div>
+
+    <!-- Quick notes -->
+    <div class="card" role="region" aria-label="Quick notes">
+      <h3>Quick notes</h3>
       <ul class="fine" style="margin:0 0 0 18px;padding:0">
-        <li><strong>Shrinkage:</strong> Flat ~33%; Point ~36% cooked weight loss.</li>
-        <li><strong>Baselines:</strong> Main ≈ 12 oz raw/adult; Mixed ≈ 8 oz; Appetizers ≈ 5 oz (before multipliers).</li>
-        <li><strong>Guests:</strong> Teens count ~¾ of an adult, kids ~½.</li>
-        <li><strong>Context:</strong> Appetite, event length, and leftovers increase or decrease raw pounds.</li>
-        <li><strong>Disclaimer:</strong> Estimates only; confirm with your butcher for exact weights and trim.</li>
+        <li><strong>Per-adult cooked baselines:</strong> Main about 8 oz; Mixed about 6 oz; Appetizer about 3.5 oz. Teens ≈ 0.8 adult; Children ≈ 0.6 adult.</li>
+        <li><strong>Shrink factors:</strong> Flat about 40% loss (yield ≈ 60%); Point about 45% loss (yield ≈ 55%).</li>
+        <li><strong>Rounding:</strong> We round raw purchase to the nearest quarter-pound for easy shopping.</li>
+        <li><strong>Context multipliers:</strong> Appetite, event length, and leftovers can shift amounts by about 10–20%.</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm with your butcher and adjust for your crowd.</li>
       </ul>
-    </div>
-
-    <!-- Mini FAQ -->
-    <div class="card" role="region" aria-label="Mini FAQ">
-      <h3>Mini FAQ</h3>
-      <details>
-        <summary>How much raw brisket per person?</summary>
-        <div class="fine">For a main dish, plan about <strong>¾ lb raw per adult</strong> (teens ~½–¾, kids ~½ of adult). This accounts for shrinkage so cooked portions land around ½ lb.</div>
-      </details>
-      <details>
-        <summary>Flat vs point — which to pick?</summary>
-        <div class="fine">Flat is leaner and slices evenly; point has more fat and flavor but cooks down more. The calculator adjusts shrinkage accordingly.</div>
-      </details>
-      <details>
-        <summary>Are results raw or cooked?</summary>
-        <div class="fine">Raw pounds to buy are the headline; the cooked yield is shown in the pills for serving planning.</div>
-      </details>
     </div>
 
   </div>
 
-  <!-- Calculator logic (auto-calc) -->
+  <!-- Calculator logic -->
   <script>
   (function(){
     const $ = id => document.getElementById(id);
     const N = (v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
     const money = n => (isFinite(n)&&n>=0) ? "$"+n.toFixed(2) : "$—";
     const fmt = (n,d=0)=> isFinite(n) ? n.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}) : "—";
+    const roundQtr = lbs => Math.round(lbs*4)/4;
+
+    // Cooked-per-person baselines (ounces)
+    function cookedPerAdultOz(course){
+      if(course==="main")  return {adult:8.0, teen:6.5, child:4.8};
+      if(course==="mixed") return {adult:6.0, teen:4.8, child:3.6};
+      return                {adult:3.5, teen:2.8, child:2.1}; // appetizer
+    }
+    // Yield (cooked/raw) by cut
+    function yieldForCut(cut){ return (cut==="point") ? 0.55 : 0.60; }
 
     function compute(){
-      const A=N($("bbA").value,0), T=N($("bbT").value,0), K=N($("bbK").value,0);
-      const guests=A+T+K;
+      const A=N($("A").value,0), T=N($("T").value,0), C=N($("C").value,0);
+      const guests = A+T+C;
 
-      const mode=$("bbMode").value;
-      const appetite=N($("bbAppetite").value,1.0);
-      const length=N($("bbLength").value,1.0);
-      const leftovers=N($("bbLeftovers").value,1.0);
-      const cut=$("bbCut").value;
+      const course = $("course").value;
+      const cut = $("cut").value;
+      const appetite = N($("appetite").value,1.0);
+      const length   = N($("length").value,1.0);
+      const leftovers= N($("leftovers").value,1.0);
 
-      // Baseline raw ounces per adult-equivalent
-      let base=12;               // main
-      if(mode==="mixed") base=8; // mixed proteins
-      if(mode==="app")   base=5; // appetizers/sliders
+      const base = cookedPerAdultOz(course);
+      let cookedOz = (A*base.adult + T*base.teen + C*base.child);
+      cookedOz *= appetite * length * leftovers;
 
-      // teens ~0.75, kids ~0.5 of baseline, then multiply by context
-      let rawOz = (A*base) + (T*base*0.75) + (K*base*0.5);
-      rawOz = rawOz * appetite * length * leftovers;
+      const cookedLb = cookedOz/16;
+      const yieldFactor = yieldForCut(cut); // cooked = raw * yield
+      const rawLb = (yieldFactor>0) ? (cookedLb / yieldFactor) : 0;
 
-      // Shrinkage by cut
-      const shrink = (cut==="flat") ? 0.33 : 0.36;
+      const rawRounded = roundQtr(Math.max(0, rawLb));
 
-      const rawLbs = rawOz/16;
-      const cookedLbs = rawLbs*(1-shrink);
-
-      // Round purchase to a shopper-friendly quarter-pound
-      const rawRounded = Math.round(rawLbs*4)/4;
-
-      return { guests, mode, cut, shrink, rawRounded, cookedLbs };
+      return {guests, course, cut, cookedLb, rawRounded};
     }
 
     function render(){
       const s = compute();
 
-      // Headline + pills
-      $("bbRawOut").textContent = (s.guests>0) ? `${fmt(s.rawRounded,(s.rawRounded%1)?2:0)} lb raw brisket to buy (est.)` : "—";
-      $("bbCookedOut").textContent = (s.guests>0) ? `${fmt(s.cookedLbs,1)} lb cooked yield (approx.)` : "—";
-      $("bbGuestsOut").textContent = (s.guests>0) ? `${s.guests} guests total` : "—";
-      const modeTxt = (s.mode==="main"?"main dish":s.mode==="mixed"?"mixed proteins":"appetizers/sliders");
-      $("bbModeOut").textContent = (s.guests>0) ? `${modeTxt} • ${s.cut} cut (~${Math.round(s.shrink*100)}% shrink)` : "—";
-      $("bbExplain").textContent = (s.guests>0)
-        ? "Auto-calculated from guests, appetite, event length, leftovers, and cut style."
+      const courseTxt = s.course==="main" ? "main dish"
+                        : s.course==="mixed" ? "mixed buffet" : "appetizer/snack";
+      const cutTxt = s.cut==="point" ? "point cut (about 45% shrink)" : "flat cut (about 40% shrink)";
+
+      $("outGuests").textContent = s.guests>0 ? s.guests.toString() : "—";
+      $("outRaw").textContent    = s.guests>0 ? fmt(s.rawRounded, (s.rawRounded%1)?2:0) + " lb" : "—";
+      $("outCooked").textContent = s.guests>0 ? fmt(s.cookedLb, (s.cookedLb%1)?2:0) + " lb" : "—";
+      $("outExplain").textContent = s.guests>0
+        ? `Auto-calculated from guests, ${courseTxt}, ${cutTxt}, appetite, event length, and leftovers.`
         : "Enter your guest mix to calculate.";
 
       // Pricing
-      const pLb  = N($("bbPriceLb").value,0);
-      const tax  = N($("bbTax").value,0)/100;
-      const fees = N($("bbFees").value,0);
+      const p = N($("priceLb").value,0);
+      const tax = N($("taxPct").value,0)/100;
+      const fees = N($("fees").value,0);
 
-      const subtotal = s.rawRounded * pLb;
-      const adds = (subtotal * tax) + fees;
-      const total  = subtotal + adds;
-      const ppp    = (s.guests>0) ? (total / s.guests) : NaN;
+      const subtotal = (p>0 && s.rawRounded>0) ? s.rawRounded * p : 0;
+      const adds = subtotal * tax + (fees>0?fees:0);
+      const total = subtotal + adds;
+      const ppp = (s.guests>0 && total>0) ? total/s.guests : NaN;
 
-      $("bbSubtotal").textContent  = (pLb>0 && s.rawRounded>0) ? money(subtotal) : "$—";
-      $("bbAdds").textContent      = (pLb>0 && s.rawRounded>0) ? money(adds) : "$—";
-      $("bbTotalCost").textContent = (pLb>0 && s.rawRounded>0) ? money(total) : "$—";
-      $("bbPPP").textContent       = (pLb>0 && s.rawRounded>0 && s.guests>0) ? money(ppp) : "$—";
+      $("outSubtotal").textContent = subtotal>0 ? money(subtotal) : "$—";
+      $("outAdds").textContent     = subtotal>0 ? money(adds) : "$—";
+      $("outTotal").textContent    = subtotal>0 ? money(total) : "$—";
+      $("outPPP").textContent      = (subtotal>0 && s.guests>0) ? money(ppp) : "$—";
     }
 
-    // Auto-calc: update on input/change
-    ["bbA","bbT","bbK","bbMode","bbAppetite","bbLength","bbLeftovers","bbCut",
-     "bbPriceLb","bbTax","bbFees"]
-      .forEach(id=>{ const el=$(id); if(el){ el.addEventListener("input", render); el.addEventListener("change", render);} });
+    // Listeners
+    ["A","T","C","course","cut","appetite","length","leftovers",
+     "priceLb","taxPct","fees"].forEach(id=>{
+      const el = $(id);
+      if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }
+    });
 
-    // Initial render
-    render();
+    // Presets
+    document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const n = parseInt(btn.getAttribute("data-people"),10)||0;
+        $("A").value = n; $("T").value = 0; $("C").value = 0; render();
+      });
+    });
+
+    // Reset
+    (function attachReset(){
+      const btn = $("dmReset");
+      if(!btn) return;
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("input, select").forEach(el=>{
+          if(el.tagName==="SELECT"){
+            const i = Array.from(el.options).findIndex(o=>o.defaultSelected);
+            el.selectedIndex = i>=0 ? i : 0;
+          } else { el.value = el.defaultValue; }
+        });
+        document.querySelectorAll("input, select").forEach(el=>{
+          el.dispatchEvent(new Event("input",{bubbles:true}));
+          el.dispatchEvent(new Event("change",{bubbles:true}));
+        });
+        render();
+      });
+    })();
+
+    render(); // initial
   })();
+  </script>
+
+  <!-- FAQPage JSON-LD (5 items to satisfy the 4–6 rule) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type":"Question",
+        "name":"How much beef brisket per person?",
+        "acceptedAnswer":{"@type":"Answer","text":"As a main dish, plan about 8 ounces cooked per adult (about 6.5 ounces for teens and 4.8 ounces for children). For a mixed buffet, plan about 6 ounces cooked per adult. Appetizers are about 3.5 ounces cooked per adult."}
+      },
+      {
+        "@type":"Question",
+        "name":"How do you calculate raw pounds to buy?",
+        "acceptedAnswer":{"@type":"Answer","text":"We estimate total cooked ounces from your guest mix and context (appetite, event length, leftovers), then divide by the cut’s yield (flat about 60% yield; point about 55% yield) to get raw pounds. We round to the nearest quarter-pound for easy shopping."}
+      },
+      {
+        "@type":"Question",
+        "name":"Flat vs. point — which should I choose?",
+        "acceptedAnswer":{"@type":"Answer","text":"Flat is leaner and usually shrinks about 40 percent. Point is fattier and shrinks a bit more (about 45 percent) but is very tender. Choose the cut you plan to buy and we adjust the math."}
+      },
+      {
+        "@type":"Question",
+        "name":"How much should I buy for 10, 25, 50, or 100 people?",
+        "acceptedAnswer":{"@type":"Answer","text":"For a main with typical appetite and flat cut: 10 people ≈ 8–9 lb raw, 25 people ≈ 20–23 lb, 50 people ≈ 40–46 lb, 100 people ≈ 80–92 lb. Use the calculator for your exact mix and settings."}
+      },
+      {
+        "@type":"Question",
+        "name":"Does the estimate include sides?",
+        "acceptedAnswer":{"@type":"Answer","text":"No—weights shown are for the meat only. Add sides separately. If your menu is side-heavy, pick “Mixed buffet” to scale portions down."}
+      }
+    ]
+  }
   </script>
 </body>
 </html>
