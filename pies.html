@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="description" content="Enter guests and slice style—DinnerMath estimates total pie slices and pies to buy, scaled for appetite, event length, and leftovers.">
+<title>Pies Quantity Calculator — How Many Slices per Person (6, 8, or 10 Slices per Pie)</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow-x:hidden;background:#eaf6fb;color:#0b2a3a;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+.wrap{width:100%;max-width:480px;margin:0 auto;padding:16px}
+@media(min-width:640px){.wrap{max-width:720px;padding:20px}}
+@media(min-width:980px){.wrap{max-width:980px;padding:28px 16px 56px}}
+:root{--ink2:#13506a;--paper:#fff;--line:#d7e8ef;--accent:#2f8db3;--shadow:0 6px 20px rgba(11,42,58,.08);--radius:18px}
+header{margin:0 0 18px}
+header h1{font-size:clamp(22px,3.2vw,34px);margin:0 0 8px;color:var(--ink2)}
+header p{margin:0;color:#274757}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+.stack{display:grid;gap:14px}
+h2{font-size:clamp(18px,2.5vw,22px);margin:0 0 8px;color:var(--ink2)}
+.grid{display:grid;gap:12px}
+@media(min-width:760px){.grid{grid-template-columns:repeat(12,1fr)}}
+.field{display:flex;flex-direction:column;gap:6px;background:#f7fbfd;border:1px solid var(--line);border-radius:12px;padding:10px}
+label{font-weight:600;font-size:.95rem}
+input[type=number],select{border:1px solid #cfe3eb;border-radius:10px;padding:9px 10px;background:#fff;font-size:1rem}
+.row-4{grid-column:span 12}@media(min-width:760px){.row-4{grid-column:span 4}}
+.row-6{grid-column:span 12}@media(min-width:760px){.row-6{grid-column:span 6}}
+.row-12{grid-column:span 12}
+.btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer}
+.btn.secondary{background:#fff;color:var(--accent)}
+.result{display:grid;gap:10px;background:#f6fbfe;border:1px dashed #b7d7e6;border-radius:16px;padding:14px}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:12px}
+.kv b{font-size:1.05rem}
+.muted{color:#4c6b7a;font-size:.9rem}
+details{border:1px solid var(--line);border-radius:12px;background:#fff;margin:10px 0}
+summary{cursor:pointer;padding:10px 14px;font-weight:700;color:#13506a}
+details[open] summary{border-bottom:1px solid var(--line)}
+details .ans{padding:10px 14px 12px;color:#2a4b5a}
+/* Mobile embed height handled by Wix (4827px container). */
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Pies Quantity Calculator — How Many Slices per Person (6, 8, or 10 Slices per Pie)</h1>
+    <p>Enter your guest mix and slice style. DinnerMath estimates total pie slices and how many pies to buy—scaled for appetite, event length, and leftovers.</p>
+  </header>
+
+  <section class="card stack" id="inputs">
+    <h2>Inputs</h2>
+    <div class="grid">
+      <div class="field row-4"><label for="adults">Adults</label><input id="adults" type="number" min="0" step="1" value="40"></div>
+      <div class="field row-4"><label for="teens">Teens</label><input id="teens" type="number" min="0" step="1" value="6"></div>
+      <div class="field row-4"><label for="kids">Kids</label><input id="kids" type="number" min="0" step="1" value="8"></div>
+
+      <div class="field row-6">
+        <label for="style">Slice style (slices per pie)</label>
+        <select id="style">
+          <option value="6">Generous (6 slices per pie)</option>
+          <option value="8" selected>Standard (8 slices per pie)</option>
+          <option value="10">Small/Wedding (10 slices per pie)</option>
+        </select>
+        <div class="help">Determines slices per 9–10″ pie (typical).</div>
+      </div>
+
+      <div class="field row-6">
+        <label for="appetite">Appetite</label>
+        <select id="appetite"><option value="0.9">Light</option><option value="1.0" selected>Typical</option><option value="1.15">Sweet tooth</option></select>
+      </div>
+
+      <div class="field row-6">
+        <label for="length">Event length</label>
+        <select id="length"><option value="0.95">≤2 hours</option><option value="1.0" selected>2–3 hours</option><option value="1.05">3–4 hours</option><option value="1.1">4–5 hours</option></select>
+      </div>
+
+      <div class="field row-6">
+        <label for="leftovers">Leftovers</label>
+        <select id="leftovers"><option value="1.0" selected>No</option><option value="1.07">Some leftovers</option><option value="1.12">Extra leftovers</option></select>
+      </div>
+
+      <div class="field row-12"><label for="notes">Notes (optional)</label><input id="notes" type="text" placeholder="e.g., multiple flavors, whipped cream, other desserts"></div>
+    </div>
+    <div class="actions"><button class="btn" id="calcBtn">Calculate</button><button class="btn secondary" id="resetBtn" type="button">Reset</button></div>
+  </section>
+
+  <section class="card stack" id="results" aria-live="polite">
+    <h2>Results</h2>
+    <div class="result">
+      <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
+      <div class="kv"><span>Total slices needed</span><b id="outSlices">—</b></div>
+      <div class="kv"><span>Pies to buy (approx.)</span><b id="outPies">—</b></div>
+      <div class="muted" id="explain">Enter details and click Calculate.</div>
+    </div>
+    <div class="footnote">Dessert adult-equivalent factors: teens = 0.8 adult; kids = 0.6 adult.</div>
+  </section>
+
+  <section class="card stack" id="notesBlock">
+    <h2>Quick Notes</h2>
+    <ul class="stack" style="margin:0;padding-left:18px">
+      <li><b>Baseline:</b> ~1 slice per adult-equivalent.</li>
+      <li><b>Common yields:</b> 9–10″ pies cut into 6, 8, or 10 slices depending on style.</li>
+      <li><b>Flavor variety:</b> Add ~1 extra pie across flavors to keep each option available.</li>
+      <li><b>Round up:</b> Pie sizes and fillings vary; small buffer helps.</li>
+    </ul>
+    <div class="disclaimer">Estimates only for planning — bakery sizes and richness vary.</div>
+  </section>
+
+  <section class="card stack" id="faqs">
+    <h2>FAQs</h2>
+    <details><summary>How many pie slices per person?</summary><div class="ans">Plan ~<b>1 slice per adult-equivalent</b>. Use “Small/Wedding” slices to stretch farther.</div></details>
+    <details><summary>How many pies do I need?</summary><div class="ans">We divide total slices by your selected <b>slices per pie</b> (6/8/10) and round up.</div></details>
+    <details><summary>What about multiple flavors?</summary><div class="ans">If you offer several flavors, add ~1 extra pie overall so each option stays available late into service.</div></details>
+  </section>
+</div>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s);
+  const N=(s,d=0)=>{const x=parseFloat($(s).value);return isFinite(x)?x:d;};
+  const TEEN=0.8, KID=0.6;
+
+  function calc(){
+    const A=N('#adults'), T=N('#teens'), K=N('#kids');
+    const AE = A + TEEN*T + KID*K;
+    const slicesPerAE = 1.0; // baseline slices per AE
+    const appetite=N('#appetite',1), length=N('#length',1), leftovers=N('#leftovers',1);
+    const totalSlices = Math.ceil(AE * slicesPerAE * appetite * length * leftovers);
+    const perPie = N('#style',8);
+    const pies = Math.ceil(totalSlices / perPie);
+
+    $('#outGuests').textContent=(A+T+K).toFixed(0);
+    $('#outSlices').textContent=totalSlices.toFixed(0);
+    $('#outPies').textContent=pies.toFixed(0);
+    $('#explain').textContent=`Using ${perPie} slices per pie (${document.querySelector('#style').selectedOptions[0].text.split(' ')[0]} style).`;
+  }
+
+  $('#calcBtn').addEventListener('click',calc);
+  $('#resetBtn').addEventListener('click',()=>{
+    $('#adults').value='40';$('#teens').value='6';$('#kids').value='8';
+    $('#style').value='8';$('#appetite').value='1.0';$('#length').value='1.0';$('#leftovers').value='1.0';
+    $('#notes').value='';
+    calc();
+  });
+
+  calc();
+})();
+</script>
+</body>
+</html>
