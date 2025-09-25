@@ -133,7 +133,17 @@
       </div>
     </div>
 
-    <!-- Results -->
+    <!-- Pricing (optional) -->
+    <div class="card" role="region" aria-label="Pricing">
+      <h3>Pricing (optional)</h3>
+      <div class="row">
+        <div><label for="bbPriceLb">Price per pound ($)</label><input id="bbPriceLb" type="number" min="0" step="0.01" value=""></div>
+        <div><label for="bbTax">Tax %</label><input id="bbTax" type="number" min="0" step="0.1" value=""></div>
+        <div><label for="bbFees">Fees ($)</label><input id="bbFees" type="number" min="0" step="0.01" value=""></div>
+      </div>
+    </div>
+
+    <!-- Results (moved below Pricing) -->
     <div class="card outline" role="region" aria-label="Results" aria-live="polite" aria-atomic="true">
       <h3>Results</h3>
       <div class="result">
@@ -168,16 +178,6 @@
       <div class="muted" style="margin-top:8px">DinnerMath v1.4 (auto-calc)</div>
     </div>
 
-    <!-- Pricing (optional) -->
-    <div class="card" role="region" aria-label="Pricing">
-      <h3>Pricing (optional)</h3>
-      <div class="row">
-        <div><label for="bbPriceLb">Price per pound ($)</label><input id="bbPriceLb" type="number" min="0" step="0.01" value=""></div>
-        <div><label for="bbTax">Tax %</label><input id="bbTax" type="number" min="0" step="0.1" value=""></div>
-        <div><label for="bbFees">Fees ($)</label><input id="bbFees" type="number" min="0" step="0.01" value=""></div>
-      </div>
-    </div>
-
     <!-- Expanded FAQ (includes group-size Q&A) -->
     <div class="card" role="region" aria-label="FAQ">
       <h2>Questions &amp; answers about corned beef per person</h2>
@@ -188,11 +188,11 @@
       </details>
       <details>
         <summary>How many pounds of corned beef for 10 people?</summary>
-        <div class="fine">About <strong>7.5 lb raw</strong> (≈ <strong>5.0 lb cooked</strong> flat cut). Adjust ±10–20% for appetite and the mix of teens/children.</div>
+        <div class="fine">About <strong>7.5 lb raw</strong> (≈ <strong>5.0 lb cooked</strong> flat cut). Adjust ±10–20% for appetite and guest mix.</div>
       </details>
       <details>
         <summary>How many pounds of corned beef for 25 people?</summary>
-        <div class="fine">About <strong>18.75 lb raw</strong> (≈ <strong>12.6 lb cooked</strong> flat cut). Tap the preset and tweak your guest mix if needed.</div>
+        <div class="fine">About <strong>18.75 lb raw</strong> (≈ <strong>12.6 lb cooked</strong> flat cut). Tap the preset and tweak Adults/Teens/Children if needed.</div>
       </details>
       <details>
         <summary>How many pounds of corned beef for 50 people?</summary>
