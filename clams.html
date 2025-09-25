@@ -1,264 +1,335 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="description" content="Plan clams for mains, appetizers, or mixed buffets. DinnerMath estimates pounds to buy and an approximate clam count by size.">
-<title>Clams Quantity Calculator — How Many per Person (Clams per Pound & Pounds)</title>
-<style>
-/* shared CSS (kept identical across calculators) */
-*, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; overflow-x: hidden; }
-img, svg, canvas, video { max-width: 100%; height: auto; display: block; }
-input, select, textarea, button { width: 100%; max-width: 100%; min-width: 0; }
-table, .wide-block { max-width: 100%; display: block; overflow-x: auto; }
-:root{ --ink:#0b2a3a; --ink-2:#13506a; --wash:#eaf6fb; --paper:#ffffff; --line:#d7e8ef; --accent:#2f8db3; --ok:#1d6b3a; --warn:#b35b2f; --shadow:0 6px 20px rgba(11,42,58,.08); --radius:18px; }
-html,body{background:var(--wash);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-.wrap{width:100%;max-width:480px;margin:0 auto;padding:16px}
-@media (min-width:640px){.wrap{max-width:720px;padding:20px}}
-@media (min-width:980px){.wrap{max-width:980px;padding:28px 16px 56px}}
-header{margin:0 0 18px}
-header h1{font-size:clamp(22px,3.2vw,34px);margin:0 0 8px;color:var(--ink-2);letter-spacing:.2px}
-header p{margin:0;color:#274757}
-.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-.stack{display:grid;gap:14px}
-section{margin:18px 0}
-h2{font-size:clamp(18px,2.5vw,22px);margin:0 0 8px;color:var(--ink-2)}
-.grid{display:grid;gap:12px}
-@media(min-width:760px){ .grid{grid-template-columns:repeat(12,1fr)} }
-.field{display:flex;flex-direction:column;gap:6px;background:#f7fbfd;border:1px solid var(--line);border-radius:12px;padding:10px}
-label{font-weight:600;font-size:.95rem}
-input[type="number"],select,input[type="text"]{border:1px solid #cfe3eb;border-radius:10px;padding:9px 10px;background:#fff;font-size:1rem;outline:none}
-input[type="number"]:focus,select:focus{border-color:var(--accent)}
-.row-6{grid-column:span 12}@media(min-width:760px){.row-6{grid-column:span 6}}
-.row-4{grid-column:span 12}@media(min-width:760px){.row-4{grid-column:span 4}}
-.row-3{grid-column:span 12}@media(min-width:760px){.row-3{grid-column:span 3}}
-.help{font-size:.88rem;color:#3a6070}
-.btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer}
-.btn.secondary{background:#fff;color:var(--accent)}
-.btn:disabled{opacity:.6;cursor:not-allowed}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
-.result{display:grid;gap:10px;background:#f6fbfe;border:1px dashed #b7d7e6;border-radius:16px;padding:14px}
-.kv{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:12px}
-.kv b{font-size:1.05rem}
-.muted{color:#4c6b7a;font-size:.9rem}
-details{border:1px solid var(--line);border-radius:12px;background:#fff}
-summary{cursor:pointer;padding:10px 14px;font-weight:700;color:#13506a}
-details .ans{padding:0 14px 12px;color:#2a4b5a}
-.disclaimer{font-size:.85rem;color:#567789;margin-top:10px}
-.price-grid{display:grid;gap:10px}
-@media(min-width:760px){.price-grid{grid-template-columns:repeat(12,1fr)}}
-.pill{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;background:#eef7fb;border:1px solid var(--line);font-size:.92rem}
-.map-links{display:flex;flex-wrap:wrap;gap:10px}
-.hr{height:1px;background:var(--line);margin:10px 0}
-.footnote{font-size:.85rem;color:#648396}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DinnerMath — Clams Quantity Calculator</title>
+  <meta name="description" content="How many clams per person? DinnerMath estimates clam count to buy and approximate live weight, with pricing and quick presets for 10, 25, 50, 100 people.">
+  <meta name="robots" content="index,follow">
+  <style>
+    :root{
+      --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc;
+      --pill:#374151; --card:#ffffff; --accent:#111827;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      background:var(--bg);
+      font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;
+      color:var(--ink);
+    }
+    .wrap{max-width:820px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+    .outline{border:2px solid var(--ink)}
+    h1{font-size:22px;margin:0 0 8px}
+    .lede{color:var(--muted);margin:0 0 16px}
+    h2{font-size:20px;margin:16px 0 8px}
+    h3{font-size:18px;margin:0 0 12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
+    input[type="number"],select{
+      width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px;
+      font-size:14px;background:#fff;color:var(--ink)
+    }
+    .muted{color:var(--muted);font-size:12px}
+    .fine{font-size:13px;color:#374151}
+    .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .preset:hover{background:#f3f4f6}
+    .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:var(--pill);background:#fff}
+    .divider{height:1px;background:var(--line);margin:12px 0}
+    .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+    .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .kv + .kv{margin-top:8px}
+    .kv b{font-size:1.05rem}
+    .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
+    @media (max-width:720px){.row{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <h1>Clams Quantity Calculator — How Many per Person (Clams per Pound &amp; Pounds)</h1>
-      <p>Enter guests and serving style to estimate pounds to buy and an approximate clam count—great for steamers, linguine, or raw bars.</p>
-    </header>
 
-    <section class="card stack" id="inputs">
-      <h2>Inputs</h2>
-      <div class="grid">
-        <div class="field row-4"><label for="adults">Adults</label><input id="adults" type="number" min="0" step="1" value="20" /></div>
-        <div class="field row-4"><label for="teens">Teens</label><input id="teens" type="number" min="0" step="1" value="4" /></div>
-        <div class="field row-4"><label for="kids">Kids</label><input id="kids" type="number" min="0" step="1" value="4" /></div>
+    <!-- Header -->
+    <div class="card" role="region" aria-label="Header">
+      <h1>Clams Quantity Calculator — Clams per Person</h1>
+      <p class="lede">
+        Enter guests and settings (or tap a quick preset). We’ll estimate
+        <strong>clams to buy</strong> and <strong>about how many pounds (live)</strong>, then
+        show an optional <strong>cost estimate</strong>.
+      </p>
+    </div>
 
-        <div class="field row-6">
-          <label for="mode">Course mode</label>
-          <select id="mode">
-            <option value="main" selected>Clams as a main</option>
-            <option value="mixed">Mixed buffet (mains + sides)</option>
+    <!-- Inputs -->
+    <div class="card" role="region" aria-label="Inputs">
+      <h3>Inputs</h3>
+      <div class="row" aria-label="Guests">
+        <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="12"></div>
+        <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="6"></div>
+        <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="4"></div>
+        <div>
+          <label for="course">Serving style</label>
+          <select id="course">
+            <option value="main" selected>Main (clam feast / pasta)</option>
+            <option value="mixed">Mixed buffet</option>
             <option value="app">Appetizer/snack</option>
           </select>
-          <div class="help">Main = clams are the star; Mixed = plenty of other mains/sides; Appetizer = short session.</div>
         </div>
+      </div>
 
-        <div class="field row-6">
-          <label for="size">Clam size (clams per lb)</label>
+      <div class="row" aria-label="Context">
+        <div>
+          <label for="size">Clam size (live oz each)</label>
           <select id="size">
-            <option value="8">~8 per lb (very large)</option>
-            <option value="12" selected>~12 per lb (standard littlenecks)</option>
-            <option value="16">~16 per lb (smaller)</option>
+            <option value="1.5">Small — about 1.5 oz each (littleneck)</option>
+            <option value="2.0" selected>Medium — about 2.0 oz each</option>
+            <option value="2.5">Large — about 2.5 oz each</option>
           </select>
-          <div class="help">Pick the posted clams-per-pound. We use it to estimate total pieces and per-person averages.</div>
+          <div class="muted">Used to convert pieces to approximate live pounds.</div>
         </div>
-
-        <div class="field row-4"><label for="appetite">Appetite</label>
+        <div>
+          <label for="appetite">Appetite</label>
           <select id="appetite">
-            <option value="0.9">Light</option>
-            <option value="1.0" selected>Typical</option>
-            <option value="1.2">Hungry</option>
+            <option value="0.90">Light</option>
+            <option value="1.00" selected>Typical</option>
+            <option value="1.20">Hearty</option>
           </select>
         </div>
-        <div class="field row-4"><label for="length">Event length</label>
+        <div>
+          <label for="length">Event length</label>
           <select id="length">
-            <option value="0.95">1–2 hours</option>
-            <option value="1.0" selected>2–3 hours</option>
-            <option value="1.08">3–4 hours</option>
-            <option value="1.15">4–5 hours</option>
+            <option value="0.95">Short — about 1 to 2 hours</option>
+            <option value="1.00" selected>Standard — about 2 to 3 hours</option>
+            <option value="1.08">Long — about 3 to 4 hours</option>
+            <option value="1.15">Extended — about 4 to 5 hours</option>
           </select>
         </div>
-        <div class="field row-4"><label for="leftovers">Leftovers</label>
+        <div>
+          <label for="leftovers">Add leftovers</label>
           <select id="leftovers">
-            <option value="1.0" selected>No</option>
-            <option value="1.1">A little</option>
-            <option value="1.2">Next-day recipes</option>
+            <option value="1.00" selected>No</option>
+            <option value="1.10">+10%</option>
+            <option value="1.20">+20%</option>
           </select>
         </div>
-        <div class="field row-6"><label for="notes">Notes (optional)</label>
-          <input id="notes" type="text" placeholder="e.g., steamers; pasta add-on; raw bar" />
-        </div>
-      </div>
-      <div class="actions"><button class="btn" id="calcBtn">Calculate</button><button class="btn secondary" id="resetBtn" type="button">Reset</button></div>
-    </section>
-
-    <section class="card stack" id="results" aria-live="polite">
-      <h2>Results</h2>
-      <div class="result">
-        <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
-        <div class="kv"><span>Recommended pounds to buy (raw)</span><b id="outPounds">—</b></div>
-        <div class="kv"><span>Approximate clam count</span><b id="outPieces">—</b></div>
-        <div class="kv"><span>Per-person average (clams)</span><b id="outPer">—</b></div>
-        <div class="muted" id="explain">Enter your details and click Calculate.</div>
       </div>
 
-      <div class="map-links" style="margin-top:10px">
-        <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/clams+near+me">Find clams near me</a>
-        <a class="pill" target="_blank" rel="noopener" href="https://www.google.com/maps/search/seafood+market+near+me">Seafood markets</a>
-        <a class="pill" target="_blank" rel="noopener" href="https://www.google.com/maps/search/grocery+store+near+me">Grocery stores</a>
+      <!-- Presets + Reset -->
+      <div class="inline" style="margin-top:8px">
+        <span class="muted">Quick presets:</span>
+        <button class="preset" data-people="10" type="button">10</button>
+        <button class="preset" data-people="25" type="button">25</button>
+        <button class="preset" data-people="50" type="button">50</button>
+        <button class="preset" data-people="100" type="button">100</button>
+        <span class="muted">Presets set all as adults — tweak Teens/Children if needed.</span>
+        <div style="flex:1"></div>
+        <button id="dmReset" type="button" class="preset">Reset</button>
       </div>
+    </div>
 
-      <div class="footnote">Tip: some markets sell by the dozen—your count still estimates fine by clams per pound.</div>
-    </section>
-
-    <section class="card stack" id="pricing">
-      <h2>Pricing (optional)</h2>
-      <div class="price-grid">
-        <div class="field row-3"><label for="priceLb">Price per pound ($)</label><input id="priceLb" type="number" min="0" step="0.01" placeholder="e.g., 6.99" /></div>
-        <div class="field row-3"><label for="taxPct">Sales tax (%)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="0" /></div>
-        <div class="field row-3"><label for="fees">Fees / delivery ($)</label><input id="fees" type="number" min="0" step="0.01" placeholder="0.00" /></div>
+    <!-- Pricing (optional) -->
+    <div class="card" role="region" aria-label="Pricing">
+      <h3>Pricing (optional)</h3>
+      <div class="row">
+        <div><label for="priceDozen">Price per dozen (US dollars)</label><input id="priceDozen" type="number" min="0" step="0.01" placeholder="e.g., 12.00"></div>
+        <div><label for="priceEach">Or price per clam (US dollars)</label><input id="priceEach" type="number" min="0" step="0.01" placeholder="optional"></div>
+        <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="e.g., 7.5"></div>
+        <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="e.g., 5.00"></div>
       </div>
-      <div class="actions"><button class="btn" id="priceBtn">Estimate cost</button><button class="btn secondary" id="clearPriceBtn" type="button">Clear</button></div>
-      <div class="result" id="priceBlock" style="display:none;margin-top:10px">
-        <div class="kv"><span>Estimated ingredient cost</span><b id="outCost">$—</b></div>
-        <div class="muted">We round up to a sensible purchase amount for easy shopping.</div>
+      <div class="muted">If both prices are entered, we use <em>price per dozen</em>. Cost = clams × unit price, then add tax and fees.</div>
+    </div>
+
+    <!-- Results -->
+    <div class="card outline" role="region" aria-label="Results" aria-live="polite">
+      <h3 class="results-title">Results</h3>
+      <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
+      <div class="kv"><span>Clams to buy (count)</span><b id="outPieces">—</b></div>
+      <div class="kv"><span>About how many pounds (live)</span><b id="outPounds">—</b></div>
+      <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$—</b></div>
+      <div class="kv"><span>Tax and fees</span><b id="outAdds">$—</b></div>
+      <div class="kv"><span>Estimated total</span><b id="outTotal">$—</b></div>
+      <div class="kv"><span>Cost per person</span><b id="outPPP">$—</b></div>
+      <p class="muted" id="outExplain">Enter your guest mix to calculate.</p>
+    </div>
+
+    <!-- Finder -->
+    <div class="card finder" role="region" aria-label="Find near me">
+      <div class="inline">
+        <a class="preset" href="#" onclick="try{window.open('https://www.google.com/maps/search/clams+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/clams+near+me';}return false;">Find clams near me</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/seafood+market','_blank');}catch(e){location.href='https://www.google.com/maps/search/seafood+market';}return false;">Seafood markets</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/grocery+store','_blank');}catch(e){location.href='https://www.google.com/maps/search/grocery+store';}return false;">Grocery stores</a>
       </div>
-    </section>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.0 (auto-calc)</div>
+    </div>
 
-    <section class="card stack" id="notesBlock">
-      <h2>Quick Notes</h2>
-      <ul class="stack" style="margin:0;padding-left:18px">
-        <li><strong>Clams per pound drive the count:</strong> pick the posted size to estimate total pieces.</li>
-        <li><strong>Appetite + event length matter:</strong> heavier eaters and longer events increase amounts.</li>
-        <li><strong>Serving style:</strong> appetizers need fewer per person than mains; mixed buffets sit in the middle.</li>
-        <li><strong>Leftovers are optional:</strong> add a little buffer if you want next-day recipes.</li>
-        <li><strong>Market variability:</strong> sizes vary by region and species.</li>
-      </ul>
-      <div class="disclaimer">Estimates only for event planning — no cooking, storage, or food-safety advice.</div>
-    </section>
-
-    <section class="card stack" id="faqs">
+    <!-- FAQs (5 total) -->
+    <div class="card" role="region" aria-label="FAQs">
       <h2>FAQs</h2>
-      <details><summary>How many pounds of clams per person?</summary><div class="ans">For a clam main, plan roughly <b>8–12 ounces per adult</b> (about ½–¾ lb raw). For appetizers, plan <b>3–5 ounces per adult</b>. Adjust for appetite, event length, and leftovers.</div></details>
-      <details><summary>What does “clams per pound” mean?</summary><div class="ans">It’s a size cue—how many clams make a pound. We use it to estimate total pieces and per-person averages. If your label differs, choose the closest value.</div></details>
-      <details><summary>Are results raw or cooked weight?</summary><div class="ans">Raw purchase weight. Cooked yield depends on prep and moisture loss.</div></details>
-      <div class="hr"></div>
-      <div class="footnote">General note: availability and pricing vary by season and region.</div>
-    </section>
+      <details open>
+        <summary>How many clams per person?</summary>
+        <div class="fine">
+          As a main, plan about <strong>12 clams per adult</strong> (about 10 for teens and 7–8 for children).
+          For a mixed buffet, plan about <strong>8 per adult</strong>. Appetizers are about <strong>4 per adult</strong>.
+        </div>
+      </details>
+      <details>
+        <summary>How do you convert clams to pounds?</summary>
+        <div class="fine">
+          We multiply the needed clam count by your size (about 1.5–2.5 oz live each) and divide by 16 to estimate total live pounds. We round counts up to whole clams.
+        </div>
+      </details>
+      <details>
+        <summary>Buy by the dozen or by the clam?</summary>
+        <div class="fine">
+          Many markets price by the dozen. Enter a price per dozen or per clam; if both are set, we use the dozen price.
+        </div>
+      </details>
+      <details>
+        <summary>How much for 10, 25, 50, or 100 people?</summary>
+        <div class="fine">
+          For a main with typical appetite, rough guides are:
+          <strong>10 people about 120 clams</strong>, <strong>25 people about 300</strong>,
+          <strong>50 people about 600</strong>, <strong>100 people about 1,200</strong>.
+          Use the calculator for your exact mix and size.
+        </div>
+      </details>
+      <details>
+        <summary>Does this account for shells and yield?</summary>
+        <div class="fine">
+          We plan by <strong>whole live clams</strong> and show live weight. If you want more meat per person, pick a larger size.
+        </div>
+      </details>
+    </div>
+
+    <!-- Quick notes -->
+    <div class="card" role="region" aria-label="Quick notes">
+      <h3>Quick notes</h3>
+      <ul class="fine" style="margin:0 0 0 18px;padding:0">
+        <li><strong>Per-adult baselines:</strong> Main about 12; Mixed about 8; Appetizer about 4. Teens ≈ 0.8 adult; Children ≈ 0.6 adult.</li>
+        <li><strong>Size choices:</strong> Small about 1.5 oz live each; Medium about 2.0 oz; Large about 2.5 oz.</li>
+        <li><strong>Rounding:</strong> We round the clam count up to whole clams; pounds shown are approximate.</li>
+        <li><strong>Context multipliers:</strong> Appetite, event length, and leftovers can shift amounts by about 10–20%.</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm availability and size with your seafood market.</li>
+      </ul>
+    </div>
+
   </div>
 
-<script>
-(function(){
-  const $ = sel => document.querySelector(sel);
-  function parseN(id, def=0){ const v = parseFloat($(id).value); return isFinite(v) ? v : def; }
+  <!-- Calculator logic -->
+  <script>
+  (function(){
+    const $ = id => document.getElementById(id);
+    const N = (v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+    const money = n => (isFinite(n)&&n>=0) ? "$"+n.toFixed(2) : "$—";
+    const fmt = (n,d=0)=> isFinite(n) ? n.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}) : "—";
+    const ceilInt = n => Math.max(0, Math.ceil(n));
 
-  function baselines(mode){
-    if(mode==='main')  return {adult:10, teen:8, kid:6};
-    if(mode==='mixed') return {adult:7,  teen:6, kid:4};
-    return               {adult:4,  teen:3, kid:2};
-  }
-
-  function calcTotals(){
-    const A = Math.max(0, parseN('#adults',0));
-    const T = Math.max(0, parseN('#teens',0));
-    const K = Math.max(0, parseN('#kids',0));
-    const guests = A + T + K;
-
-    const mode   = $('#mode').value;
-    const clamsPerLb = parseN('#size', 12);
-    const appetite  = parseN('#appetite',1.0);
-    const length    = parseN('#length',1.0);
-    const leftovers = parseN('#leftovers',1.0);
-
-    const base = baselines(mode);
-    const adultOz = Math.max(0, base.adult * appetite * length * leftovers);
-    const teenOz  = Math.max(0, base.teen  * appetite * length * leftovers);
-    const kidOz   = Math.max(0, base.kid   * appetite * length * leftovers);
-
-    const totalOz = (A*adultOz + T*teenOz + K*kidOz);
-    const totalLb = totalOz / 16;
-
-    const poundsRounded = Math.ceil(totalLb * 100) / 100;
-    const poundsShop    = Math.ceil(poundsRounded * 4) / 4;
-
-    $('#outGuests').textContent = guests.toString();
-    $('#outPounds').textContent = guests>0 ? poundsShop.toFixed(2) + ' lb' : '—';
-
-    let pcs = Math.round(poundsShop * clamsPerLb);
-    $('#outPieces').textContent = guests>0 ? pcs.toLocaleString() + ' clams' : '—';
-    const per = guests>0 ? (pcs/guests) : 0;
-    $('#outPer').textContent = guests>0 ? per.toFixed(1) + ' clams/guest' : '—';
-
-    const modeTxt = {main:'Clams as a main', mixed:'Mixed buffet', app:'Appetizer/snack'}[mode];
-    const sizeTxt = $('#size').selectedOptions[0].text;
-    $('#explain').innerHTML = guests>0
-      ? `Based on <b>${modeTxt}</b>, size <b>${sizeTxt}</b>, appetite <b>${$('#appetite').selectedOptions[0].text}</b>, length <b>${$('#length').selectedOptions[0].text}</b>, leftovers <b>${$('#leftovers').selectedOptions[0].text}</b>.`
-      : 'Enter your details and click Calculate.';
-  }
-
-  function money(n){ return isFinite(n) ? '$'+n.toFixed(2) : '$—'; }
-  function priceTotals(){
-    const pLb  = parseN('#priceLb',0);
-    const tax  = parseN('#taxPct',0)/100;
-    const fees = parseN('#fees',0);
-    const poundsText = $('#outPounds').textContent.replace(' lb','');
-    const poundsVal = parseFloat(poundsText);
-    let cost = 0;
-    if (isFinite(poundsVal) && pLb>0){
-      cost = (poundsVal * pLb);
-      cost = cost + (cost*tax) + fees;
+    // Baseline clams per person
+    function clamsPerPerson(course){
+      if(course==="main")  return {adult:12.0, teen:9.6, child:7.2};
+      if(course==="mixed") return {adult:8.0,  teen:6.4, child:4.8};
+      return                {adult:4.0,  teen:3.2, child:2.4}; // appetizer
     }
-    $('#outCost').textContent = cost>0 ? money(cost) : '$—';
-    $('#priceBlock').style.display = (pLb>0) ? 'grid' : 'none';
+
+    function compute(){
+      const A=N($("A").value,0), T=N($("T").value,0), C=N($("C").value,0);
+      const guests = A+T+C;
+
+      const course = $("course").value;
+      const ozEach = N($("size").value,2.0);  // live oz per clam
+      const appetite = N($("appetite").value,1.0);
+      const length   = N($("length").value,1.0);
+      const leftovers= N($("leftovers").value,1.0);
+
+      const base = clamsPerPerson(course);
+      let pieces = (A*base.adult + T*base.teen + C*base.child);
+      pieces *= appetite * length * leftovers;
+
+      const piecesRounded = ceilInt(pieces);
+      const pounds = (piecesRounded * ozEach) / 16;
+
+      return {guests, piecesRounded, pounds};
+    }
+
+    function render(){
+      const s = compute();
+
+      $("outGuests").textContent = s.guests>0 ? s.guests.toString() : "—";
+      $("outPieces").textContent = s.guests>0 ? s.piecesRounded.toLocaleString() + " clams" : "—";
+      const poundsDec = (s.pounds%1)?2:0;
+      $("outPounds").textContent = s.guests>0 ? fmt(s.pounds, poundsDec) + " lb (live)" : "—";
+      $("outExplain").textContent = s.guests>0
+        ? "Auto-calculated from guest mix, serving style, size, appetite, event length, and leftovers."
+        : "Enter your guest mix to calculate.";
+
+      // Pricing: prefer per dozen if set, else per clam
+      const perDozen = N($("priceDozen").value,0);
+      const perEach  = N($("priceEach").value,0);
+      const unit = (perDozen>0) ? (perDozen/12) : (perEach>0 ? perEach : 0);
+      const tax = N($("taxPct").value,0)/100;
+      const fees = N($("fees").value,0);
+
+      const subtotal = (unit>0 && s.piecesRounded>0) ? s.piecesRounded * unit : 0;
+      const adds = subtotal * tax + (fees>0?fees:0);
+      const total = subtotal + adds;
+      const ppp = (s.guests>0 && total>0) ? total/s.guests : NaN;
+
+      $("outSubtotal").textContent = subtotal>0 ? money(subtotal) : "$—";
+      $("outAdds").textContent     = subtotal>0 ? money(adds) : "$—";
+      $("outTotal").textContent    = subtotal>0 ? money(total) : "$—";
+      $("outPPP").textContent      = (subtotal>0 && s.guests>0) ? money(ppp) : "$—";
+    }
+
+    // Listeners
+    ["A","T","C","course","size","appetite","length","leftovers",
+     "priceDozen","priceEach","taxPct","fees"].forEach(id=>{
+      const el = $(id);
+      if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }
+    });
+
+    // Presets
+    document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const n = parseInt(btn.getAttribute("data-people"),10)||0;
+        $("A").value = n; $("T").value = 0; $("C").value = 0; render();
+      });
+    });
+
+    // Reset
+    (function attachReset(){
+      const btn = $("dmReset");
+      if(!btn) return;
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("input, select").forEach(el=>{
+          if(el.tagName==="SELECT"){
+            const i = Array.from(el.options).findIndex(o=>o.defaultSelected);
+            el.selectedIndex = i>=0 ? i : 0;
+          } else { el.value = el.defaultValue; }
+        });
+        document.querySelectorAll("input, select").forEach(el=>{
+          el.dispatchEvent(new Event("input",{bubbles:true}));
+          el.dispatchEvent(new Event("change",{bubbles:true}));
+        });
+        render();
+      });
+    })();
+
+    render(); // initial
+  })();
+  </script>
+
+  <!-- FAQPage JSON-LD (5 items) -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How many clams per person?","acceptedAnswer":{"@type":"Answer","text":"As a main, plan about 12 clams per adult (about 10 for teens and 7–8 for children). For a mixed buffet, plan about 8 per adult. Appetizers are about 4 per adult."}},
+      {"@type":"Question","name":"How do you convert clams to pounds?","acceptedAnswer":{"@type":"Answer","text":"We multiply the needed clam count by your size (about 1.5–2.5 oz live each) and divide by 16 to estimate total live pounds. We round counts up to whole clams."}},
+      {"@type":"Question","name":"Buy by the dozen or by the clam?","acceptedAnswer":{"@type":"Answer","text":"Many markets price by the dozen. Enter a price per dozen or per clam; if both are set, we use the dozen price."}},
+      {"@type":"Question","name":"How much for 10, 25, 50, or 100 people?","acceptedAnswer":{"@type":"Answer","text":"For a main with typical appetite: 10 people about 120 clams, 25 people about 300, 50 people about 600, 100 people about 1,200. Use the calculator for your exact mix and size."}},
+      {"@type":"Question","name":"Does this account for shells and yield?","acceptedAnswer":{"@type":"Answer","text":"We plan by whole live clams and show live weight. If you want more meat per person, pick a larger size."}}
+    ]
   }
-
-  $('#calcBtn').addEventListener('click', calcTotals);
-  $('#resetBtn').addEventListener('click', () => {
-    ['#adults','#teens','#kids'].forEach(id => $(id).value = 0);
-    $('#mode').value = 'main';
-    $('#size').value = '12';
-    $('#appetite').value = '1.0';
-    $('#length').value = '1.0';
-    $('#leftovers').value = '1.0';
-    $('#notes').value = '';
-    calcTotals();
-    ['#priceLb','#taxPct','#fees'].forEach(id => $(id).value='');
-    $('#priceBlock').style.display='none';
-  });
-
-  $('#priceBtn').addEventListener('click', priceTotals);
-  $('#clearPriceBtn').addEventListener('click',()=>{
-    ['#priceLb','#taxPct','#fees'].forEach(id => $(id).value='');
-    $('#priceBlock').style.display='none';
-  });
-
-  calcTotals();
-})();
-</script>
+  </script>
 </body>
 </html>
