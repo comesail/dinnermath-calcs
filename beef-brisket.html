@@ -185,12 +185,14 @@ details .ans{padding:0 14px 12px;color:#2a4b5a}
 <script>
 (function(){
   const $ = sel => document.querySelector(sel);
+
+  // parse numeric value from <input>/<select>
   function parseN(id, def=0){
     const el = $(id);
     const v = parseFloat(el && el.value !== undefined ? el.value : "");
     return isFinite(v) ? v : def;
   }
-  // read numeric value from an output <b> tag
+  // parse numeric value from output <b> tags
   function parseOut(id){
     const el = $(id);
     const v = parseFloat((el?.textContent || "").replace(/[^\d.-]/g,""));
@@ -225,12 +227,15 @@ details .ans{padding:0 14px 12px;color:#2a4b5a}
   }
 
   function priceTotals(){
-    const unit = parseN('#price');           // $/lb
-    const tax  = parseN('#tax')/100;         // % -> decimal
-    const fees = parseN('#fees');            // $
+    // ensure results reflect current inputs (prevents $fees-only totals)
+    calcTotals();
 
-    const raw    = parseOut('#outRaw');      // lbs (from results)
-    const guests = parseOut('#outGuests');   // integer (from results)
+    const unit = parseN('#price',0);           // $/lb
+    const tax  = parseN('#tax',0)/100;         // % -> decimal
+    const fees = parseN('#fees',0);            // $
+
+    const raw    = parseOut('#outRaw');        // lbs (from results)
+    const guests = parseOut('#outGuests');     // integer (from results)
 
     const subtotal = raw * unit;
     const total    = subtotal + (subtotal * tax) + fees;
