@@ -48,7 +48,7 @@ input[type="number"]:focus,select:focus{border-color:var(--accent)}
 .muted{color:#4c6b7a;font-size:.9rem}
 .callout{border-left:4px solid var(--ok);background:#f2fbf5;padding:10px 12px;border-radius:10px}
 details{border:1px solid var(--line);border-radius:12px;background:#fff}
-summary{cursor:pointer;padding:10px 14px;font-weight:700;color:var(--ink-2)}
+summary{cursor:pointer;padding:10px 14px;font-weight:700;color:#13506a}
 details .ans{padding:0 14px 12px;color:#2a4b5a}
 .disclaimer{font-size:.85rem;color:#567789;margin-top:10px}
 .price-grid{display:grid;gap:10px}
@@ -185,7 +185,18 @@ details .ans{padding:0 14px 12px;color:#2a4b5a}
 <script>
 (function(){
   const $ = sel => document.querySelector(sel);
-  function parseN(id, def=0){ const v = parseFloat($(id).value); return isFinite(v) ? v : def; }
+  function parseN(id, def=0){
+    const el = $(id);
+    const v = parseFloat(el && el.value !== undefined ? el.value : "");
+    return isFinite(v) ? v : def;
+  }
+  // read numeric value from an output <b> tag
+  function parseOut(id){
+    const el = $(id);
+    const v = parseFloat((el?.textContent || "").replace(/[^\d.-]/g,""));
+    return isFinite(v) ? v : 0;
+  }
+  function money(n){ return isFinite(n)?'$'+n.toFixed(2):'$—'; }
 
   function calcTotals(){
     const A=parseN('#adults'); const T=parseN('#teens'); const K=parseN('#kids');
@@ -197,11 +208,12 @@ details .ans{padding:0 14px 12px;color:#2a4b5a}
     if(mode==="main"){ base=12; }   // 12 oz raw per adult
     if(mode==="mixed"){ base=8; }   // 8 oz raw
     if(mode==="app"){ base=5; }     // 5 oz raw
+
     // teens ~0.75, kids ~0.5
     let rawOz=(A*base)+(T*base*0.75)+(K*base*0.5);
     rawOz=rawOz*appetite*length*leftovers;
 
-    // size shrink: flat ~33%, point ~36%
+    // shrink: flat ~33%, point ~36%
     const shrink=size==="flat"?0.33:0.36;
     const rawLbs=rawOz/16;
     const cookedLbs=rawLbs*(1-shrink);
@@ -212,24 +224,40 @@ details .ans{padding:0 14px 12px;color:#2a4b5a}
     $('#explain').textContent="~"+(shrink*100).toFixed(0)+"% shrinkage applied for "+size+" cut.";
   }
 
-  function money(n){ return isFinite(n)?'$'+n.toFixed(2):'$—'; }
   function priceTotals(){
-    const unit=parseN('#price'); const tax=parseN('#tax')/100; const fees=parseN('#fees');
-    const raw=parseN('#outRaw');
-    const subtotal=raw*unit; const total=subtotal+(subtotal*tax)+fees;
-    const guests=parseN('#outGuests'); const per=guests?total/guests:0;
-    $('#outTotal').textContent=money(total);
-    $('#outPer').textContent=money(per);
-    $('#priceBlock').style.display="block";
+    const unit = parseN('#price');           // $/lb
+    const tax  = parseN('#tax')/100;         // % -> decimal
+    const fees = parseN('#fees');            // $
+
+    const raw    = parseOut('#outRaw');      // lbs (from results)
+    const guests = parseOut('#outGuests');   // integer (from results)
+
+    const subtotal = raw * unit;
+    const total    = subtotal + (subtotal * tax) + fees;
+    const per      = guests ? total / guests : 0;
+
+    $('#outTotal').textContent = money(total);
+    $('#outPer').textContent   = money(per);
+    $('#priceBlock').style.display = 'block';
   }
 
   $('#calcBtn').addEventListener('click', calcTotals);
-  $('#resetBtn').addEventListener('click', ()=>{ ['#adults','#teens','#kids','#price','#tax','#fees','#notes'].forEach(id=>$(id).value=""); $('#mode').value="main"; $('#size').value="flat"; $('#appetite').value="1.0"; $('#length').value="1.0"; $('#leftovers').value="1.0"; $('#priceBlock').style.display="none"; calcTotals(); });
+  $('#resetBtn').addEventListener('click', ()=>{
+    ['#adults','#teens','#kids','#price','#tax','#fees','#notes'].forEach(id=>$(id).value="");
+    $('#mode').value="main"; $('#size').value="flat"; $('#appetite').value="1.0";
+    $('#length').value="1.0"; $('#leftovers').value="1.0";
+    $('#priceBlock').style.display="none";
+    calcTotals();
+  });
   $('#priceBtn').addEventListener('click', priceTotals);
-  $('#clearPriceBtn').addEventListener('click',()=>{ ['#price','#tax','#fees'].forEach(id=>$(id).value=""); $('#priceBlock').style.display="none"; });
+  $('#clearPriceBtn').addEventListener('click',()=>{
+    ['#price','#tax','#fees'].forEach(id=>$(id).value="");
+    $('#priceBlock').style.display="none";
+  });
+
+  // initial render
   calcTotals();
 })();
 </script>
 </body>
 </html>
-
