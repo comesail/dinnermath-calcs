@@ -37,7 +37,7 @@
     .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
     .preset:hover{background:#f3f4f6}
     .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:var(--pill);background:#fff}
-    .divider{height:1px;background:var(--line);margin:12px 0}
+    .divider{height:1px;background:#e5e7eb;margin:12px 0}
     .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
     .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
     .kv + .kv{margin-top:8px}
@@ -277,18 +277,11 @@
       $("outPPP").textContent      = (subtotal>0 && s.guests>0) ? money(ppp) : "$—";
     }
 
-    // Listeners
+    // Correct listeners
     ["A","T","C","course","size","appetite","length","leftovers",
      "priceLb","taxPct","fees"].forEach(id=>{
       const el = $(id);
-      if(el){ el.addEventListener("input",render); el addEventListener=undefined; }
-    });
-
-    // Correct event listeners (avoid accidental overwrite)
-    ["A","T","C","course","size","appetite","length","leftovers",
-     "priceLb","taxPct","fees"].forEach(id=>{
-      const el = $(id);
-      if(el){ el.addEventListener("change",render); el.addEventListener("input",render); }
+      if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }
     });
 
     // Presets
