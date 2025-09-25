@@ -64,11 +64,10 @@
       </p>
     </div>
 
-    <!-- Inputs (single, non-duplicated) -->
+    <!-- Inputs -->
     <div class="card" role="region" aria-label="Guest mix and settings">
       <h3>Inputs</h3>
 
-      <!-- Guest mix -->
       <div class="row" aria-label="Guests">
         <div><label for="bbA">Adults</label><input id="bbA" type="number" min="0" step="1" value="12"></div>
         <div><label for="bbT">Teens</label><input id="bbT" type="number" min="0" step="1" value="3"></div>
@@ -83,7 +82,6 @@
         </div>
       </div>
 
-      <!-- Context -->
       <div class="row" aria-label="Context">
         <div>
           <label for="bbAppetite">Appetite</label>
@@ -212,13 +210,13 @@
       </div>
 
       <div class="divider"></div>
-      <!-- Finder links with outline -->
+      <!-- Finder links -->
       <div class="finder inline" role="region" aria-label="Find near me">
         <a class="btn" href="#" onclick="try{window.open('https://www.google.com/maps/search/chips+and+dip+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/chips+and+dip+near+me';}return false;">Find chips and dip near me</a>
         <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/grocery+store','_blank');}catch(e){location.href='https://www.google.com/maps/search/grocery+store';}return false;">Grocery stores</a>
         <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/deli','_blank');}catch(e){location.href='https://www.google.com/maps/search/deli';}return false;">Delis</a>
       </div>
-      <div class="muted" style="margin-top:8px">DinnerMath v1.4 (auto-calc)</div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.5 (auto-calc)</div>
     </div>
 
     <!-- FAQ -->
@@ -229,16 +227,28 @@
         <div class="fine">For light snacks, plan about <strong>one and a half ounces of chips</strong> and <strong>one ounce of dip</strong> per adult. For mixed parties, plan about <strong>two and a half ounces of chips</strong> and <strong>one and a half ounces of dip</strong>. For heavy game nights, plan about <strong>four ounces of chips</strong> and <strong>two ounces of dip</strong> per adult. Teens count as about three quarters of an adult; children count as about one half. Adjust for appetite, event length, and leftovers.</div>
       </details>
       <details><summary>How many bags and cups of dip for 10 people?</summary><div class="fine">With a 12 ounce bag and “mixed party,” expect roughly <strong>2 bags</strong> of chips and about <strong>2 cups</strong> of dip. Use the calculator for your exact mix and appetite.</div></details>
-      <details><summary>How many bags and cups of dip for 25 people?</summary><div class="fine">About <strong>5 to 6 bags</strong> and <strong>4 to 5 cups</strong> of dip under “mixed party.” Tap the preset, then tweak.</div></details>
-      <details><summary>How many bags and cups of dip for 50 people?</summary><div class="fine">About <strong>10 to 11 bags</strong> and <strong>8 to 9 cups</strong> of dip for a mixed party. Heavier game nights will need more.</div></details>
-      <details><summary>How many bags and cups of dip for 100 people?</summary><div class="fine">About <strong>20 to 21 bags</strong> and <strong>16 to 18 cups</strong> of dip. Consider leftovers if you want buffer.</div></details>
-      <details><summary>What bag size do you assume?</summary><div class="fine">Default is a <strong>12 ounce</strong> bag. You can change to 10, 13, or 15 ounce in Inputs; the bag count updates automatically.</div></details>
-      <details><summary>How do I budget total cost?</summary><div class="fine">Enter a price per bag for chips. For dip, choose the pricing mode: price per jar (jar size in Inputs) or homemade (price per ounce). We calculate subtotal, tax and fees, total, and cost per person automatically.</div></details>
+      <details><summary>How many for 25, 50, 100 people?</summary><div class="fine">About <strong>5–6 bags/4–5 cups</strong> for 25, <strong>10–11 bags/8–9 cups</strong> for 50, and <strong>20–21 bags/16–18 cups</strong> for 100 (mixed party baseline). Heavier game nights need more.</div></details>
+      <details><summary>What bag size do you assume?</summary><div class="fine">Default is a <strong>12 ounce</strong> bag. Change in Inputs; bag count updates automatically.</div></details>
+      <details><summary>How do I budget total cost?</summary><div class="fine">Enter a price per bag for chips. For dip, choose price per jar (jar size in Inputs) or homemade (price per ounce). We calculate subtotal, tax and fees, total, and cost per person.</div></details>
+    </div>
+
+    <!-- Quick notes -->
+    <div class="card" role="region" aria-label="Quick notes">
+      <h3>Quick notes</h3>
+      <ul class="fine" style="margin:0 0 0 18px;padding:0">
+        <li><strong>Per-adult baselines:</strong> Light ≈ 1.5 oz chips + 1.0 oz dip; Mixed ≈ 2.5 oz + 1.5 oz; Heavy ≈ 4.0 oz + 2.0 oz.</li>
+        <li><strong>Guest weights:</strong> Teens ≈ 0.75 adult; Children ≈ 0.5 adult.</li>
+        <li><strong>Context multipliers:</strong> Appetite, event length, and leftovers can shift totals ~10–20%.</li>
+        <li><strong>Dip style:</strong> Thick/loaded adds ~10% dip; light/thin reduces ~10% (chips unchanged).</li>
+        <li><strong>Packages:</strong> Chips round to whole bags. Dip rounds to quarter-cups; you can change the “ounces per cup”.</li>
+        <li><strong>Pricing:</strong> Use price per jar with the jar size you selected in Inputs, or homemade price per ounce.</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm with your store sizes and your crowd.</li>
+      </ul>
     </div>
 
   </div>
 
-  <!-- Calculator logic (auto-calc + presets) -->
+  <!-- Calculator logic (auto-calc + presets + jar toggle) -->
   <script>
   (function(){
     const $ = id => document.getElementById(id);
@@ -251,159 +261,139 @@
       const A=N($("bbA").value,0), T=N($("bbT").value,0), C=N($("bbC").value,0);
       const guests=A+T+C;
 
-      const mode=$("bbMode").value;          // light | mixed | heavy
+      const mode=$("bbMode").value;
       const appetite=N($("bbAppetite").value,1.0);
       const length=N($("bbLength").value,1.0);
       const leftovers=N($("bbLeftovers").value,1.0);
 
-      const dipStyle=N($("bbDipStyle").value,1.0);  // 0.9, 1.0, 1.1 (dip only)
-      const bagOz=N($("bbBagOz").value,12);         // ounces per bag
-      const cupOz=N($("bbDipPerCup").value,8);      // ounces per cup for reporting
+      const dipStyle=N($("bbDipStyle").value,1.0);
+      const bagOz=N($("bbBagOz").value,12);
+      const cupOz=N($("bbDipPerCup").value,8);
 
-      // Baselines per adult (ounces)
-      let chipsPerAdult = 1.5, dipPerAdult = 1.0;        // light snacks
+      // Baselines per adult (oz)
+      let chipsPerAdult=1.5, dipPerAdult=1.0;
       if(mode==="mixed"){ chipsPerAdult=2.5; dipPerAdult=1.5; }
       if(mode==="heavy"){ chipsPerAdult=4.0; dipPerAdult=2.0; }
 
-      // Guest weighting and context
-      let chipsOz = (A*chipsPerAdult) + (T*chipsPerAdult*0.75) + (C*chipsPerAdult*0.5);
-      let dipOz   = (A*dipPerAdult)   + (T*dipPerAdult*0.75)   + (C*dipPerAdult*0.5);
+      let chipsOz=(A*chipsPerAdult)+(T*chipsPerAdult*0.75)+(C*chipsPerAdult*0.5);
+      let dipOz  =(A*dipPerAdult)  +(T*dipPerAdult*0.75)  +(C*dipPerAdult*0.5);
 
-      chipsOz *= appetite * length * leftovers;
-      dipOz   *= appetite * length * leftovers * dipStyle;
+      chipsOz*=appetite*length*leftovers;
+      dipOz  *=appetite*length*leftovers*dipStyle;
 
-      // Convert to packages
-      const bags = (bagOz>0) ? ceil(chipsOz / bagOz) : 0;
-      const dipCups = (cupOz>0) ? Math.ceil(dipOz / cupOz * 4)/4 : 0; // round to 1/4 cup
+      const bags=(bagOz>0)?ceil(chipsOz/bagOz):0;
+      const dipCups=(cupOz>0)?Math.ceil(dipOz/cupOz*4)/4:0;
 
-      return { guests, mode, chipsOz, dipOz, bags, dipCups, bagOz, cupOz };
+      return {guests,mode,chipsOz,dipOz,bags,dipCups,bagOz,cupOz};
     }
 
     function render(){
-      const s = compute();
+      const s=compute();
 
-      // Headline: bags + cups
-      $("bbRawOut").textContent = (s.guests>0)
+      $("bbRawOut").textContent=(s.guests>0)
         ? `${s.bags} bag${s.bags===1?'':'s'} of chips • ${fmt(s.dipCups,(s.dipCups%1)?2:0)} cup${s.dipCups===1?'':'s'} of dip (estimated)`
         : "—";
 
-      const chipsPer = (s.guests>0) ? s.chipsOz/s.guests : NaN;
-      const dipPer   = (s.guests>0) ? s.dipOz/s.guests : NaN;
+      const chipsPer=(s.guests>0)?s.chipsOz/s.guests:NaN;
+      const dipPer  =(s.guests>0)?s.dipOz/s.guests:NaN;
 
-      $("bbCookedOut").textContent = (s.guests>0)
+      $("bbCookedOut").textContent=(s.guests>0)
         ? `Per person about ${fmt(chipsPer,1)} ounces of chips and ${fmt(dipPer,1)} ounces of dip`
         : "—";
-      const modeTxt = (s.mode==="light"?"light snacks":s.mode==="mixed"?"mixed party":"game night heavy");
-      $("bbGuestsOut").textContent = (s.guests>0) ? `${s.guests} guests total` : "—";
-      $("bbModeOut").textContent   = (s.guests>0) ? `${modeTxt} • ${s.bagOz} ounce bag` : "—";
-      $("bbExplain").textContent   = (s.guests>0)
+      const modeTxt=(s.mode==="light"?"light snacks":s.mode==="mixed"?"mixed party":"game night heavy");
+      $("bbGuestsOut").textContent=(s.guests>0)?`${s.guests} guests total`:"—";
+      $("bbModeOut").textContent  =(s.guests>0)?`${modeTxt} • ${s.bagOz} ounce bag`:"—";
+      $("bbExplain").textContent  =(s.guests>0)
         ? "Auto-calculated from guests, appetite, event length, leftovers, dip style, and package sizes."
         : "Enter your guest mix to calculate.";
 
-      // Pricing — chips per bag + dip jar or homemade per-ounce
-      const pricePerBag = N($("bbChipPriceBag").value,0);
-      const dipMode = (document.getElementById("bbDipPriceMode").value || "jar");
-      const priceJar  = N($("bbDipPriceJar").value,0);
-      const pricePerOz= N($("bbDipPricePerOz").value,0);
+      // Pricing
+      const pricePerBag=N($("bbChipPriceBag").value,0);
+      const modePrice=$("bbDipPriceMode").value;
+      const priceJar=N($("bbDipPriceJar").value,0);
+      const pricePerOz=N($("bbDipPricePerOz").value,0);
 
-      // If jar mode is active, we need the current jar size from Inputs
-      const jarOzEl = document.getElementById("bbDipJarOz");
-      const jarOz = jarOzEl && !jarOzEl.disabled ? N(jarOzEl.value,16) : 16;
+      // get current jar size if enabled (in Inputs)
+      const jarSel=$("bbDipJarOz");
+      const jarOz=(jarSel && !jarSel.disabled)?N(jarSel.value,16):16;
 
-      const chipsCost = (pricePerBag>0 && s.bags>0) ? s.bags * pricePerBag : 0;
-
-      let dipCost = 0;
-      if (dipMode === "jar"){
-        const dipJars = (jarOz>0) ? Math.ceil(s.dipOz / jarOz) : 0;
-        dipCost = (priceJar>0 && dipJars>0) ? dipJars * priceJar : 0;
-      } else {
-        dipCost = (pricePerOz>0 && s.dipOz>0) ? s.dipOz * pricePerOz : 0;
+      const chipsCost=(pricePerBag>0 && s.bags>0)?s.bags*pricePerBag:0;
+      let dipCost=0;
+      if(modePrice==="jar"){
+        const jars=(jarOz>0)?Math.ceil(s.dipOz/jarOz):0;
+        dipCost=(priceJar>0 && jars>0)?jars*priceJar:0;
+      }else{
+        dipCost=(pricePerOz>0 && s.dipOz>0)?s.dipOz*pricePerOz:0;
       }
 
-      const subtotal = chipsCost + dipCost;
-      const tax  = N($("bbTax").value,0)/100;
-      const fees = N($("bbFees").value,0);
-      const adds = (subtotal * tax) + fees;
-      const total  = subtotal + adds;
-      const ppp    = (s.guests>0 && total>0) ? (total / s.guests) : NaN;
+      const subtotal=chipsCost+dipCost;
+      const tax=N($("bbTax").value,0)/100;
+      const fees=N($("bbFees").value,0);
+      const adds=(subtotal*tax)+fees;
+      const total=subtotal+adds;
+      const ppp=(s.guests>0 && total>0)?(total/s.guests):NaN;
 
-      $("bbSubtotal").textContent  = subtotal>0 ? money(subtotal) : "$—";
-      $("bbAdds").textContent      = subtotal>0 ? money(adds) : "$—";
-      $("bbTotalCost").textContent = subtotal>0 ? money(total) : "$—";
-      $("bbPPP").textContent       = (subtotal>0 && s.guests>0) ? money(ppp) : "$—";
+      $("bbSubtotal").textContent=subtotal>0?money(subtotal):"$—";
+      $("bbAdds").textContent=subtotal>0?money(adds):"$—";
+      $("bbTotalCost").textContent=subtotal>0?money(total):"$—";
+      $("bbPPP").textContent=(subtotal>0 && s.guests>0)?money(ppp):"$—";
     }
 
-    // Toggle UI for dip pricing modes (show/hide + enable/disable)
     function toggleDipPricingUI(){
-      const mode = $("bbDipPriceMode").value;
-      const jarWrap = $("jarPriceGroup");
-      const homeWrap = $("homePriceGroup");
-      const jarSizeWrap = $("jarSizeWrap");
-      const jarSizeSel = $("bbDipJarOz");
+      const mode=$("bbDipPriceMode").value;
+      const jarWrap=$("jarPriceGroup");
+      const homeWrap=$("homePriceGroup");
+      const jarSizeWrap=$("jarSizeWrap");
+      const jarSizeSel=$("bbDipJarOz");
+      const jarOn=(mode==="jar");
 
-      const jarOn = (mode === "jar");
-      jarWrap.classList.toggle("hidden", !jarOn);
-      homeWrap.classList.toggle("hidden", jarOn);
+      jarWrap.classList.toggle("hidden",!jarOn);
+      homeWrap.classList.toggle("hidden",jarOn);
 
-      // Hide/disable the jar size selector when homemade is active
-      if (jarOn){
+      if(jarOn){
         jarSizeWrap.classList.remove("hidden");
-        jarSizeSel.disabled = false;
+        jarSizeSel.disabled=false;
         jarSizeSel.setAttribute("aria-disabled","false");
-      } else {
+      }else{
         jarSizeWrap.classList.add("hidden");
-        jarSizeSel.disabled = true;
+        jarSizeSel.disabled=true;
         jarSizeSel.setAttribute("aria-disabled","true");
       }
       render();
     }
 
-    // Auto-calc listeners
+    // listeners
     ["bbA","bbT","bbC","bbMode","bbAppetite","bbLength","bbLeftovers",
      "bbDipStyle","bbBagOz","bbDipPerCup","bbDipJarOz",
      "bbChipPriceBag","bbDipPriceMode","bbDipPriceJar","bbDipPricePerOz",
      "bbTax","bbFees"]
-      .forEach(id=>{ const el=$(id); if(el){ el.addEventListener("input", render); el.addEventListener("change", render);} });
+      .forEach(id=>{const el=document.getElementById(id); if(el){el.addEventListener("input",render); el.addEventListener("change",render);}});
 
-    // Pricing mode toggle
-    $("bbDipPriceMode").addEventListener("change", toggleDipPricingUI);
+    $("bbDipPriceMode").addEventListener("change",toggleDipPricingUI);
 
-    // Presets: set all as adults; reset Teens/Children to 0
     document.querySelectorAll(".preset").forEach(btn=>{
       btn.addEventListener("click",()=>{
-        const ppl = parseInt(btn.getAttribute("data-people"),10)||0;
-        $("bbA").value = ppl;
-        $("bbT").value = 0;
-        $("bbC").value = 0;
-        render();
+        const ppl=parseInt(btn.getAttribute("data-people"),10)||0;
+        $("bbA").value=ppl; $("bbT").value=0; $("bbC").value=0; render();
       });
     });
 
-    // Initial
-    toggleDipPricingUI(); // sets correct visibility and calls render()
+    toggleDipPricingUI(); // sets initial visibility and renders
   })();
   </script>
 
   <!-- FAQPage JSON-LD -->
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      { "@type": "Question", "name": "How much chips and dip per person?",
-        "acceptedAnswer": { "@type": "Answer", "text": "For light snacks, plan about one and a half ounces of chips and one ounce of dip per adult. For mixed parties, plan about two and a half ounces of chips and one and a half ounces of dip. For heavy game nights, plan about four ounces of chips and two ounces of dip per adult. Teens count as about three quarters of an adult; children count as about one half. Adjust for appetite, event length, and leftovers." } },
-      { "@type": "Question", "name": "How many bags and cups of dip for 10 people?",
-        "acceptedAnswer": { "@type": "Answer", "text": "With a 12 ounce bag and mixed party settings, expect roughly 2 bags of chips and about 2 cups of dip. Use the calculator for your exact mix and appetite." } },
-      { "@type": "Question", "name": "How many bags and cups of dip for 25 people?",
-        "acceptedAnswer": { "@type": "Answer", "text": "About 5 to 6 bags and 4 to 5 cups of dip under mixed party. Tap the preset, then tweak." } },
-      { "@type": "Question", "name": "How many bags and cups of dip for 50 people?",
-        "acceptedAnswer": { "@type": "Answer", "text": "About 10 to 11 bags and 8 to 9 cups of dip for a mixed party. Heavier game nights will need more." } },
-      { "@type": "Question", "name": "How many bags and cups of dip for 100 people?",
-        "acceptedAnswer": { "@type": "Answer", "text": "About 20 to 21 bags and 16 to 18 cups of dip. Consider leftovers if you want buffer." } },
-      { "@type": "Question", "name": "What bag size do you assume?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Default is a 12 ounce bag. You can change to 10, 13, or 15 ounce in Inputs; the bag count updates automatically." } }
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How much chips and dip per person?","acceptedAnswer":{"@type":"Answer","text":"For light snacks, plan about one and a half ounces of chips and one ounce of dip per adult. For mixed parties, plan about two and a half ounces of chips and one and a half ounces of dip. For heavy game nights, plan about four ounces of chips and two ounces of dip per adult. Teens count as about three quarters of an adult; children count as about one half."}},
+      {"@type":"Question","name":"How many bags and cups of dip for 10 people?","acceptedAnswer":{"@type":"Answer","text":"With a 12 ounce bag and mixed party settings, expect roughly 2 bags of chips and about 2 cups of dip. Use the calculator for your exact mix and appetite."}},
+      {"@type":"Question","name":"How many for 25, 50, 100 people?","acceptedAnswer":{"@type":"Answer","text":"About 5–6 bags/4–5 cups for 25, 10–11 bags/8–9 cups for 50, and 20–21 bags/16–18 cups for 100 (mixed party baseline). Heavier game nights need more."}}
     ]
   }
   </script>
 </body>
 </html>
+
