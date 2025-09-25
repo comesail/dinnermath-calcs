@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="description" content="Enter guests and appetite—DinnerMath returns raw pounds of corned beef brisket to buy and approximate cooked yield per serving.">
+<title>Corned Beef Brisket Quantity Calculator — How Many per Person (Raw vs Cooked Yield)</title>
+<style>
+/* (Base CSS from v1.4 — unchanged) */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; overflow-x: hidden; }
+img, svg, canvas, video { max-width: 100%; height: auto; display: block; }
+input, select, textarea, button { width: 100%; max-width: 100%; min-width: 0; }
+table, .wide-block { max-width: 100%; display: block; overflow-x: auto; }
+:root{
+  --ink:#0b2a3a; --ink-2:#13506a; --wash:#eaf6fb; --paper:#ffffff; --line:#d7e8ef;
+  --accent:#2f8db3; --ok:#1d6b3a; --warn:#b35b2f; --shadow:0 6px 20px rgba(11,42,58,.08);
+  --radius:18px;
+}
+html,body{background:var(--wash);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+.wrap{width:100%;max-width:480px;margin:0 auto;padding:16px}
+@media (min-width:640px){.wrap{max-width:720px;padding:20px}}
+@media (min-width:980px){.wrap{max-width:980px;padding:28px 16px 56px}}
+header{margin:0 0 18px}
+header h1{font-size:clamp(22px,3.2vw,34px);margin:0 0 8px;color:var(--ink-2);letter-spacing:.2px}
+header p{margin:0;color:#274757}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+.stack{display:grid;gap:14px}
+section{margin:18px 0}
+h2{font-size:clamp(18px,2.5vw,22px);margin:0 0 8px;color:var(--ink-2)}
+.grid{display:grid;gap:12px}
+@media(min-width:760px){.grid{grid-template-columns:repeat(12,1fr)}}
+.field{display:flex;flex-direction:column;gap:6px;background:#f7fbfd;border:1px solid var(--line);border-radius:12px;padding:10px}
+label{font-weight:600;font-size:.95rem}
+input[type="number"],select,input[type="text"]{border:1px solid #cfe3eb;border-radius:10px;padding:9px 10px;background:#fff;font-size:1rem;outline:none}
+input[type="number"]:focus,select:focus{border-color:var(--accent)}
+.row-6{grid-column:span 12}@media(min-width:760px){.row-6{grid-column:span 6}}
+.row-4{grid-column:span 12}@media(min-width:760px){.row-4{grid-column:span 4}}
+.row-3{grid-column:span 12}@media(min-width:760px){.row-3{grid-column:span 3}}
+.help{font-size:.88rem;color:#3a6070}
+.btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer}
+.btn.secondary{background:#fff;color:var(--accent)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.result{display:grid;gap:10px;background:#f6fbfe;border:1px dashed #b7d7e6;border-radius:16px;padding:14px}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:12px}
+.kv b{font-size:1.05rem}
+.muted{color:#4c6b7a;font-size:.9rem}
+.callout{border-left:4px solid var(--ok);background:#f2fbf5;padding:10px 12px;border-radius:10px}
+details{border:1px solid var(--line);border-radius:12px;background:#fff}
+summary{cursor:pointer;padding:10px 14px;font-weight:700;color:var(--ink-2)}
+details .ans{padding:0 14px 12px;color:#2a4b5a}
+.disclaimer{font-size:.85rem;color:#567789;margin-top:10px}
+.price-grid{display:grid;gap:10px}
+@media(min-width:760px){.price-grid{grid-template-columns:repeat(12,1fr)}}
+.pill{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;background:#eef7fb;border:1px solid var(--line);font-size:.92rem}
+.map-links{display:flex;flex-wrap:wrap;gap:10px}
+.hr{height:1px;background:var(--line);margin:10px 0}
+.footnote{font-size:.85rem;color:#648396}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Corned Beef Brisket Quantity Calculator — How Many per Person (Raw vs Cooked Yield)</h1>
+      <p>Enter your guest mix and appetite level, and we’ll estimate raw brisket pounds to buy plus approximate cooked yield so you know how much to serve.</p>
+    </header>
+
+    <!-- INPUTS -->
+    <section class="card stack" id="inputs">
+      <h2>Inputs</h2>
+      <div class="grid">
+        <div class="field row-4"><label for="adults">Adults</label><input id="adults" type="number" min="0" step="1" value="20" /></div>
+        <div class="field row-4"><label for="teens">Teens</label><input id="teens" type="number" min="0" step="1" value="4" /></div>
+        <div class="field row-4"><label for="kids">Kids</label><input id="kids" type="number" min="0" step="1" value="4" /></div>
+
+        <div class="field row-6">
+          <label for="mode">Course mode</label>
+          <select id="mode">
+            <option value="main">Main dish</option>
+            <option value="mixed">Mixed proteins</option>
+            <option value="app">Appetizers or sliders</option>
+          </select>
+          <div class="help">Choose how brisket is being served.</div>
+        </div>
+
+        <div class="field row-6">
+          <label for="size">Cut style</label>
+          <select id="size">
+            <option value="flat" selected>Flat cut</option>
+            <option value="point">Point cut</option>
+          </select>
+          <div class="help">Flat is leaner; point is fattier and shrinks more when cooked.</div>
+        </div>
+
+        <div class="field row-4"><label for="appetite">Appetite</label>
+          <select id="appetite">
+            <option value="0.9">Light</option>
+            <option value="1.0" selected>Typical</option>
+            <option value="1.2">Hungry</option>
+          </select>
+        </div>
+        <div class="field row-4"><label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">1–2 hours</option>
+            <option value="1.0" selected>2–3 hours</option>
+            <option value="1.08">3–4 hours</option>
+            <option value="1.15">4–5 hours</option>
+          </select>
+        </div>
+        <div class="field row-4"><label for="leftovers">Leftovers</label>
+          <select id="leftovers">
+            <option value="1.0" selected>No</option>
+            <option value="1.1">A little</option>
+            <option value="1.2">Next-day recipes</option>
+          </select>
+        </div>
+        <div class="field row-6"><label for="notes">Notes (optional)</label>
+          <input id="notes" type="text" placeholder="e.g., serving style; with cabbage; Reuben sandwiches" />
+        </div>
+      </div>
+      <div class="actions"><button class="btn" id="calcBtn">Calculate</button><button class="btn secondary" id="resetBtn" type="button">Reset</button></div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="card stack" id="results" aria-live="polite">
+      <h2>Results</h2>
+      <div class="result">
+        <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
+        <div class="kv"><span>Raw brisket to buy (lbs)</span><b id="outRaw">—</b></div>
+        <div class="kv"><span>Approx cooked yield (lbs)</span><b id="outCooked">—</b></div>
+        <div class="muted" id="explain">Enter your details and click Calculate.</div>
+      </div>
+
+      <div class="map-links" style="margin-top:10px">
+        <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/corned+beef+brisket+near+me">Find corned beef brisket near me</a>
+        <a class="pill" target="_blank" rel="noopener" href="https://www.google.com/maps/search/butcher+shop+near+me">Butcher shops</a>
+        <a class="pill" target="_blank" rel="noopener" href="https://www.google.com/maps/search/grocery+store+near+me">Grocery stores</a>
+      </div>
+      <div class="footnote">Raw weight shrinks ~30–35% when cooked. Estimates are averages.</div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="card stack" id="pricing">
+      <h2>Pricing (optional)</h2>
+      <div class="price-grid">
+        <div class="field row-4"><label for="price">Unit price ($/lb)</label><input id="price" type="number" step="0.01" /></div>
+        <div class="field row-4"><label for="tax">Tax %</label><input id="tax" type="number" step="0.1" /></div>
+        <div class="field row-4"><label for="fees">Extra fees ($)</label><input id="fees" type="number" step="0.01" /></div>
+      </div>
+      <div class="actions"><button class="btn" id="priceBtn">Estimate cost</button><button class="btn secondary" id="clearPriceBtn" type="button">Clear</button></div>
+      <div class="result" id="priceBlock" style="display:none;margin-top:10px">
+        <div class="kv"><span>Estimated total cost</span><b id="outTotal">—</b></div>
+        <div class="kv"><span>Cost per guest</span><b id="outPer">—</b></div>
+        <div class="muted">Based on raw purchase weight × unit price plus tax and fees.</div>
+      </div>
+    </section>
+
+    <!-- QUICK NOTES -->
+    <section class="card stack" id="notesBlock">
+      <h2>Quick Notes</h2>
+      <ul class="stack" style="margin:0;padding-left:18px">
+        <li>Raw brisket shrinks 30–35% during cooking—plan extra pounds for yield.</li>
+        <li>Flat cut is leaner with more consistent slices; point cut is fattier and shrinks more.</li>
+        <li>Main dish: ~¾ lb raw per adult before shrinkage; kids count ~½.</li>
+        <li>Mixed proteins: ~½ lb raw brisket per person works with sides.</li>
+        <li>For sandwiches or sliders, ~⅓ lb raw brisket per person is enough.</li>
+      </ul>
+      <div class="disclaimer">Estimates only for event planning — no cooking, storage, or food-safety advice.</div>
+    </section>
+
+    <!-- FAQS -->
+    <section class="card stack" id="faqs">
+      <h2>FAQs</h2>
+      <details><summary>How much raw brisket per person?</summary><div class="ans">Plan ¾ lb raw per adult for a main dish, adjusting for teens and kids. This accounts for shrinkage so cooked portions land around ½ lb each.</div></details>
+      <details><summary>What’s the shrinkage rate when cooking?</summary><div class="ans">Corned beef brisket typically loses 30–35% of its raw weight during simmering or slow cooking. Point cuts lose slightly more due to fat content.</div></details>
+      <details><summary>Flat cut vs point cut—what’s the difference?</summary><div class="ans">Flat cut is leaner, easier to slice, and shrinks a bit less. Point cut has more marbling and flavor but cooks down more.</div></details>
+      <details><summary>Can brisket be served in sliders or sandwiches?</summary><div class="ans">Yes, for sandwiches or sliders use about ⅓ lb raw brisket per person, yielding ~2–3 ounces cooked each.</div></details>
+      <details><summary>What if I’m serving brisket with other meats?</summary><div class="ans">Use the mixed proteins mode: about ½ lb raw brisket per person. Combine with chicken, sausage, or other mains as part of the menu.</div></details>
+      <div class="hr"></div>
+      <div class="footnote">General note: availability, sizes, and pricing vary by region; confirm with your butcher.</div>
+    </section>
+  </div>
+
+<script>
+(function(){
+  const $ = sel => document.querySelector(sel);
+  function parseN(id, def=0){ const v = parseFloat($(id).value); return isFinite(v) ? v : def; }
+
+  function calcTotals(){
+    const A=parseN('#adults'); const T=parseN('#teens'); const K=parseN('#kids');
+    const guests=A+T+K; const mode=$('#mode').value; const appetite=parseN('#appetite',1.0);
+    const length=parseN('#length',1.0); const leftovers=parseN('#leftovers',1.0);
+    const size=$('#size').value;
+
+    let base=0.0;
+    if(mode==="main"){ base=12; }   // 12 oz raw per adult
+    if(mode==="mixed"){ base=8; }   // 8 oz raw
+    if(mode==="app"){ base=5; }     // 5 oz raw
+    // teens ~0.75, kids ~0.5
+    let rawOz=(A*base)+(T*base*0.75)+(K*base*0.5);
+    rawOz=rawOz*appetite*length*leftovers;
+
+    // size shrink: flat ~33%, point ~36%
+    const shrink=size==="flat"?0.33:0.36;
+    const rawLbs=rawOz/16;
+    const cookedLbs=rawLbs*(1-shrink);
+
+    $('#outGuests').textContent=guests;
+    $('#outRaw').textContent=rawLbs.toFixed(1);
+    $('#outCooked').textContent=cookedLbs.toFixed(1);
+    $('#explain').textContent="~"+(shrink*100).toFixed(0)+"% shrinkage applied for "+size+" cut.";
+  }
+
+  function money(n){ return isFinite(n)?'$'+n.toFixed(2):'$—'; }
+  function priceTotals(){
+    const unit=parseN('#price'); const tax=parseN('#tax')/100; const fees=parseN('#fees');
+    const raw=parseN('#outRaw');
+    const subtotal=raw*unit; const total=subtotal+(subtotal*tax)+fees;
+    const guests=parseN('#outGuests'); const per=guests?total/guests:0;
+    $('#outTotal').textContent=money(total);
+    $('#outPer').textContent=money(per);
+    $('#priceBlock').style.display="block";
+  }
+
+  $('#calcBtn').addEventListener('click', calcTotals);
+  $('#resetBtn').addEventListener('click', ()=>{ ['#adults','#teens','#kids','#price','#tax','#fees','#notes'].forEach(id=>$(id).value=""); $('#mode').value="main"; $('#size').value="flat"; $('#appetite').value="1.0"; $('#length').value="1.0"; $('#leftovers').value="1.0"; $('#priceBlock').style.display="none"; calcTotals(); });
+  $('#priceBtn').addEventListener('click', priceTotals);
+  $('#clearPriceBtn').addEventListener('click',()=>{ ['#price','#tax','#fees'].forEach(id=>$(id).value=""); $('#priceBlock').style.display="none"; });
+  calcTotals();
+})();
+</script>
+</body>
+</html>
