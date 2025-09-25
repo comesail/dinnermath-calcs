@@ -159,11 +159,23 @@
     <div class="card" role="region" aria-label="Pricing">
       <h3>Pricing (optional)</h3>
       <div class="row">
-        <div><label for="bbPriceLb">Blended price per pound (US dollars)</label><input id="bbPriceLb" type="number" min="0" step="0.01" value=""></div>
+        <div><label for="bbChipPriceBag">Price per bag of chips (US dollars)</label><input id="bbChipPriceBag" type="number" min="0" step="0.01" placeholder="e.g., 4.49"></div>
+
+        <div>
+          <label for="bbDipPriceMode">Dip pricing</label>
+          <select id="bbDipPriceMode">
+            <option value="jar" selected>Price per jar</option>
+            <option value="homemade">Homemade (price per ounce)</option>
+          </select>
+        </div>
+        <div><label for="bbDipJarOz">Dip jar size (ounces)</label><input id="bbDipJarOz" type="number" min="1" step="1" value="16"></div>
+        <div><label for="bbDipPriceJar">Price per dip jar (US dollars)</label><input id="bbDipPriceJar" type="number" min="0" step="0.01" placeholder="e.g., 3.99"></div>
+        <div><label for="bbDipPricePerOz">Homemade dip price per ounce (US dollars)</label><input id="bbDipPricePerOz" type="number" min="0" step="0.01" placeholder="e.g., 0.20"></div>
+
         <div><label for="bbTax">Sales tax (percent)</label><input id="bbTax" type="number" min="0" step="0.1" value=""></div>
         <div><label for="bbFees">Extra fees (US dollars)</label><input id="bbFees" type="number" min="0" step="0.01" value=""></div>
       </div>
-      <div class="muted">Tip: use an average price per pound across your chip bags and dip tubs. We convert both into pounds to estimate cost.</div>
+      <div class="muted">Tip: use “Price per jar” for premade dips (common jar is 16 ounces), or “Homemade” to enter your cost per ounce.</div>
     </div>
 
     <!-- Results (after Pricing) -->
@@ -231,7 +243,7 @@
       </details>
       <details>
         <summary>How do I budget total cost?</summary>
-        <div class="fine">Enter a blended price per pound, sales tax percent, and any fixed fees. We convert both chips and dip to pounds and estimate subtotal, tax and fees, total, and cost per person automatically.</div>
+        <div class="fine">Enter a price per bag for chips. For dip, choose the pricing mode: price per jar (with jar size) or homemade (price per ounce). We calculate subtotal, tax and fees, total, and cost per person automatically.</div>
       </details>
     </div>
 
@@ -288,12 +300,7 @@
       const bags = (bagOz>0) ? ceil(chipsOz / bagOz) : 0;
       const dipCups = (cupOz>0) ? Math.ceil(dipOz / cupOz * 4)/4 : 0; // round to 1/4 cup
 
-      // For pricing (blended price per pound)
-      const chipsLb = chipsOz / 16;
-      const dipLb   = dipOz / 16;
-      const totalLb = chipsLb + dipLb;
-
-      return { guests, mode, chipsOz, dipOz, bags, dipCups, bagOz, cupOz, totalLb };
+      return { guests, mode, chipsOz, dipOz, bags, dipCups, bagOz, cupOz };
     }
 
     function render(){
@@ -317,26 +324,42 @@
         ? "Auto-calculated from guests, appetite, event length, leftovers, dip style, and bag size."
         : "Enter your guest mix to calculate.";
 
-      // Pricing (blended price per pound across chips + dip)
-      const pLb  = N($("bbPriceLb").value,0);
+      // Pricing — chips per bag + dip jar or homemade per-ounce
+      const pricePerBag = N($("bbChipPriceBag").value,0);
+
+      const dipMode = (document.getElementById("bbDipPriceMode").value || "jar");
+      const jarOz   = N($("bbDipJarOz").value,16);
+      const priceJar= N($("bbDipPriceJar").value,0);
+      const pricePerOz = N($("bbDipPricePerOz").value,0);
+
+      const chipsCost = (pricePerBag>0 && s.bags>0) ? s.bags * pricePerBag : 0;
+
+      let dipCost = 0;
+      if (dipMode === "jar"){
+        const dipJars = (jarOz>0) ? Math.ceil(s.dipOz / jarOz) : 0;
+        dipCost = (priceJar>0 && dipJars>0) ? dipJars * priceJar : 0;
+      } else {
+        dipCost = (pricePerOz>0 && s.dipOz>0) ? s.dipOz * pricePerOz : 0;
+      }
+
+      const subtotal = chipsCost + dipCost;
       const tax  = N($("bbTax").value,0)/100;
       const fees = N($("bbFees").value,0);
-
-      const subtotal = s.totalLb * pLb;
       const adds = (subtotal * tax) + fees;
       const total  = subtotal + adds;
-      const ppp    = (s.guests>0) ? (total / s.guests) : NaN;
+      const ppp    = (s.guests>0 && total>0) ? (total / s.guests) : NaN;
 
-      $("bbSubtotal").textContent  = (pLb>0 && s.totalLb>0) ? "$"+subtotal.toFixed(2) : "$—";
-      $("bbAdds").textContent      = (pLb>0 && s.totalLb>0) ? "$"+adds.toFixed(2) : "$—";
-      $("bbTotalCost").textContent = (pLb>0 && s.totalLb>0) ? "$"+total.toFixed(2) : "$—";
-      $("bbPPP").textContent       = (pLb>0 && s.totalLb>0 && s.guests>0) ? "$"+ppp.toFixed(2) : "$—";
+      $("bbSubtotal").textContent  = subtotal>0 ? money(subtotal) : "$—";
+      $("bbAdds").textContent      = subtotal>0 ? money(adds) : "$—";
+      $("bbTotalCost").textContent = subtotal>0 ? money(total) : "$—";
+      $("bbPPP").textContent       = (subtotal>0 && s.guests>0) ? money(ppp) : "$—";
     }
 
     // Auto-calc listeners
     ["bbA","bbT","bbC","bbMode","bbAppetite","bbLength","bbLeftovers",
      "bbDipStyle","bbBagOz","bbDipPerCup",
-     "bbPriceLb","bbTax","bbFees"]
+     "bbChipPriceBag","bbDipPriceMode","bbDipJarOz","bbDipPriceJar","bbDipPricePerOz",
+     "bbTax","bbFees"]
       .forEach(id=>{ const el=$(id); if(el){ el.addEventListener("input", render); el.addEventListener("change", render);} });
 
     // Presets: set all as adults; reset Teens/Children to 0
@@ -384,7 +407,7 @@
       {
         "@type": "Question",
         "name": "How many bags and cups of dip for 100 people?",
-        "acceptedAnswer": { "@type": "Answer", "text": "About 20 to 21 bags and 16 to 18 cups of dip in a mixed party setting. Consider leftovers if you want buffer." }
+        "acceptedAnswer": { "@type": "Answer", "text": "About 20 to 21 bags and 16 to 18 cups of dip in a mixed party setting. Consider whether you want leftovers." }
       },
       {
         "@type": "Question",
@@ -396,3 +419,4 @@
   </script>
 </body>
 </html>
+
