@@ -168,14 +168,22 @@
             <option value="homemade">Homemade (price per ounce)</option>
           </select>
         </div>
-        <div><label for="bbDipJarOz">Dip jar size (ounces)</label><input id="bbDipJarOz" type="number" min="1" step="1" value="16"></div>
+        <div>
+          <label for="bbDipJarOz">Dip jar size (ounces)</label>
+          <select id="bbDipJarOz">
+            <option value="12">12 ounce jar</option>
+            <option value="15">15 ounce jar</option>
+            <option value="16" selected>16 ounce jar (common)</option>
+            <option value="24">24 ounce jar (party size)</option>
+          </select>
+        </div>
         <div><label for="bbDipPriceJar">Price per dip jar (US dollars)</label><input id="bbDipPriceJar" type="number" min="0" step="0.01" placeholder="e.g., 3.99"></div>
         <div><label for="bbDipPricePerOz">Homemade dip price per ounce (US dollars)</label><input id="bbDipPricePerOz" type="number" min="0" step="0.01" placeholder="e.g., 0.20"></div>
 
         <div><label for="bbTax">Sales tax (percent)</label><input id="bbTax" type="number" min="0" step="0.1" value=""></div>
         <div><label for="bbFees">Extra fees (US dollars)</label><input id="bbFees" type="number" min="0" step="0.01" value=""></div>
       </div>
-      <div class="muted">Tip: use “Price per jar” for premade dips (common jar is 16 ounces), or “Homemade” to enter your cost per ounce.</div>
+      <div class="muted">Use “Price per jar” for premade dips (pick jar size), or “Homemade” to enter your cost per ounce.</div>
     </div>
 
     <!-- Results (after Pricing) -->
@@ -235,7 +243,7 @@
       </details>
       <details>
         <summary>How many bags and cups of dip for 100 people?</summary>
-        <div class="fine">About <strong>20 to 21 bags</strong> and <strong>16 to 18 cups</strong> of dip in a mixed party setting. Consider leftovers if you want buffer.</div>
+        <div class="fine">About <strong>20 to 21 bags</strong> and <strong>16 to 18 cups</strong> of dip in a mixed party setting. Consider whether you want leftovers.</div>
       </details>
       <details>
         <summary>What bag size do you assume?</summary>
@@ -243,7 +251,7 @@
       </details>
       <details>
         <summary>How do I budget total cost?</summary>
-        <div class="fine">Enter a price per bag for chips. For dip, choose the pricing mode: price per jar (with jar size) or homemade (price per ounce). We calculate subtotal, tax and fees, total, and cost per person automatically.</div>
+        <div class="fine">Enter a price per bag for chips. For dip, choose the pricing mode: price per jar (pick a common jar size) or homemade (price per ounce). We calculate subtotal, tax and fees, total, and cost per person automatically.</div>
       </details>
     </div>
 
@@ -328,7 +336,7 @@
       const pricePerBag = N($("bbChipPriceBag").value,0);
 
       const dipMode = (document.getElementById("bbDipPriceMode").value || "jar");
-      const jarOz   = N($("bbDipJarOz").value,16);
+      const jarOz   = N($("bbDipJarOz").value,16);  // now a SELECT of common sizes
       const priceJar= N($("bbDipPriceJar").value,0);
       const pricePerOz = N($("bbDipPricePerOz").value,0);
 
@@ -419,4 +427,3 @@
   </script>
 </body>
 </html>
-
