@@ -2,311 +2,258 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="description" content="Plan whole Dungeness crab portions fast. Enter guests and appetite—DinnerMath estimates pounds to buy and an approximate count based on typical weights.">
-<title>Dungeness Crab Quantity Calculator — How Many per Person (Whole Crabs & Pounds)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dungeness Crab Calculator — How Much Per Person | DinnerMath</title>
 <style>
-/* ---- Mobile-safe base ---- */
-*, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; overflow-x: hidden; }
-/* Media should never overflow */
-img, svg, canvas, video { max-width: 100%; height: auto; display: block; }
-/* Form controls shouldn't force width */
-input, select, textarea, button {
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-}
-/* Any wide blocks/tables scroll inside themselves instead of pushing the page */
-table, .wide-block { max-width: 100%; display: block; overflow-x: auto; }
-:root{
-  --ink:#0b2a3a; --ink-2:#13506a; --wash:#eaf6fb; --paper:#ffffff; --line:#d7e8ef;
-  --accent:#2f8db3; --ok:#1d6b3a; --warn:#b35b2f; --shadow:0 6px 20px rgba(11,42,58,.08);
-  --radius:18px;
-}
-html,body{background:var(--wash);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-.wrap{width:100%;max-width:480px;margin:0 auto;padding:16px}
-@media (min-width:640px){.wrap{max-width:720px;padding:20px}}
-@media (min-width:980px){.wrap{max-width:980px;padding:28px 16px 56px}}
-header{margin:0 0 18px}
-header h1{font-size:clamp(22px,3.2vw,34px);margin:0 0 8px;color:var(--ink-2);letter-spacing:.2px}
-header p{margin:0;color:#274757}
-.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-.stack{display:grid;gap:14px}
-section{margin:18px 0}
-h2{font-size:clamp(18px,2.5vw,22px);margin:0 0 8px;color:var(--ink-2)}
-.grid{display:grid;gap:12px}
-@media(min-width:760px){ .grid{grid-template-columns:repeat(12,1fr)} }
-.field{display:flex;flex-direction:column;gap:6px;background:#f7fbfd;border:1px solid var(--line);border-radius:12px;padding:10px}
-label{font-weight:600;font-size:.95rem}
-input[type="number"],select,input[type="text"]{
-  border:1px solid #cfe3eb;border-radius:10px;padding:9px 10px;background:#fff;font-size:1rem;outline:none;
-}
-input[type="number"]:focus,select:focus{border-color:var(--accent)}
-.row-6{grid-column:span 12}@media(min-width:760px){.row-6{grid-column:span 6}}
-.row-4{grid-column:span 12}@media(min-width:760px){.row-4{grid-column:span 4}}
-.row-3{grid-column:span 12}@media(min-width:760px){.row-3{grid-column:span 3}}
-.help{font-size:.88rem;color:#3a6070}
-.btn{
-  appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;
-  border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer
-}
-.btn.secondary{background:#fff;color:var(--accent)}
-.btn:disabled{opacity:.6;cursor:not-allowed}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
-.result{
-  display:grid;gap:10px;background:#f6fbfe;border:1px dashed #b7d7e6;border-radius:16px;padding:14px
-}
-.kv{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:12px}
-.kv b{font-size:1.05rem}
-.muted{color:#4c6b7a;font-size:.9rem}
-.callout{border-left:4px solid var(--ok);background:#f2fbf5;padding:10px 12px;border-radius:10px}
-details{border:1px solid var(--line);border-radius:12px;background:#fff}
-summary{cursor:pointer;padding:10px 14px;font-weight:700;color:#13506a}
-details .ans{padding:0 14px 12px;color:#2a4b5a}
-.disclaimer{font-size:.85rem;color:#567789;margin-top:10px}
-.price-grid{display:grid;gap:10px}
-@media(min-width:760px){.price-grid{grid-template-columns:repeat(12,1fr)}}
-.pill{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;background:#eef7fb;border:1px solid var(--line);font-size:.92rem}
-.map-links{display:flex;flex-wrap:wrap;gap:10px}
-.hr{height:1px;background:var(--line);margin:10px 0}
-.footnote{font-size:.85rem;color:#648396}
+  :root{
+    --bg:#ffffff; --fg:#111111; --muted:#6b7280; --line:#111111; --card:#ffffff;
+    --accent:#111111;
+  }
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:"Brandon Grotesque","Brandon Text","Avenir Next","Segoe UI",system-ui,-apple-system,Arial,sans-serif;}
+  .wrap{max-width:860px;margin:32px auto;padding:0 16px;}
+  h1{font-size:28px;letter-spacing:0.3px;margin:0 0 12px 0}
+  p.lede{color:var(--muted);margin:0 0 20px 0;line-height:1.45}
+  .grid{display:grid;gap:14px}
+  @media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
+  .card{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:16px}
+  .sec-title{font-weight:700;margin:0 0 8px 0}
+  label{font-size:14px;color:var(--muted);display:block;margin:0 0 6px 0}
+  input[type="number"], select{
+    width:100%;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:10px;background:#fff;color:var(--fg);
+    font-size:16px;appearance:textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button,input[type="number"]::-webkit-inner-spin-button{appearance:none;margin:0}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .btns{display:flex;flex-wrap:wrap;gap:8px}
+  button{
+    border:2px solid var(--line);background:#fff;color:var(--accent);padding:10px 14px;border-radius:999px;cursor:pointer;
+    font-weight:700;letter-spacing:.2px
+  }
+  button.ghost{background:transparent}
+  .results{border:3px solid var(--line);border-radius:16px;padding:16px;background:#fff}
+  .kv{display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px dashed #d1d5db;padding:10px 0}
+  .kv:last-child{border-bottom:none}
+  .k{font-weight:700}
+  .v{font-variant-numeric:tabular-nums}
+  .muted{color:var(--muted)}
+  .pill{display:inline-block;border:1.5px solid var(--line);border-radius:999px;padding:6px 10px;font-size:14px;margin-right:8px}
+  .faq h2{font-size:20px;margin:18px 0 10px 0}
+  details{border:1.5px solid #d1d5db;border-radius:10px;padding:10px 12px;background:#fff}
+  details+details{margin-top:10px}
+  summary{font-weight:700;cursor:pointer;outline:none}
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <h1>Dungeness Crab Quantity Calculator — How Many per Person (Whole Crabs &amp; Pounds)</h1>
-      <p>Tell us who’s coming and your crab size. We’ll estimate total pounds to buy and an approximate crab count—great for boils, appetizers, or mains.</p>
-    </header>
+  <div class="wrap" id="dm-app">
+    <h1>Dungeness Crab Quantity Calculator — How Much Per Person</h1>
+    <p class="lede">How much Dungeness crab per person? Enter guests and settings — or tap a quick preset (10, 25, 50, 100). We estimate raw pounds (in shell) and an approximate whole-crab count so you buy the right amount.</p>
 
-    <!-- INPUTS -->
-    <section class="card stack" id="inputs">
-      <h2>Inputs</h2>
-      <div class="grid">
-        <div class="field row-4"><label for="adults">Adults</label><input id="adults" type="number" min="0" step="1" value="20" /></div>
-        <div class="field row-4"><label for="teens">Teens</label><input id="teens" type="number" min="0" step="1" value="4" /></div>
-        <div class="field row-4"><label for="kids">Kids</label><input id="kids" type="number" min="0" step="1" value="4" /></div>
+    <!-- Presets -->
+    <div class="card" aria-label="Quick presets">
+      <div class="sec-title">Quick presets</div>
+      <div class="btns">
+        <button data-preset="10">10 people</button>
+        <button data-preset="25">25 people</button>
+        <button data-preset="50">50 people</button>
+        <button data-preset="100">100 people</button>
+        <button id="dm-reset" class="ghost">Reset</button>
+      </div>
+      <p class="muted" style="margin-top:8px">Presets assume all adults. Adjust Teens/Children manually.</p>
+    </div>
 
-        <div class="field row-6">
-          <label for="mode">Course mode</label>
-          <select id="mode">
-            <option value="main" selected>Crab as a main</option>
-            <option value="mixed">Mixed buffet (mains + sides)</option>
-            <option value="app">Appetizer/snack</option>
-          </select>
-          <div class="help">Main = crab is the star; Mixed = plenty of other mains/sides; Appetizer = short session.</div>
+    <!-- Inputs -->
+    <div class="grid" style="margin-top:14px">
+      <div class="card">
+        <div class="sec-title">Guests</div>
+        <div class="row">
+          <div><label for="adults">Adults</label><input id="adults" type="number" min="0" step="1" value="10" /></div>
+          <div><label for="teens">Teens</label><input id="teens" type="number" min="0" step="1" value="0" /></div>
         </div>
-
-        <div class="field row-6">
-          <label for="size">Crab size (average whole weight)</label>
-          <select id="size">
-            <option value="1.6">Small ~1.6 lb</option>
-            <option value="2.0" selected>Medium ~2.0 lb</option>
-            <option value="2.5">Large ~2.5 lb</option>
-          </select>
-          <div class="help">Pick an average whole-crab weight. We convert your total to pounds and approx. crabs.</div>
+        <div class="row" style="margin-top:12px">
+          <div><label for="children">Children</label><input id="children" type="number" min="0" step="1" value="0" /></div>
+          <div>
+            <label for="appetite">Appetite</label>
+            <select id="appetite">
+              <option value="0.90">Light (0.90)</option>
+              <option value="1.00" selected>Typical (1.00)</option>
+              <option value="1.20">Hearty (1.20)</option>
+            </select>
+          </div>
         </div>
-
-        <div class="field row-4"><label for="appetite">Appetite</label>
-          <select id="appetite">
-            <option value="0.9">Light</option>
-            <option value="1.0" selected>Typical</option>
-            <option value="1.2">Hungry</option>
-          </select>
-        </div>
-        <div class="field row-4"><label for="length">Event length</label>
-          <select id="length">
-            <option value="0.95">1–2 hours</option>
-            <option value="1.0" selected>2–3 hours</option>
-            <option value="1.08">3–4 hours</option>
-            <option value="1.15">4–5 hours</option>
-          </select>
-        </div>
-        <div class="field row-4"><label for="leftovers">Leftovers</label>
-          <select id="leftovers">
-            <option value="1.0" selected>No</option>
-            <option value="1.1">A little</option>
-            <option value="1.2">Next-day recipes</option>
-          </select>
-        </div>
-        <div class="field row-6"><label for="notes">Notes (optional)</label>
-          <input id="notes" type="text" placeholder="e.g., add sides; 2 vegetarians" />
+        <div class="row" style="margin-top:12px">
+          <div>
+            <label for="leftovers">Leftovers</label>
+            <select id="leftovers">
+              <option value="0">No</option>
+              <option value="0.10">+10%</option>
+              <option value="0.20">+20%</option>
+            </select>
+          </div>
+          <div>
+            <label for="avgWeight">Average whole crab weight (lb)</label>
+            <input id="avgWeight" type="number" min="1" step="0.1" value="2.0" />
+          </div>
         </div>
       </div>
 
-      <div class="actions">
-        <button class="btn" id="calcBtn">Calculate</button>
-        <button class="btn secondary" id="resetBtn" type="button">Reset</button>
+      <div class="card">
+        <div class="sec-title">Pricing (optional)</div>
+        <div class="row">
+          <div><label for="price">Price per lb (raw)</label><input id="price" type="number" min="0" step="0.01" value="0" /></div>
+          <div><label for="tax">Tax %</label><input id="tax" type="number" min="0" step="0.01" value="0" /></div>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <div><label for="fees">Fees %</label><input id="fees" type="number" min="0" step="0.01" value="0" /></div>
+          <div>
+            <label for="notes">Notes</label>
+            <input id="notes" type="text" placeholder="store, sale, etc. (optional)" />
+          </div>
+        </div>
+        <p class="muted" style="margin-top:10px">Subtotal uses <span class="pill">rounded raw lb × price</span>, then adds tax + fees.</p>
       </div>
-    </section>
+    </div>
 
-    <!-- RESULTS -->
-    <section class="card stack" id="results" aria-live="polite">
-      <h2>Results</h2>
-      <div class="result">
-        <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
-        <div class="kv"><span>Recommended pounds to buy (raw)</span><b id="outPounds">—</b></div>
-        <div class="kv"><span>Approximate whole crabs</span><b id="outPieces">—</b></div>
-        <div class="kv"><span>Per-person average (crabs)</span><b id="outPer">—</b></div>
-        <div class="muted" id="explain">Enter your details and click Calculate.</div>
-      </div>
+    <!-- Results -->
+    <div class="results" style="margin-top:14px" aria-live="polite">
+      <div class="kv"><div class="k">Total guests</div><div class="v" id="outGuests">10</div></div>
+      <div class="kv"><div class="k">About raw pounds to buy (in shell)</div><div class="v" id="outRaw">—</div></div>
+      <div class="kv"><div class="k">Approx. whole Dungeness crabs</div><div class="v" id="outCrabs">—</div></div>
+      <div class="kv"><div class="k">Estimated cost</div><div class="v" id="outCost">$0.00</div></div>
+      <div class="kv"><div class="k">Settings</div><div class="v" id="outSettings" class="muted">Typical appetite, no leftovers</div></div>
+    </div>
 
-      <div class="map-links" style="margin-top:10px">
-        <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/dungeness+crab+near+me">Find dungeness crab near me</a>
-        <a class="pill" target="_blank" rel="noopener" href="https://www.google.com/maps/search/seafood+market+near+me">Seafood markets</a>
-        <a class="pill" target="_blank" rel="noopener" href="https://www.google.com/maps/search/grocery+store+near+me">Grocery stores</a>
-      </div>
-
-      <div class="footnote">Tip: availability, sizes, and pricing vary by season and region; confirm with your market.</div>
-    </section>
-
-    <!-- PRICING (optional) -->
-    <section class="card stack" id="pricing">
-      <h2>Pricing (optional)</h2>
-      <div class="price-grid">
-        <div class="field row-3"><label for="priceLb">Price per pound ($)</label><input id="priceLb" type="number" min="0" step="0.01" placeholder="e.g., 12.99" /></div>
-        <div class="field row-3"><label for="taxPct">Sales tax (%)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="0" /></div>
-        <div class="field row-3"><label for="fees">Fees / delivery ($)</label><input id="fees" type="number" min="0" step="0.01" placeholder="0.00" /></div>
-      </div>
-      <div class="actions">
-        <button class="btn" id="priceBtn">Estimate cost</button>
-        <button class="btn secondary" id="clearPriceBtn" type="button">Clear</button>
-      </div>
-
-      <div class="result" id="priceBlock" style="display:none;margin-top:10px">
-        <div class="kv"><span>Estimated ingredient cost</span><b id="outCost">$—</b></div>
-        <div class="muted">We round up to a sensible purchase amount for easy shopping.</div>
-      </div>
-    </section>
-
-    <!-- QUICK NOTES -->
-    <section class="card stack" id="notesBlock">
-      <h2>Quick Notes</h2>
-      <ul class="stack" style="margin:0;padding-left:18px">
-        <li><strong>Whole-crab weight matters:</strong> choose an average (e.g., ~2 lb) to convert pounds to approximate crabs.</li>
-        <li><strong>Appetite + event length:</strong> heavier eaters/longer events increase amounts.</li>
-        <li><strong>Serving style:</strong> appetizers need fewer crabs per person than mains; mixed buffets sit in the middle.</li>
-        <li><strong>Leftovers buffer:</strong> add a little extra if you want next-day recipes.</li>
-        <li><strong>Market variability:</strong> sizes and weights vary by region and season.</li>
-      </ul>
-      <div class="disclaimer">Estimates only for event planning — no cooking, storage, or food-safety advice.</div>
-    </section>
-
-    <!-- FAQS -->
-    <section class="card stack" id="faqs">
+    <!-- FAQs -->
+    <section class="faq" style="margin-top:18px">
       <h2>FAQs</h2>
-
-      <details><summary>How many pounds of Dungeness crab per person?</summary>
-        <div class="ans">For a crab main, plan roughly <b>8–12 ounces per adult</b> (about ½–¾ lb raw). For appetizers, plan <b>3–5 ounces per adult</b>. Adjust for appetite, event length, and leftovers.</div>
+      <details>
+        <summary>How much Dungeness crab per person?</summary>
+        <div class="muted">Plan about <strong>2 lb per adult</strong> (whole, in shell) for a main course. Teens count as about three-quarters of an adult and children about half. Use the appetite and leftovers settings to fine-tune.</div>
       </details>
-
-      <details><summary>How do I pick a crab weight?</summary>
-        <div class="ans">Your market may label average whole-crab weights. Pick the closest option; we use it to convert pounds to approximate whole crabs.</div>
+      <details>
+        <summary>How many whole crabs is that?</summary>
+        <div class="muted">Average whole Dungeness crabs weigh about <strong>2 lb each</strong>. Enter your average weight to convert pounds to an estimated crab count.</div>
       </details>
-
-      <details><summary>Are results raw or cooked?</summary>
-        <div class="ans">Raw purchase weight. Cooked yield depends on prep and moisture loss.</div>
+      <details>
+        <summary>Does cooked yield matter?</summary>
+        <div class="muted">Because you’re buying whole crabs in shell, the calculator works in <strong>raw pounds</strong>. If you need picked meat only, assume roughly 20–25% edible yield and size up accordingly.</div>
       </details>
-
-      <div class="hr"></div>
-      <div class="footnote">General note: availability, sizes, and pricing vary by season and region.</div>
+      <details>
+        <summary>Leftovers or big eaters?</summary>
+        <div class="muted">Choose Hearty appetite (+20%) or add <strong>+10% or +20%</strong> leftovers to cover extra servings or next-day meals.</div>
+      </details>
     </section>
   </div>
 
-<script>
-(function(){
-  const $ = sel => document.querySelector(sel);
-  function parseN(id, def=0){ const v = parseFloat($(id).value); return isFinite(v) ? v : def; }
+  <script>
+    // ====== Helpers ======
+    const $ = sel => document.querySelector(sel);
+    const roundQuarter = n => Math.round(n * 4) / 4;
 
-  function baselines(mode){
-    if(mode==='main')  return {adult:10, teen:8, kid:6};
-    if(mode==='mixed') return {adult:7,  teen:6, kid:4};
-    return               {adult:4,  teen:3, kid:2};
-  }
+    // ====== Elements ======
+    const adults = $("#adults");
+    const teens = $("#teens");
+    const children = $("#children");
+    const appetite = $("#appetite");
+    const leftovers = $("#leftovers");
+    const avgWeight = $("#avgWeight");
+    const price = $("#price");
+    const tax = $("#tax");
+    const fees = $("#fees");
 
-  function calcTotals(){
-    const A = Math.max(0, parseN('#adults',0));
-    const T = Math.max(0, parseN('#teens',0));
-    const K = Math.max(0, parseN('#kids',0));
-    const guests = A + T + K;
+    const outGuests = $("#outGuests");
+    const outRaw = $("#outRaw");
+    const outCrabs = $("#outCrabs");
+    const outCost = $("#outCost");
+    const outSettings = $("#outSettings");
 
-    const mode   = $('#mode').value;
-    const avgLb  = parseN('#size', 2.0); // average whole-crab pounds
-    const appetite  = parseN('#appetite',1.0);
-    const length    = parseN('#length',1.0);
-    const leftovers = parseN('#leftovers',1.0);
+    // ====== Assumptions ======
+    // Base per-person (Typical appetite), whole in-shell
+    const BASE_ADULT_LB = 2.0;
+    const TEEN_FACTOR = 0.75;
+    const CHILD_FACTOR = 0.50;
 
-    const base = baselines(mode);
-    const adultOz = Math.max(0, base.adult * appetite * length * leftovers);
-    const teenOz  = Math.max(0, base.teen  * appetite * length * leftovers);
-    const kidOz   = Math.max(0, base.kid   * appetite * length * leftovers);
+    function calc(){
+      const a = +adults.value || 0;
+      const t = +teens.value || 0;
+      const c = +children.value || 0;
+      const appet = +appetite.value || 1.0;
+      const left = +leftovers.value || 0;
+      const avg = Math.max(+avgWeight.value || 2.0, 0.1);
 
-    const totalOz = (A*adultOz + T*teenOz + K*kidOz);
-    const totalLb = totalOz / 16;
+      const guests = a + t + c;
 
-    const poundsRounded = Math.ceil(totalLb * 100) / 100;
-    const poundsShop    = Math.ceil(poundsRounded * 4) / 4;
+      // raw pounds before leftovers: per-person × factors × appetite
+      const baseLb =
+        (a * BASE_ADULT_LB) +
+        (t * BASE_ADULT_LB * TEEN_FACTOR) +
+        (c * BASE_ADULT_LB * CHILD_FACTOR);
 
-    $('#outGuests').textContent = guests.toString();
-    $('#outPounds').textContent = guests>0 ? poundsShop.toFixed(2) + ' lb' : '—';
+      const appetLb = baseLb * appet;
+      const rawLb = appetLb * (1 + left);
+      const rawRounded = roundQuarter(rawLb);
 
-    let crabsTxt = '—', perTxt = '—';
-    if (guests>0 && avgLb>0){
-      const crabs = Math.round(poundsShop / avgLb);
-      crabsTxt = crabs.toLocaleString() + ' crabs';
-      const per = (crabs / guests);
-      perTxt = per.toFixed(2) + ' crabs/guest';
+      // crab count estimate
+      const crabs = avg > 0 ? Math.max(0, Math.round(rawRounded / avg)) : 0;
+
+      // pricing
+      const p = +price.value || 0;
+      const sub = rawRounded * p;
+      const total = sub * (1 + (+tax.value||0)/100) * (1 + (+fees.value||0)/100);
+
+      outGuests.textContent = guests;
+      outRaw.textContent = guests ? rawRounded.toFixed(2) + " lb" : "—";
+      outCrabs.textContent = guests ? (crabs > 0 ? "about " + crabs : "—") : "—";
+      outCost.textContent = (p>0 && guests>0) ? "$" + total.toFixed(2) : "$0.00";
+
+      const appetLabel = appetite.options[appetite.selectedIndex]?.text || "Typical (1.00)";
+      const leftLabel = leftovers.options[leftovers.selectedIndex]?.text || "No";
+      outSettings.textContent = appetLabel.replace(/\s*\(.+\)\s*/,"") + ", " + leftLabel.toLowerCase() + " leftovers";
     }
-    $('#outPieces').textContent = crabsTxt;
-    $('#outPer').textContent = perTxt;
 
-    const modeTxt = {main:'Crab as a main', mixed:'Mixed buffet', app:'Appetizer/snack'}[mode];
-    const sizeTxt = $('#size').selectedOptions[0].text;
-    $('#explain').innerHTML = guests>0
-      ? `Based on <b>${modeTxt}</b>, size <b>${sizeTxt}</b>, appetite <b>${$('#appetite').selectedOptions[0].text}</b>, length <b>${$('#length').selectedOptions[0].text}</b>, leftovers <b>${$('#leftovers').selectedOptions[0].text}</b>.`
-      : 'Enter your details and click Calculate.';
+    // Auto-calc
+    ["input","change"].forEach(evt=>{
+      document.getElementById("dm-app").addEventListener(evt, e=>{
+        if(["adults","teens","children","appetite","leftovers","avgWeight","price","tax","fees"].includes(e.target.id)){
+          calc();
+        }
+      }, true);
+    });
+
+    // Presets
+    document.querySelectorAll("[data-preset]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const n = +btn.getAttribute("data-preset");
+        adults.value = n; teens.value = 0; children.value = 0;
+        appetite.value = "1.00"; leftovers.value = "0"; avgWeight.value = "2.0";
+        price.value = price.value || 0; tax.value = tax.value || 0; fees.value = fees.value || 0;
+        calc();
+      });
+    });
+
+    // Reset
+    document.getElementById("dm-reset").addEventListener("click", ()=>{
+      adults.value = 10; teens.value = 0; children.value = 0;
+      appetite.value = "1.00"; leftovers.value = "0"; avgWeight.value = "2.0";
+      price.value = 0; tax.value = 0; fees.value = 0;
+      calc();
+    });
+
+    // Init
+    calc();
+  </script>
+
+  <!-- JSON-LD FAQ Schema (4 items per v1.7 lock) -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How much Dungeness crab per person?","acceptedAnswer":{"@type":"Answer","text":"Plan about 2 lb per adult (whole, in shell) for a main course. Teens count as about three-quarters of an adult and children about half. Use the appetite and leftovers settings to fine-tune."}},
+      {"@type":"Question","name":"How many whole crabs is that?","acceptedAnswer":{"@type":"Answer","text":"Average whole Dungeness crabs weigh about 2 lb each. Enter your average weight to convert pounds to an estimated crab count."}},
+      {"@type":"Question","name":"Does cooked yield matter?","acceptedAnswer":{"@type":"Answer","text":"Because you’re buying whole crabs in shell, the calculator works in raw pounds. If you need picked meat only, assume roughly 20–25% edible yield and size up accordingly."}},
+      {"@type":"Question","name":"Leftovers or big eaters?","acceptedAnswer":{"@type":"Answer","text":"Choose Hearty appetite (+20%) or add +10% or +20% leftovers to cover extra servings or next-day meals."}}
+    ]
   }
-
-  function money(n){ return isFinite(n) ? '$'+n.toFixed(2) : '$—'; }
-  function priceTotals(){
-    const pLb  = parseN('#priceLb',0);
-    const tax  = parseN('#taxPct',0)/100;
-    const fees = parseN('#fees',0);
-    const poundsText = $('#outPounds').textContent.replace(' lb','');
-    const poundsVal = parseFloat(poundsText);
-    let cost = 0;
-    if (isFinite(poundsVal) && pLb>0){
-      cost = (poundsVal * pLb);
-      cost = cost + (cost*tax) + fees;
-    }
-    $('#outCost').textContent = cost>0 ? money(cost) : '$—';
-    $('#priceBlock').style.display = (pLb>0) ? 'grid' : 'none';
-  }
-
-  $('#calcBtn').addEventListener('click', calcTotals);
-  $('#resetBtn').addEventListener('click', () => {
-    ['#adults','#teens','#kids'].forEach(id => $(id).value = 0);
-    $('#mode').value = 'main';
-    $('#size').value = '2.0';
-    $('#appetite').value = '1.0';
-    $('#length').value = '1.0';
-    $('#leftovers').value = '1.0';
-    $('#notes').value = '';
-    calcTotals();
-    ['#priceLb','#taxPct','#fees'].forEach(id => $(id).value='');
-    $('#priceBlock').style.display='none';
-  });
-
-  $('#priceBtn').addEventListener('click', priceTotals);
-  $('#clearPriceBtn').addEventListener('click',()=>{
-    ['#priceLb','#taxPct','#fees'].forEach(id => $(id).value='');
-    $('#priceBlock').style.display='none';
-  });
-
-  // initial compute
-  calcTotals();
-})();
-</script>
+  </script>
 </body>
 </html>
