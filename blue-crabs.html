@@ -1,435 +1,357 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Blue Crab Calculator — How Many Blue Crabs per Person | DinnerMath</title>
-<style>
-  /* ---- Mobile-safe base ---- */
-*, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; overflow-x: hidden; }
-
-/* Media should never overflow */
-img, svg, canvas, video { max-width: 100%; height: auto; display: block; }
-
-/* Form controls shouldn't force width */
-input, select, textarea, button {
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;       /* important inside CSS grid/flex */
-}
-
-/* Any wide blocks/tables scroll inside themselves instead of pushing the page */
-table, .wide-block { max-width: 100%; display: block; overflow-x: auto; }
-
-  :root{
-    --ink:#0b2a3a;          /* deep blue-ink */
-    --ink-2:#13506a;        /* blue-crab teal */
-    --wash:#eaf6fb;         /* light sea wash */
-    --paper:#ffffff;
-    --line:#d7e8ef;
-    --accent:#2f8db3;
-    --ok:#1d6b3a;
-    --warn:#b35b2f;
-    --shadow:0 6px 20px rgba(11,42,58,.08);
-    --radius:18px;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;background:var(--wash);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-  /* Mobile first */
-.wrap {
-  width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 16px;
-}
-@media (min-width: 640px){ .wrap { max-width: 720px; padding: 20px; } }
-@media (min-width: 980px){ .wrap { max-width: 980px; padding: 28px 16px 56px; } }
-  header{margin:0 0 18px}
-  header h1{font-size:clamp(22px,3.2vw,34px);margin:0 0 8px;color:var(--ink-2);letter-spacing:.2px}
-  header p{margin:0;color:#274757}
-  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-  .stack{display:grid;gap:14px}
-  section{margin:18px 0}
-  h2{font-size:clamp(18px,2.5vw,22px);margin:0 0 8px;color:var(--ink-2)}
-  .grid{display:grid;gap:12px}
-  @media(min-width:760px){ .grid{grid-template-columns:repeat(12,1fr)} }
-  .field{display:flex;flex-direction:column;gap:6px;background:#f7fbfd;border:1px solid var(--line);border-radius:12px;padding:10px}
-  label{font-weight:600;font-size:.95rem}
-  input[type="number"],select,input[type="text"]{
-    border:1px solid #cfe3eb;border-radius:10px;padding:9px 10px;background:#fff;font-size:1rem;outline:none;
-  }
-  input[type="number"]:focus,select:focus{border-color:var(--accent)}
-  .row-6{grid-column:span 12}@media(min-width:760px){.row-6{grid-column:span 6}}
-  .row-4{grid-column:span 12}@media(min-width:760px){.row-4{grid-column:span 4}}
-  .row-3{grid-column:span 12}@media(min-width:760px){.row-3{grid-column:span 3}}
-  .help{font-size:.88rem;color:#3a6070}
-  .btn{
-    appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;
-    border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer
-  }
-  .btn.secondary{background:#fff;color:var(--accent)}
-  .btn:disabled{opacity:.6;cursor:not-allowed}
-  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
-  .result{
-    display:grid;gap:10px;background:#f6fbfe;border:1px dashed #b7d7e6;border-radius:16px;padding:14px
-  }
-  .kv{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:12px}
-  .kv b{font-size:1.05rem}
-  .muted{color:#4c6b7a;font-size:.9rem}
-  .callout{border-left:4px solid var(--ok);background:#f2fbf5;padding:10px 12px;border-radius:10px}
-  details{border:1px solid var(--line);border-radius:12px;background:#fff}
-  summary{cursor:pointer;padding:10px 14px;font-weight:700;color:var(--ink-2)}
-  details .ans{padding:0 14px 12px;color:#2a4b5a}
-  .disclaimer{font-size:.85rem;color:#567789;margin-top:10px}
-  .price-grid{display:grid;gap:10px}
-  @media(min-width:760px){.price-grid{grid-template-columns:repeat(12,1fr)}}
-  .pill{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;background:#eef7fb;border:1px solid var(--line);font-size:.92rem}
-  .map-links{display:flex;flex-wrap:wrap;gap:10px}
-  .hr{height:1px;background:var(--line);margin:10px 0}
-  .footnote{font-size:.85rem;color:#648396}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DinnerMath — Blue Crabs Quantity Calculator</title>
+  <meta name="description" content="How many blue crabs per person? DinnerMath estimates whole crabs to buy and approximate live weight for mains or buffet, with pricing and quick presets for 10, 25, 50, 100 people.">
+  <meta name="robots" content="index,follow">
+  <style>
+    :root{
+      --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc;
+      --pill:#374151; --card:#ffffff; --accent:#111827;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      background:var(--bg);
+      font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;
+      color:var(--ink);
+    }
+    .wrap{max-width:820px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+    .outline{border:2px solid var(--ink)}
+    h1{font-size:22px;margin:0 0 8px}
+    .lede{color:var(--muted);margin:0 0 16px}
+    h2{font-size:20px;margin:16px 0 8px}
+    h3{font-size:18px;margin:0 0 12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
+    input[type="number"],select{
+      width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px;
+      font-size:14px;background:#fff;color:var(--ink)
+    }
+    .muted{color:var(--muted);font-size:12px}
+    .fine{font-size:13px;color:#374151}
+    .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .preset:hover{background:#f3f4f6}
+    .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:var(--pill);background:#fff}
+    .divider{height:1px;background:var(--line);margin:12px 0}
+    /* Prominent Results */
+    .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+    .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .kv + .kv{margin-top:8px}
+    .kv b{font-size:1.05rem}
+    .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
+    @media (max-width:720px){.row{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <h1>Blue Crab Quantity Calculator — How Many per Person (Bushels &amp; Dozens)</h1>
-      <p>Tell us who’s coming and how you’ll serve the crabs. We’ll estimate total crabs, convert to dozens and bushels, and optionally tally cost — perfect for 10–200 guests.</p>
-    </header>
 
-    <!-- INPUTS -->
-    <section class="card stack" id="inputs">
-      <h2>Inputs</h2>
-      <div class="grid">
-        <div class="field row-4">
-          <label for="adults">Adults</label>
-          <input id="adults" type="number" min="0" step="1" value="20" />
-        </div>
-        <div class="field row-4">
-          <label for="teens">Teens</label>
-          <input id="teens" type="number" min="0" step="1" value="4" />
-        </div>
-        <div class="field row-4">
-          <label for="kids">Kids</label>
-          <input id="kids" type="number" min="0" step="1" value="4" />
-        </div>
+    <!-- Header -->
+    <div class="card" role="region" aria-label="Header">
+      <h1>Blue Crabs Quantity Calculator — Crabs per Person</h1>
+      <p class="lede">
+        Enter guests and settings (or tap a quick preset). We’ll estimate
+        <strong>whole blue crabs to buy</strong> and <strong>approximate live weight</strong>, then
+        show an optional <strong>cost estimate</strong>.
+      </p>
+    </div>
 
-        <div class="field row-6">
-          <label for="mode">Course mode</label>
-          <select id="mode">
-            <option value="feast" selected>Crab feast (main event)</option>
-            <option value="mixed">Mixed spread (mains + sides)</option>
+    <!-- Inputs -->
+    <div class="card" role="region" aria-label="Inputs">
+      <h3>Inputs</h3>
+      <div class="row" aria-label="Guests">
+        <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="12"></div>
+        <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="6"></div>
+        <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="4"></div>
+        <div>
+          <label for="course">Serving style</label>
+          <select id="course">
+            <option value="main" selected>Main (crab feast)</option>
+            <option value="mixed">Mixed buffet</option>
             <option value="app">Appetizer/snack</option>
           </select>
-          <div class="help">Feast = crabs are the star; Mixed = plenty of other mains/sides; Appetizer = short session.</div>
         </div>
+      </div>
 
-        <div class="field row-6">
+      <div class="row" aria-label="Context">
+        <div>
           <label for="size">Crab size</label>
           <select id="size">
-            <option value="small">Small (≈5–5.5")</option>
-            <option value="medium" selected>Medium (≈5.5–6")</option>
-            <option value="large">Large #1 (≈6–6.5")</option>
-            <option value="jumbo">Jumbo (6.5"+)</option>
+            <option value="0.25">Small (about 0.25 lb live each)</option>
+            <option value="0.33" selected>Medium (about 0.33 lb live each)</option>
+            <option value="0.50">Large (about 0.50 lb live each)</option>
           </select>
-          <div class="help">Larger crabs have more meat, so you’ll need fewer per person.</div>
+          <div class="muted">Used to estimate total live pounds from the crab count.</div>
         </div>
-
-        <div class="field row-4">
+        <div>
           <label for="appetite">Appetite</label>
           <select id="appetite">
-            <option value="0.85">Light</option>
-            <option value="1.0" selected>Typical</option>
-            <option value="1.2">Hungry</option>
+            <option value="0.90">Light</option>
+            <option value="1.00" selected>Typical</option>
+            <option value="1.20">Hearty</option>
           </select>
         </div>
-
-        <div class="field row-4">
+        <div>
           <label for="length">Event length</label>
           <select id="length">
-            <option value="0.9">1–2 hours</option>
-            <option value="1.0" selected>2–3 hours</option>
-            <option value="1.1">3–4 hours</option>
-            <option value="1.2">4–5 hours</option>
+            <option value="0.95">Short — about 1 to 2 hours</option>
+            <option value="1.00" selected>Standard — about 2 to 3 hours</option>
+            <option value="1.08">Long — about 3 to 4 hours</option>
+            <option value="1.15">Extended — about 4 to 5 hours</option>
           </select>
         </div>
-
-        <div class="field row-4">
-          <label for="leftovers">Leftovers</label>
+        <div>
+          <label for="leftovers">Add leftovers</label>
           <select id="leftovers">
-            <option value="1.0" selected>No</option>
-            <option value="1.1">A little</option>
-            <option value="1.2">Next-day feast</option>
+            <option value="1.00" selected>No</option>
+            <option value="1.10">+10%</option>
+            <option value="1.20">+20%</option>
           </select>
         </div>
-
-        <div class="field row-6">
-          <label for="bushelDozen">Dozens per bushel (adjust if your supplier differs)</label>
-          <input id="bushelDozen" type="number" min="5.5" max="7.5" step="0.1" value="6.5" />
-          <div class="help">Typical bushel holds about 6–7 dozen (varies by size).</div>
-        </div>
-
-        <div class="field row-6">
-          <label for="notes">Notes (optional)</label>
-          <input id="notes" type="text" placeholder="e.g., add corn & potatoes; 2 vegetarians" />
-        </div>
       </div>
 
-      <div class="actions">
-        <button class="btn" id="calcBtn">Calculate</button>
-        <button class="btn secondary" id="resetBtn" type="button">Reset</button>
+      <!-- Presets + Reset -->
+      <div class="inline" style="margin-top:8px">
+        <span class="muted">Quick presets:</span>
+        <button class="preset" data-people="10" type="button">10</button>
+        <button class="preset" data-people="25" type="button">25</button>
+        <button class="preset" data-people="50" type="button">50</button>
+        <button class="preset" data-people="100" type="button">100</button>
+        <span class="muted">Presets set all as adults — tweak Teens/Children if needed.</span>
+        <div style="flex:1"></div>
+        <button id="dmReset" type="button" class="preset">Reset</button>
       </div>
-    </section>
+    </div>
 
-    <!-- RESULTS -->
-    <section class="card stack" id="results" aria-live="polite">
-      <h2>Results</h2>
-      <div class="result">
-        <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
-        <div class="kv"><span>Recommended crabs to buy</span><b id="outCrabs">—</b></div>
-        <div class="kv"><span>That’s about (dozens)</span><b id="outDozens">—</b></div>
-        <div class="kv"><span>Estimated bushels</span><b id="outBushels">—</b></div>
-        <div class="kv"><span>Per-person average (crabs)</span><b id="outPer">—</b></div>
-        <div class="muted" id="explain">Enter your details and click Calculate.</div>
+    <!-- Pricing (optional) -->
+    <div class="card" role="region" aria-label="Pricing">
+      <h3>Pricing (optional)</h3>
+      <div class="row">
+        <div><label for="priceDozen">Price per dozen (US dollars)</label><input id="priceDozen" type="number" min="0" step="0.01" placeholder="e.g., 42.00"></div>
+        <div><label for="priceEach">Or price per crab (US dollars)</label><input id="priceEach" type="number" min="0" step="0.01" placeholder="optional"></div>
+        <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="e.g., 7.5"></div>
+        <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="e.g., 8.00"></div>
       </div>
+      <div class="muted">If both prices are entered, we use <em>price per dozen</em>. Cost = crabs × unit price, then add tax and fees.</div>
+    </div>
 
-      <div class="map-links" style="margin-top:10px">
-        <a class="btn" target="_blank" rel="noopener"
-           href="https://www.google.com/maps/search/blue+crabs+near+me">Find blue crabs near me</a>
-        <a class="pill" target="_blank" rel="noopener"
-           href="https://www.google.com/maps/search/seafood+market+near+me">Seafood markets</a>
-        <a class="pill" target="_blank" rel="noopener"
-           href="https://www.google.com/maps/search/grocery+store+near+me">Grocery stores</a>
+    <!-- Results -->
+    <div class="card outline" role="region" aria-label="Results" aria-live="polite">
+      <h3 class="results-title">Results</h3>
+      <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
+      <div class="kv"><span>Whole blue crabs to buy (count)</span><b id="outCrabs">—</b></div>
+      <div class="kv"><span>Approximate live weight (pounds)</span><b id="outPounds">—</b></div>
+      <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$—</b></div>
+      <div class="kv"><span>Tax and fees</span><b id="outAdds">$—</b></div>
+      <div class="kv"><span>Estimated total</span><b id="outTotal">$—</b></div>
+      <div class="kv"><span>Cost per person</span><b id="outPPP">$—</b></div>
+      <p class="muted" id="outExplain">Enter your guest mix to calculate.</p>
+    </div>
+
+    <!-- Finder -->
+    <div class="card finder" role="region" aria-label="Find near me">
+      <div class="inline">
+        <a class="preset" href="#" onclick="try{window.open('https://www.google.com/maps/search/blue+crabs+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/blue+crabs+near+me';}return false;">Find blue crabs near me</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/seafood+market','_blank');}catch(e){location.href='https://www.google.com/maps/search/seafood+market';}return false;">Seafood markets</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/grocery+store','_blank');}catch(e){location.href='https://www.google.com/maps/search/grocery+store';}return false;">Grocery stores</a>
       </div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.0 (auto-calc)</div>
+    </div>
 
-      <div class="footnote">Tip: Check availability early for peak weekends and pre-order bushels if possible.</div>
-    </section>
-
-    <!-- PRICING (optional) -->
-    <section class="card stack" id="pricing">
-      <h2>Pricing (optional)</h2>
-      <div class="price-grid">
-        <div class="field row-3">
-          <label for="priceDozen">Price per dozen ($)</label>
-          <input id="priceDozen" type="number" min="0" step="0.01" placeholder="e.g., 38.00" />
-        </div>
-        <div class="field row-3">
-          <label for="priceBushel">Price per bushel ($)</label>
-          <input id="priceBushel" type="number" min="0" step="0.01" placeholder="e.g., 420.00" />
-        </div>
-        <div class="field row-3">
-          <label for="taxPct">Sales tax (%)</label>
-          <input id="taxPct" type="number" min="0" step="0.1" placeholder="0" />
-        </div>
-        <div class="field row-3">
-          <label for="fees">Fees / delivery ($)</label>
-          <input id="fees" type="number" min="0" step="0.01" placeholder="0.00" />
-        </div>
-      </div>
-      <div class="actions">
-        <button class="btn" id="priceBtn">Estimate cost</button>
-        <button class="btn secondary" id="clearPriceBtn" type="button">Clear</button>
-      </div>
-
-      <div class="result" id="priceBlock" style="display:none;margin-top:10px">
-        <div class="kv"><span>Buying by dozens (est.)</span><b id="outCostDozens">$—</b></div>
-        <div class="kv"><span>Buying by bushels (est.)</span><b id="outCostBushels">$—</b></div>
-        <div class="muted">We show both so you can compare current market pricing.</div>
-      </div>
-    </section>
-
-    <!-- QUICK NOTES -->
-    <section class="card stack" id="notesBlock">
-      <h2>Quick Notes</h2>
-      <ul class="stack" style="margin:0;padding-left:18px">
-        <li>Feast mode assumes crabs are the main attraction with minimal other mains.</li>
-        <li>Dozens/bushels vary by size and supplier; adjust the “dozens per bushel” to match your market.</li>
-        <li>Have mallets, picks, paper, and extra butter/vinegar ready. Plan refills every ~30–45 minutes for large groups.</li>
-        <li>For mixed spreads, add hearty sides (corn, potatoes, sausage) to reduce crab count per person.</li>
-        <li>Chill beverages ahead and set up a discard bin at every table end for shells.</li>
-      </ul>
-      <div class="disclaimer">Estimates only for event planning — no cooking, storage, or food-safety advice.</div>
-    </section>
-
-    <!-- FAQS -->
-    <section class="card stack" id="faqs">
+    <!-- FAQs (5 total) -->
+    <div class="card" role="region" aria-label="FAQs">
       <h2>FAQs</h2>
-
-      <details>
-        <summary>How many blue crabs per person for a crab feast?</summary>
-        <div class="ans">
-          For a true crab-feast main, plan about <b>7–9 crabs per adult</b>, <b>5–7 per teen</b>, and <b>3–5 per kid</b> with medium-to-large crabs over a 2–3 hour event. Bigger crabs trend to the low end. Use Hungry appetite or longer event length to raise counts.
+      <details open>
+        <summary>How many blue crabs per person?</summary>
+        <div class="fine">
+          As a main crab feast, plan about <strong>6 crabs per adult</strong> (about 5 for teens and 4 for children).
+          For a mixed buffet, plan about <strong>4 per adult</strong>.
+          Appetizers are about <strong>3 per adult</strong>.
         </div>
       </details>
-
       <details>
-        <summary>What if it’s a mixed buffet with other mains?</summary>
-        <div class="ans">
-          When crabs share the stage with pulled pork, wings, or hearty sides, plan roughly <b>5–7 per adult</b>, <b>4–6 per teen</b>, and <b>2–4 per kid</b>. Add starches (corn, potatoes, rolls) to stretch portions without guests feeling shortchanged.
+        <summary>How do you convert crabs to pounds?</summary>
+        <div class="fine">
+          We multiply the needed crab count by your size choice (about 0.25 lb small, 0.33 lb medium, 0.50 lb large) to estimate total live weight.
         </div>
       </details>
-
       <details>
-        <summary>Do I buy by the dozen or by the bushel?</summary>
-        <div class="ans">
-          Check both prices. A bushel commonly holds <b>about 6–7 dozen</b> (varies by crab size), which can be cost-effective for 25+ guests. This calculator shows totals both ways. If sizes are small, increase the “dozens per bushel” setting for accuracy.
+        <summary>Do I buy by the dozen or by the crab?</summary>
+        <div class="fine">
+          Many markets price by the dozen. Enter a price per dozen or per crab; if both are set, we use the dozen price.
         </div>
       </details>
-
       <details>
-        <summary>How do size and event length change the math?</summary>
-        <div class="ans">
-          Larger crabs yield more meat, so you need fewer per person. We factor size, appetite, and event length: small/jumbo adjust the baseline, while 3–5 hour parties nudge quantities higher for grazing and seconds.
+        <summary>How much should I buy for 10, 25, 50, or 100 people?</summary>
+        <div class="fine">
+          For a main with typical appetite, rough guides are:
+          <strong>10 people about 60 crabs</strong>, <strong>25 people about 150</strong>,
+          <strong>50 people about 300</strong>, <strong>100 people about 600</strong>.
+          Use the calculator for your exact mix and size.
         </div>
       </details>
-
       <details>
-        <summary>Leftovers strategy for next-day crab salads or cakes?</summary>
-        <div class="ans">
-          Turn on “Leftovers” to add 10–20% more. Pick meat at the end while crabs are warm; refrigerate promptly. Plan sealed containers and labels so cleanup is quick and safe for next-day recipes.
+        <summary>Does this account for meat yield?</summary>
+        <div class="fine">
+          We plan by <strong>whole crabs</strong> and show live weight. Pick a larger size if you prefer more meat per person.
         </div>
       </details>
+    </div>
 
-      <details>
-        <summary>How many bushels for 100 people?</summary>
-        <div class="ans">
-          In feast mode with medium crabs and typical appetite, 100 mixed guests often lands around <b>~600–750 crabs</b>, or roughly <b>7.5–9.5 bushels</b> at 6.5 dozen per bushel. Use the slider to match your supplier’s bushel size.
-        </div>
-      </details>
+    <!-- Quick notes -->
+    <div class="card" role="region" aria-label="Quick notes">
+      <h3>Quick notes</h3>
+      <ul class="fine" style="margin:0 0 0 18px;padding:0">
+        <li><strong>Per-adult baselines:</strong> Main about 6 crabs; Mixed about 4; Appetizer about 3. Teens about 0.8 adult; Children about 0.6 adult.</li>
+        <li><strong>Size choices:</strong> Small about 0.25 lb live each; Medium about 0.33 lb; Large about 0.50 lb.</li>
+        <li><strong>Rounding:</strong> We round the crab count up to whole crabs.</li>
+        <li><strong>Context multipliers:</strong> Appetite, event length, and leftovers can shift amounts by about 10–20%.</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm availability and size with your seafood market.</li>
+      </ul>
+    </div>
 
-      <div class="hr"></div>
-      <div class="footnote">General note: availability, sizes, and pricing vary by season and region; always confirm with your seafood market.</div>
-    </section>
   </div>
 
-<script>
-(function(){
-  const $ = sel => document.querySelector(sel);
+  <!-- Calculator logic -->
+  <script>
+  (function(){
+    const $ = id => document.getElementById(id);
+    const N = (v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+    const money = n => (isFinite(n)&&n>=0) ? "$"+n.toFixed(2) : "$—";
+    const fmt = (n,d=0)=> isFinite(n) ? n.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}) : "—";
+    const ceilInt = n => Math.max(0, Math.ceil(n));
 
-  function parseN(id, def=0){
-    const v = parseFloat($(id).value);
-    return isFinite(v) ? v : def;
-  }
-
-  function baselines(mode){
-    // Baseline crabs per person before multipliers, for MEDIUM size, 2–3h, typical appetite, no leftovers
-    if(mode==='feast') return {adult:8, teen:6, kid:4};
-    if(mode==='mixed') return {adult:6, teen:5, kid:3};
-    return {adult:4, teen:3, kid:2}; // appetizer
-  }
-
-  function sizeFactor(size){
-    // Larger size => fewer needed
-    if(size==='small') return 1.15;
-    if(size==='medium') return 1.00;
-    if(size==='large') return 0.90;
-    if(size==='jumbo') return 0.85;
-    return 1.0;
-  }
-
-  function calcTotals(){
-    const A = Math.max(0, parseN('#adults',0));
-    const T = Math.max(0, parseN('#teens',0));
-    const K = Math.max(0, parseN('#kids',0));
-    const guests = A + T + K;
-
-    const mode = $('#mode').value;
-    const size = $('#size').value;
-
-    const appetite = parseN('#appetite',1.0);
-    const length = parseN('#length',1.0);
-    const leftovers = parseN('#leftovers',1.0);
-
-    const base = baselines(mode);
-    const sizeAdj = sizeFactor(size);
-
-    const adultPP = Math.max(0, base.adult * sizeAdj * appetite * length * leftovers);
-    const teenPP  = Math.max(0, base.teen  * sizeAdj * appetite * length * leftovers);
-    const kidPP   = Math.max(0, base.kid   * sizeAdj * appetite * length * leftovers);
-
-    const totalCrabs = Math.round((A*adultPP + T*teenPP + K*kidPP));
-
-    const dozens = totalCrabs / 12;
-    const dozensRoundedUpQuarter = Math.ceil(dozens*4)/4;
-
-    const dozPerBushel = Math.min(Math.max(parseN('#bushelDozen',6.5), 5.5), 7.5);
-    const bushels = dozens / dozPerBushel;
-
-    // Outputs
-    $('#outGuests').textContent = guests.toString();
-    $('#outCrabs').textContent = totalCrabs > 0 ? totalCrabs.toLocaleString() + ' crabs' : '—';
-    $('#outDozens').textContent = totalCrabs > 0
-      ? dozens.toFixed(2) + ' doz (round up: ' + dozensRoundedUpQuarter.toFixed(2) + ' doz)'
-      : '—';
-    $('#outBushels').textContent = totalCrabs > 0 ? bushels.toFixed(2) + ' bushels' : '—';
-
-    const per = guests>0 ? (totalCrabs/guests) : 0;
-    $('#outPer').textContent = guests>0 ? per.toFixed(1) + ' crabs/guest' : '—';
-
-    const modeTxt = {feast:'Crab feast (main)', mixed:'Mixed spread', app:'Appetizer/snack'}[mode];
-    const sizeTxt = {small:'small', medium:'medium', large:'#1 large', jumbo:'jumbo'}[size];
-    $('#explain').innerHTML = totalCrabs>0
-      ? `Based on <b>${modeTxt}</b>, <b>${sizeTxt}</b> size, appetite <b>${$('#appetite').selectedOptions[0].text}</b>, ` +
-        `length <b>${$('#length').selectedOptions[0].text}</b>, leftovers <b>${$('#leftovers').selectedOptions[0].text}</b>.`
-      : 'Enter your details and click Calculate.';
-
-    return {totalCrabs, dozens, dozensRoundedUpQuarter, bushels};
-  }
-
-  function money(n){ return isFinite(n) ? '$' + n.toFixed(2) : '$—'; }
-
-  function priceTotals(){
-    const { dozensRoundedUpQuarter, bushels } = calcTotals();
-    const pDoz = parseN('#priceDozen',0);
-    const pBus = parseN('#priceBushel',0);
-    const tax  = parseN('#taxPct',0) / 100;
-    const fees = parseN('#fees',0);
-
-    let costDozens = 0, costBushels = 0;
-
-    if (pDoz>0){
-      costDozens = (dozensRoundedUpQuarter * pDoz);
-      costDozens = costDozens + (costDozens*tax) + fees;
+    // Baseline crabs per person
+    function crabsPerPerson(course){
+      if(course==="main")  return {adult:6.0, teen:5.0, child:4.0};
+      if(course==="mixed") return {adult:4.0, teen:3.2, child:2.4};
+      return                {adult:3.0, teen:2.4, child:1.8}; // appetizer
     }
 
-    if (pBus>0){
-      // round up bushels to 2 decimals then to next 0.01 bushel for conservative cost
-      const busRounded = Math.ceil(bushels*100)/100;
-      costBushels = (busRounded * pBus);
-      costBushels = costBushels + (costBushels*tax) + fees;
+    function compute(){
+      const A=N($("A").value,0), T=N($("T").value,0), C=N($("C").value,0);
+      const guests = A+T+C;
+
+      const course = $("course").value;
+      const sizeLb = N($("size").value,0.33); // live lb per crab
+      const appetite = N($("appetite").value,1.0);
+      const length   = N($("length").value,1.0);
+      const leftovers= N($("leftovers").value,1.0);
+
+      const base = crabsPerPerson(course);
+      let totalCrabs = (A*base.adult + T*base.teen + C*base.child);
+      totalCrabs *= appetite * length * leftovers;
+
+      const crabsRounded = ceilInt(totalCrabs);
+      const livePounds = crabsRounded * sizeLb;
+
+      return {guests, crabsRounded, livePounds, sizeLb};
     }
 
-    $('#outCostDozens').textContent = costDozens>0 ? money(costDozens) : '$—';
-    $('#outCostBushels').textContent = costBushels>0 ? money(costBushels) : '$—';
+    function render(){
+      const s = compute();
 
-    $('#priceBlock').style.display = (pDoz>0 || pBus>0) ? 'grid' : 'none';
+      $("outGuests").textContent = s.guests>0 ? s.guests.toString() : "—";
+      $("outCrabs").textContent  = s.guests>0 ? s.crabsRounded.toLocaleString() + " crabs" : "—";
+      const poundsDec = (s.livePounds%1)?2:0;
+      $("outPounds").textContent = s.guests>0 ? fmt(s.livePounds, poundsDec) + " lb (live)" : "—";
+      $("outExplain").textContent = s.guests>0
+        ? "Auto-calculated from guest mix, serving style, size, appetite, event length, and leftovers."
+        : "Enter your guest mix to calculate.";
+
+      // Pricing: prefer price per dozen if set, else price per crab
+      const perDozen = N($("priceDozen").value,0);
+      const perEach  = N($("priceEach").value,0);
+      const unit = (perDozen>0) ? (perDozen/12) : (perEach>0 ? perEach : 0);
+      const tax = N($("taxPct").value,0)/100;
+      const fees = N($("fees").value,0);
+
+      const subtotal = (unit>0 && s.crabsRounded>0) ? s.crabsRounded * unit : 0;
+      const adds = subtotal * tax + (fees>0?fees:0);
+      const total = subtotal + adds;
+      const ppp = (s.guests>0 && total>0) ? total/s.guests : NaN;
+
+      $("outSubtotal").textContent = subtotal>0 ? money(subtotal) : "$—";
+      $("outAdds").textContent     = subtotal>0 ? money(adds) : "$—";
+      $("outTotal").textContent    = subtotal>0 ? money(total) : "$—";
+      $("outPPP").textContent      = (subtotal>0 && s.guests>0) ? money(ppp) : "$—";
+    }
+
+    // Listeners
+    ["A","T","C","course","size","appetite","length","leftovers",
+     "priceDozen","priceEach","taxPct","fees"].forEach(id=>{
+      const el = $(id);
+      if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }
+    });
+
+    // Presets
+    document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const n = parseInt(btn.getAttribute("data-people"),10)||0;
+        $("A").value = n; $("T").value = 0; $("C").value = 0; render();
+      });
+    });
+
+    // Reset
+    (function attachReset(){
+      const btn = $("dmReset");
+      if(!btn) return;
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("input, select").forEach(el=>{
+          if(el.tagName==="SELECT"){
+            const i = Array.from(el.options).findIndex(o=>o.defaultSelected);
+            el.selectedIndex = i>=0 ? i : 0;
+          } else { el.value = el.defaultValue; }
+        });
+        document.querySelectorAll("input, select").forEach(el=>{
+          el.dispatchEvent(new Event("input",{bubbles:true}));
+          el.dispatchEvent(new Event("change",{bubbles:true}));
+        });
+        render();
+      });
+    })();
+
+    render(); // initial
+  })();
+  </script>
+
+  <!-- FAQPage JSON-LD (5 items) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type":"Question",
+        "name":"How many blue crabs per person?",
+        "acceptedAnswer":{"@type":"Answer","text":"As a main crab feast, plan about 6 crabs per adult (about 5 for teens and 4 for children). For a mixed buffet, plan about 4 per adult. Appetizers are about 3 per adult."}
+      },
+      {
+        "@type":"Question",
+        "name":"How do you convert crabs to pounds?",
+        "acceptedAnswer":{"@type":"Answer","text":"We multiply the needed crab count by your size choice (about 0.25 lb small, 0.33 lb medium, 0.50 lb large) to estimate total live weight."}
+      },
+      {
+        "@type":"Question",
+        "name":"Do I buy by the dozen or by the crab?",
+        "acceptedAnswer":{"@type":"Answer","text":"Many markets price by the dozen. Enter a price per dozen or per crab; if both are set, we use the dozen price."}
+      },
+      {
+        "@type":"Question",
+        "name":"How much should I buy for 10, 25, 50, or 100 people?",
+        "acceptedAnswer":{"@type":"Answer","text":"For a main with typical appetite, rough guides are: 10 people about 60 crabs, 25 people about 150, 50 people about 300, 100 people about 600. Use the calculator for your exact mix and size."}
+      },
+      {
+        "@type":"Question",
+        "name":"Does this account for meat yield?",
+        "acceptedAnswer":{"@type":"Answer","text":"We plan by whole crabs and show live weight. Pick a larger size if you prefer more meat per person."}
+      }
+    ]
   }
-
-  $('#calcBtn').addEventListener('click', calcTotals);
-  $('#resetBtn').addEventListener('click', () => {
-    ['#adults','#teens','#kids'].forEach(id => $(id).value = 0);
-    $('#mode').value = 'feast';
-    $('#size').value = 'medium';
-    $('#appetite').value = '1.0';
-    $('#length').value = '1.0';
-    $('#leftovers').value = '1.0';
-    $('#bushelDozen').value = 6.5;
-    $('#notes').value = '';
-    calcTotals();
-    ['#priceDozen','#priceBushel','#taxPct','#fees'].forEach(id => $(id).value='');
-    $('#priceBlock').style.display='none';
-  });
-
-  $('#priceBtn').addEventListener('click', priceTotals);
-  $('#clearPriceBtn').addEventListener('click',()=>{
-    ['#priceDozen','#priceBushel','#taxPct','#fees'].forEach(id => $(id).value='');
-    $('#priceBlock').style.display='none';
-  });
-
-  // initial compute
-  calcTotals();
-})();
-</script>
+  </script>
 </body>
 </html>
-
