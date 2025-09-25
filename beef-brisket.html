@@ -185,61 +185,58 @@ details .ans{padding:0 14px 12px;color:#2a4b5a}
 <script>
 (function(){
   const $ = sel => document.querySelector(sel);
+  const num = (v,def=0) => { const n = parseFloat(v); return isFinite(n)?n:def; };
 
-  // parse numeric value from <input>/<select>
-  function parseN(id, def=0){
-    const el = $(id);
-    const v = parseFloat(el && el.value !== undefined ? el.value : "");
-    return isFinite(v) ? v : def;
-  }
-  // parse numeric value from output <b> tags
-  function parseOut(id){
-    const el = $(id);
-    const v = parseFloat((el?.textContent || "").replace(/[^\d.-]/g,""));
-    return isFinite(v) ? v : 0;
-  }
-  function money(n){ return isFinite(n)?'$'+n.toFixed(2):'$—'; }
+  // ---- One source of truth for the math ----
+  function compute(){
+    const A = num($('#adults')?.value,0);
+    const T = num($('#teens')?.value,0);
+    const K = num($('#kids')?.value,0);
+    const mode = $('#mode')?.value || 'main';
+    const appetite  = num($('#appetite')?.value,1.0);
+    const length    = num($('#length')?.value,1.0);
+    const leftovers = num($('#leftovers')?.value,1.0);
+    const size = $('#size')?.value || 'flat';
 
-  function calcTotals(){
-    const A=parseN('#adults'); const T=parseN('#teens'); const K=parseN('#kids');
-    const guests=A+T+K; const mode=$('#mode').value; const appetite=parseN('#appetite',1.0);
-    const length=parseN('#length',1.0); const leftovers=parseN('#leftovers',1.0);
-    const size=$('#size').value;
+    const guests = A+T+K;
 
-    let base=0.0;
-    if(mode==="main"){ base=12; }   // 12 oz raw per adult
-    if(mode==="mixed"){ base=8; }   // 8 oz raw
-    if(mode==="app"){ base=5; }     // 5 oz raw
+    // baselines (raw ounces per adult-equivalent)
+    let base=12;                 // main
+    if(mode==='mixed') base=8;   // mixed proteins
+    if(mode==='app')   base=5;   // appetizers/sliders
 
     // teens ~0.75, kids ~0.5
-    let rawOz=(A*base)+(T*base*0.75)+(K*base*0.5);
-    rawOz=rawOz*appetite*length*leftovers;
+    let rawOz = (A*base) + (T*base*0.75) + (K*base*0.5);
+    rawOz = rawOz * appetite * length * leftovers;
 
-    // shrink: flat ~33%, point ~36%
-    const shrink=size==="flat"?0.33:0.36;
-    const rawLbs=rawOz/16;
-    const cookedLbs=rawLbs*(1-shrink);
+    const shrink = (size==='flat') ? 0.33 : 0.36;
+    const rawLbs = rawOz/16;
+    const cookedLbs = rawLbs*(1-shrink);
 
-    $('#outGuests').textContent=guests;
-    $('#outRaw').textContent=rawLbs.toFixed(1);
-    $('#outCooked').textContent=cookedLbs.toFixed(1);
-    $('#explain').textContent="~"+(shrink*100).toFixed(0)+"% shrinkage applied for "+size+" cut.";
+    return { guests, rawLbs, cookedLbs, shrink, size };
+  }
+
+  function money(n){ return isFinite(n) ? '$'+n.toFixed(2) : '$—'; }
+
+  function calcTotals(){
+    const s = compute();
+    $('#outGuests').textContent = s.guests;
+    $('#outRaw').textContent    = s.rawLbs.toFixed(1);
+    $('#outCooked').textContent = s.cookedLbs.toFixed(1);
+    $('#explain').textContent   = '~'+(s.shrink*100).toFixed(0)+'% shrinkage applied for '+s.size+' cut.';
   }
 
   function priceTotals(){
-    // ensure results reflect current inputs (prevents $fees-only totals)
-    calcTotals();
+    // Always recompute from inputs (don’t read from DOM outputs)
+    const s = compute();
 
-    const unit = parseN('#price',0);           // $/lb
-    const tax  = parseN('#tax',0)/100;         // % -> decimal
-    const fees = parseN('#fees',0);            // $
+    const unit = num($('#price')?.value,0);  // $/lb
+    const tax  = num($('#tax')?.value,0)/100;
+    const fees = num($('#fees')?.value,0);
 
-    const raw    = parseOut('#outRaw');        // lbs (from results)
-    const guests = parseOut('#outGuests');     // integer (from results)
-
-    const subtotal = raw * unit;
+    const subtotal = s.rawLbs * unit;
     const total    = subtotal + (subtotal * tax) + fees;
-    const per      = guests ? total / guests : 0;
+    const per      = s.guests ? (total / s.guests) : 0;
 
     $('#outTotal').textContent = money(total);
     $('#outPer').textContent   = money(per);
@@ -248,16 +245,16 @@ details .ans{padding:0 14px 12px;color:#2a4b5a}
 
   $('#calcBtn').addEventListener('click', calcTotals);
   $('#resetBtn').addEventListener('click', ()=>{
-    ['#adults','#teens','#kids','#price','#tax','#fees','#notes'].forEach(id=>$(id).value="");
-    $('#mode').value="main"; $('#size').value="flat"; $('#appetite').value="1.0";
-    $('#length').value="1.0"; $('#leftovers').value="1.0";
-    $('#priceBlock').style.display="none";
+    ['#adults','#teens','#kids','#price','#tax','#fees','#notes'].forEach(id=>{ const el=$(id); if(el) el.value=''; });
+    $('#mode').value='main'; $('#size').value='flat'; $('#appetite').value='1.0';
+    $('#length').value='1.0'; $('#leftovers').value='1.0';
+    $('#priceBlock').style.display='none';
     calcTotals();
   });
   $('#priceBtn').addEventListener('click', priceTotals);
   $('#clearPriceBtn').addEventListener('click',()=>{
-    ['#price','#tax','#fees'].forEach(id=>$(id).value="");
-    $('#priceBlock').style.display="none";
+    ['#price','#tax','#fees'].forEach(id=>{ const el=$(id); if(el) el.value=''; });
+    $('#priceBlock').style.display='none';
   });
 
   // initial render
@@ -266,3 +263,4 @@ details .ans{padding:0 14px 12px;color:#2a4b5a}
 </script>
 </body>
 </html>
+
