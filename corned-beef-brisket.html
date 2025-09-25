@@ -44,7 +44,6 @@
     .kv + .kv{margin-top:8px}
     .kv b{font-size:1.05rem}
     .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
-    .hidden{display:none!important}
     @media (max-width:720px){.row{grid-template-columns:1fr}}
   </style>
 </head>
@@ -82,8 +81,8 @@
         <div>
           <label for="cut">Cut style</label>
           <select id="cut">
-            <option value="flat" selected>Flat cut (≈ 33 percent shrink)</option>
-            <option value="point">Point cut (≈ 40 percent shrink)</option>
+            <option value="flat" selected>Flat cut (about 33 percent shrink)</option>
+            <option value="point">Point cut (about 40 percent shrink)</option>
           </select>
           <div class="muted">We convert cooked ounces → raw pounds using the shrink for your cut.</div>
         </div>
@@ -92,7 +91,7 @@
           <select id="appetite">
             <option value="0.90">Light</option>
             <option value="1.00" selected>Typical</option>
-            <option value="1.20">Hungry</option>
+            <option value="1.20">Hearty</option>
           </select>
         </div>
         <div>
@@ -108,8 +107,8 @@
           <label for="leftovers">Add leftovers</label>
           <select id="leftovers">
             <option value="1.00" selected>No</option>
-            <option value="1.10">Add about ten percent</option>
-            <option value="1.20">Add about twenty percent</option>
+            <option value="1.10">+10%</option>
+            <option value="1.20">+20%</option>
           </select>
         </div>
       </div>
@@ -158,26 +157,26 @@
         <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/butcher+shop','_blank');}catch(e){location.href='https://www.google.com/maps/search/butcher+shop';}return false;">Butcher shops</a>
         <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/grocery+store','_blank');}catch(e){location.href='https://www.google.com/maps/search/grocery+store';}return false;">Grocery stores</a>
       </div>
-      <div class="muted" style="margin-top:8px">DinnerMath v1.5 (auto-calc)</div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.6 (auto-calc)</div>
     </div>
 
-    <!-- FAQ -->
-    <div class="card" role="region" aria-label="FAQ">
-      <h2>Questions and answers about corned beef brisket amounts</h2>
+    <!-- FAQs -->
+    <div class="card" role="region" aria-label="FAQs">
+      <h2>FAQs</h2>
       <details open>
         <summary>How much corned beef brisket per person?</summary>
         <div class="fine">
           As a main dish, plan about <strong>7 ounces cooked per adult</strong> (≈5.5 oz teen, ≈4 oz child).
           For a mixed buffet, about <strong>5 ounces cooked per adult</strong>.
           Appetizers are about <strong>3 ounces cooked per adult</strong>.
-          We convert cooked ounces to raw pounds using the cut’s shrink: flat ≈ 33 percent; point ≈ 40 percent.
+          We convert cooked ounces to raw pounds using the cut’s shrink: flat about 33 percent; point about 40 percent.
         </div>
       </details>
       <details>
         <summary>What’s the difference between flat and point cut?</summary>
         <div class="fine">
           Flat is leaner and typically shrinks about one-third when cooked.
-          Point is fattier and shrinks a little more (around two-fifths).
+          Point is fattier and shrinks a little more (about two-fifths).
         </div>
       </details>
       <details>
@@ -245,12 +244,10 @@
     function render(){
       const s = compute();
 
-      // Explain badge text
       const courseTxt = s.course==="main" ? "main dish"
                         : s.course==="mixed" ? "mixed buffet" : "appetizer/snack";
-      const cutTxt = s.cut==="point" ? "point cut (≈ 40% shrink)" : "flat cut (≈ 33% shrink)";
+      const cutTxt = s.cut==="point" ? "point cut (about 40% shrink)" : "flat cut (about 33% shrink)";
 
-      // Results
       $("outGuests").textContent = s.guests>0 ? s.guests.toString() : "—";
       $("outRaw").textContent    = s.guests>0 ? fmt(s.rawRounded, (s.rawRounded%1)?2:0) + " lb" : "—";
       $("outCooked").textContent = s.guests>0 ? fmt(s.cookedLb, (s.cookedLb%1)?2:0) + " lb" : "—";
@@ -289,7 +286,7 @@
       });
     });
 
-    // Reset (returns all inputs/selects to their HTML defaults)
+    // Reset
     (function attachReset(){
       const btn = $("dmReset");
       if(!btn) return;
@@ -302,7 +299,6 @@
             el.value = el.defaultValue;
           }
         });
-        // fire events to re-calc
         document.querySelectorAll("input, select").forEach(el=>{
           el.dispatchEvent(new Event("input",{bubbles:true}));
           el.dispatchEvent(new Event("change",{bubbles:true}));
@@ -311,11 +307,11 @@
       });
     })();
 
-    render(); // initial
+    render();
   })();
   </script>
 
-  <!-- FAQPage JSON-LD (helps search engines) -->
+  <!-- FAQPage JSON-LD -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -326,7 +322,7 @@
         "name": "How much corned beef brisket per person?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "As a main dish, plan about 7 ounces cooked per adult (about 5.5 ounces for teens and 4 ounces for children). For a mixed buffet, plan about 5 ounces cooked per adult. Appetizers are about 3 ounces cooked per adult. We convert cooked ounces to raw pounds using the cut’s shrink (flat ≈ 33% shrink; point ≈ 40% shrink)."
+          "text": "As a main dish, plan about 7 ounces cooked per adult (about 5.5 ounces for teens and 4 ounces for children). For a mixed buffet, plan about 5 ounces cooked per adult. Appetizers are about 3 ounces cooked per adult. We convert cooked ounces to raw pounds using the cut’s shrink (flat about 33% shrink; point about 40% shrink)."
         }
       },
       {
@@ -350,6 +346,3 @@
   </script>
 </body>
 </html>
-
-
-
