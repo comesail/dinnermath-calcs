@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DinnerMath — Whole Turkey Quantity Calculator</title>
+  <meta name="description" content="How much whole turkey to buy per person? DinnerMath estimates about raw pounds and about how many whole turkeys, with optional pricing and quick presets.">
+  <meta name="robots" content="index,follow">
+  <style>
+    :root{
+      --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc;
+      --pill:#374151; --card:#ffffff; --accent:#111827;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      background:var(--bg);
+      font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;
+      color:var(--ink);
+    }
+    .wrap{max-width:820px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+    .outline{border:2px solid var(--ink)}
+    h1{font-size:22px;margin:0 0 8px}
+    .lede{color:var(--muted);margin:0 0 16px}
+    h2{font-size:20px;margin:16px 0 8px}
+    h3{font-size:18px;margin:0 0 12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
+    input[type="number"],select{
+      width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px;
+      font-size:14px;background:#fff;color:var(--ink)
+    }
+    .muted{color:var(--muted);font-size:12px}
+    .fine{font-size:13px;color:#374151}
+    .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .preset:hover{background:#f3f4f6}
+    .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:#374151;background:#fff}
+    .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+    .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .kv + .kv{margin-top:8px}
+    .kv b{font-size:1.05rem}
+    .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
+    @media (max-width:720px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- Header -->
+    <div class="card" role="region" aria-label="Header">
+      <h1>Whole Turkey Quantity Calculator — How Much per Person</h1>
+      <p class="lede">
+        Enter guests and settings (or tap a quick preset). We’ll estimate
+        <strong>about raw pounds</strong> of whole turkey to buy and <strong>about how many turkeys</strong>,
+        then show an optional <strong>cost estimate</strong>.
+      </p>
+    </div>
+
+    <!-- Inputs -->
+    <div class="card" role="region" aria-label="Inputs">
+      <h3>Inputs</h3>
+
+      <div class="row" aria-label="Guests">
+        <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="10"></div>
+        <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="0"></div>
+        <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="0"></div>
+        <div>
+          <label for="course">Course mode</label>
+          <select id="course">
+            <option value="main" selected>Main protein</option>
+            <option value="mixed">Mixed buffet</option>
+            <option value="sandwich">Sandwich carving station</option>
+            <option value="app">Appetizer tasting</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" aria-label="Context">
+        <div>
+          <label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">Short — about 1 to 2 hours</option>
+            <option value="1.00" selected>Standard — about 2 to 3 hours</option>
+            <option value="1.08">Long — about 3 to 4 hours</option>
+            <option value="1.15">Extended — about 4 to 5 hours</option>
+          </select>
+        </div>
+        <div>
+          <label for="leftovers">Add leftovers</label>
+          <select id="leftovers">
+            <option value="1.00" selected>No</option>
+            <option value="1.10">+10%</option>
+            <option value="1.20">+20%</option>
+          </select>
+        </div>
+        <div>
+          <label for="appetite">Appetite</label>
+          <select id="appetite">
+            <option value="0.90">Light</option>
+            <option value="1.00" selected>Typical</option>
+            <option value="1.20">Hearty</option>
+          </select>
+        </div>
+        <!-- Item-specific dropdown AFTER Appetite -->
+        <div>
+          <label for="size">Turkey class (avg whole-bird weight)</label>
+          <select id="size">
+            <option value="12">Small — about 12 lb each</option>
+            <option value="14" selected>Average — about 14 lb each</option>
+            <option value="16">Large — about 16 lb each</option>
+            <option value="20">Jumbo — about 20 lb each</option>
+          </select>
+          <div class="muted">We use your class to convert raw pounds to about how many whole turkeys to buy.</div>
+        </div>
+      </div>
+
+      <!-- Presets + Reset -->
+      <div class="inline" style="margin-top:8px">
+        <span class="muted">Quick presets:</span>
+        <button class="preset" data-people="10" type="button">10</button>
+        <button class="preset" data-people="25" type="button">25</button>
+        <button class="preset" data-people="50" type="button">50</button>
+        <button class="preset" data-people="100" type="button">100</button>
+        <span class="muted">Presets set all as adults — tweak Teens/Children if needed.</span>
+        <div style="flex:1"></div>
+        <button id="dmReset" type="button" class="preset">Reset</button>
+      </div>
+    </div>
+
+    <!-- Pricing -->
+    <div class="card" role="region" aria-label="Pricing">
+      <h3>Pricing (optional)</h3>
+      <div class="row">
+        <div><label for="priceUnit">Unit price (US dollars per pound)</label><input id="priceUnit" type="number" min="0" step="0.01" placeholder="e.g., 1.29"></div>
+        <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="e.g., 7.5"></div>
+        <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="e.g., 8.00"></div>
+      </div>
+      <div class="muted">Cost = <em>rounded raw pounds</em> × price + tax + extra fees.</div>
+    </div>
+
+    <!-- Results -->
+    <div class="card outline" role="region" aria-label="Results" aria-live="polite">
+      <h3 class="results-title">Results</h3>
+      <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
+      <div class="kv"><span>Raw whole turkey pounds to buy (about)</span><b id="outPounds">—</b></div>
+      <div class="kv"><span>About how many whole turkeys</span><b id="outBirds">—</b></div>
+      <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$—</b></div>
+      <div class="kv"><span>Tax and fees</span><b id="outAdds">$—</b></div>
+      <div class="kv"><span>Estimated total</span><b id="outTotal">$—</b></div>
+      <div class="kv"><span>Cost per person</span><b id="outPPP">$—</b></div>
+      <p class="muted" id="outExplain">Enter your guest mix to calculate.</p>
+    </div>
+
+    <!-- Finder -->
+    <div class="card finder" role="region" aria-label="Find near me">
+      <div class="inline">
+        <a class="preset" href="#" onclick="try{window.open('https://www.google.com/maps/search/whole+turkey+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/whole+turkey+near+me';}return false;">Find whole turkey near me</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/butcher','_blank');}catch(e){location.href='https://www.google.com/maps/search/butcher';}return false;">Butcher shops</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/catering','_blank');}catch(e){location.href='https://www.google.com/maps/search/catering';}return false;">Catering</a>
+      </div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.7 (auto-calc)</div>
+    </div>
+
+    <!-- FAQs (5) -->
+    <div class="card" role="region" aria-label="FAQs">
+      <h2>FAQs</h2>
+
+      <details open>
+        <summary>How much whole turkey per person?</summary>
+        <div class="fine">
+          As a main protein, plan about <strong>1.25 lb per adult</strong>, about <strong>1.5 lb per teen</strong>,
+          and about <strong>0.75 lb per child</strong> <em>raw</em>. Bones and moisture loss mean only part becomes edible meat.
+        </div>
+      </details>
+
+      <details>
+        <summary>What do the turkey class labels mean?</summary>
+        <div class="fine">
+          <strong>Small about 12 lb</strong>, <strong>Average about 14 lb</strong>, <strong>Large about 16 lb</strong>,
+          <strong>Jumbo about 20 lb</strong> per bird. We use these to estimate <em>about how many whole turkeys</em> for your raw-pound target.
+        </div>
+      </details>
+
+      <details>
+        <summary>Main protein, mixed buffet, or sandwiches — what changes?</summary>
+        <div class="fine">
+          Course mode multipliers: Main 1.00x, Mixed buffet 0.75x, Sandwich station 0.80x, Appetizer 0.50x.
+          Combine with appetite, event length, and leftovers to fit your crowd.
+        </div>
+      </details>
+
+      <details>
+        <summary>How does pricing work here?</summary>
+        <div class="fine">
+          Subtotal = <em>rounded raw pounds × unit price per pound</em>. Then we add your tax and any extra fees to estimate a total and per-person cost.
+        </div>
+      </details>
+
+      <details>
+        <summary>How many pounds of cooked meat does that yield?</summary>
+        <div class="fine">
+          A whole turkey typically yields about <strong>40 to 50 percent cooked, boneless meat</strong>. If you need a cooked-meat target (for sandwiches),
+          multiply the cooked pounds you want by about 2.2 to 2.5 to get raw whole-turkey pounds. <strong>This calculator already factors that shrinkage into the raw-pound results you see.</strong>
+        </div>
+      </details>
+    </div>
+
+    <!-- Quick notes -->
+    <div class="card" role="region" aria-label="Quick notes">
+      <h3>Quick notes</h3>
+      <ul class="fine" style="margin:0 0 0 18px;padding:0">
+        <li><strong>Base portions (raw lb per person):</strong> Adults about 1.25 lb; Teens about 1.50 lb; Children about 0.75 lb.</li>
+        <li><strong>Course multipliers:</strong> Main 1.00x; Mixed 0.75x; Sandwich 0.80x; Appetizer 0.50x.</li>
+        <li><strong>Context multipliers:</strong> Appetite (0.90 / 1.00 / 1.20); Event length (0.95 / 1.00 / 1.08 / 1.15); Leftovers (No / +10% / +20%).</li>
+        <li><strong>Turkey class (avg whole-bird weight):</strong> Small 12 lb; Average 14 lb; Large 16 lb; Jumbo 20 lb.</li>
+        <li><strong>Rounding:</strong> Whole turkeys round up to whole birds. Raw pounds round to the nearest 1/4 lb.</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm with your grocer/caterer and adjust for your crowd.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Calculator logic -->
+  <script>
+  (function(){
+    const $ = id => document.getElementById(id);
+    const N = (v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+    const money = n => (isFinite(n)&&n>=0) ? "$"+n.toFixed(2) : "$—";
+    const roundQuarter = n => Math.round(n*4)/4;
+
+    const courseMult = c => (c==="main"?1.00:c==="mixed"?0.75:c==="sandwich"?0.80:0.50);
+    const lenMult = v => (v==1.15?1.15:v==1.08?1.08:v==0.95?0.95:1.00);
+
+    function compute(){
+      const A=N($("A").value,0), T=N($("T").value,0), C=N($("C").value,0);
+      const guests = A+T+C;
+      const appetite=N($("appetite").value,1.0);
+      const leftovers=N($("leftovers").value,1.0);
+      const length=N($("length").value,1.0);
+      const course=$("course").value;
+      const birdAvg=N($("size").value,14);
+
+      // base raw pounds per person
+      const base={adult:1.25, teen:1.50, child:0.75};
+      let pounds = (A*base.adult + T*base.teen + C*base.child);
+      pounds *= courseMult(course) * appetite * lenMult(length) * leftovers;
+
+      const rawRounded = roundQuarter(Math.max(0,pounds));
+
+      // birds
+      const birds = (rawRounded>0 && birdAvg>0) ? Math.ceil(rawRounded / birdAvg) : 0;
+
+      // Pricing by pound
+      const price=N($("priceUnit").value,0), tax=N($("taxPct").value,0)/100, fees=N($("fees").value,0);
+      const subtotal = (price>0 && rawRounded>0) ? rawRounded*price : 0;
+      const adds = subtotal*tax + (fees>0?fees:0);
+      const total = subtotal + adds;
+      const ppp = (guests>0 && total>0) ? total/guests : NaN;
+
+      return {guests, rawRounded, birds, subtotal, adds, total, ppp};
+    }
+
+    function render(){
+      const s=compute();
+      $("outGuests").textContent = s.guests>0 ? s.guests.toString() : "—";
+      $("outPounds").textContent = s.guests>0 ? (s.rawRounded.toFixed(2).replace(/\.00$/,''))+" lb" : "—";
+      $("outBirds").textContent   = s.guests>0 ? s.birds.toString() : "—";
+      $("outSubtotal").textContent = s.subtotal>0 ? money(s.subtotal) : "$—";
+      $("outAdds").textContent     = s.subtotal>0 ? money(s.adds) : "$—";
+      $("outTotal").textContent    = s.subtotal>0 ? money(s.total) : "$—";
+      $("outPPP").textContent      = (s.total>0 && s.guests>0) ? money(s.ppp) : "$—";
+      $("outExplain").textContent  = s.guests>0
+        ? "Auto-calculated from guests, course, turkey class, appetite, event length, and leftovers."
+        : "Enter your guest mix to calculate.";
+    }
+
+    ["A","T","C","course","length","leftovers","appetite","size","priceUnit","taxPct","fees"]
+      .forEach(id=>{const el=$(id); if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }});
+
+    document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+      btn.addEventListener("click",()=>{const n=parseInt(btn.getAttribute("data-people"),10)||0;$("A").value=n;$("T").value=0;$("C").value=0;render();});
+    });
+
+    (function attachReset(){
+      const btn=$("dmReset"); if(!btn) return;
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("input, select").forEach(el=>{
+          if(el.tagName==="SELECT"){
+            const i=Array.from(el.options).findIndex(o=>o.defaultSelected);
+            el.selectedIndex = i>=0 ? i : 0;
+          } else { el.value = el.defaultValue; }
+        });
+        document.querySelectorAll("input, select").forEach(el=>{
+          el.dispatchEvent(new Event("input",{bubbles:true}));
+          el.dispatchEvent(new Event("change",{bubbles:true}));
+        });
+        render();
+      });
+    })();
+
+    render();
+  })();
+  </script>
+
+  <!-- FAQPage JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How much whole turkey per person?","acceptedAnswer":{"@type":"Answer","text":"As a main protein, plan about 1.25 lb per adult, about 1.5 lb per teen, and about 0.75 lb per child raw. Bones and moisture loss mean only part becomes edible meat."}},
+      {"@type":"Question","name":"What do the turkey class labels mean?","acceptedAnswer":{"@type":"Answer","text":"Small about 12 lb, Average about 14 lb, Large about 16 lb, Jumbo about 20 lb per bird. We use these to estimate about how many whole turkeys for your raw-pound target."}},
+      {"@type":"Question","name":"Main protein, mixed buffet, or sandwiches — what changes?","acceptedAnswer":{"@type":"Answer","text":"Course mode multipliers: Main 1.00x, Mixed buffet 0.75x, Sandwich station 0.80x, Appetizer 0.50x."}},
+      {"@type":"Question","name":"How does pricing work here?","acceptedAnswer":{"@type":"Answer","text":"Subtotal = rounded raw pounds × unit price per pound. Then tax and fees are added to estimate a total and per-person cost."}},
+      {"@type":"Question","name":"How many pounds of cooked meat does that yield?","acceptedAnswer":{"@type":"Answer","text":"A whole turkey typically yields about 40 to 50 percent cooked, boneless meat. If you need a cooked-meat target, multiply by about 2.2 to 2.5 to estimate raw pounds."}}
+    ]
+  }
+  </script>
+
+</body>
+</html>
