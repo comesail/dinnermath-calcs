@@ -1,195 +1,336 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="description" content="Enter guests and appetite—DinnerMath estimates spiral ham to buy in raw pounds and cooked yield, with options for bone-in or boneless, plus leftovers.">
-<title>Spiral Ham Quantity Calculator — How Many per Person (Raw Pounds & Cooked Yield)</title>
-<style>
-*,*::before,*::after{box-sizing:border-box}
-html,body{margin:0;padding:0;overflow-x:hidden;background:#eaf6fb;color:#0b2a3a;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-.wrap{width:100%;max-width:480px;margin:0 auto;padding:16px}
-@media(min-width:640px){.wrap{max-width:720px;padding:20px}}
-@media(min-width:980px){.wrap{max-width:980px;padding:28px 16px 56px}}
-:root{--ink2:#13506a;--paper:#fff;--line:#d7e8ef;--accent:#2f8db3;--shadow:0 6px 20px rgba(11,42,58,.08);--radius:18px}
-header{margin:0 0 18px}
-header h1{font-size:clamp(22px,3.2vw,34px);margin:0 0 8px;color:var(--ink2)}
-header p{margin:0;color:#274757}
-.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-.stack{display:grid;gap:14px}
-h2{font-size:clamp(18px,2.5vw,22px);margin:0 0 8px;color:var(--ink2)}
-.grid{display:grid;gap:12px}
-@media(min-width:760px){.grid{grid-template-columns:repeat(12,1fr)}}
-.field{display:flex;flex-direction:column;gap:6px;background:#f7fbfd;border:1px solid var(--line);border-radius:12px;padding:10px}
-label{font-weight:600;font-size:.95rem}
-input[type=number],select{border:1px solid #cfe3eb;border-radius:10px;padding:9px 10px;background:#fff;font-size:1rem}
-.row-4{grid-column:span 12}@media(min-width:760px){.row-4{grid-column:span 4}}
-.row-6{grid-column:span 12}@media(min-width:760px){.row-6{grid-column:span 6}}
-.row-12{grid-column:span 12}
-.btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer}
-.btn.secondary{background:#fff;color:var(--accent)}
-.result{display:grid;gap:10px;background:#f6fbfe;border:1px dashed #b7d7e6;border-radius:16px;padding:14px}
-.kv{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:12px}
-.kv b{font-size:1.05rem}
-.muted{color:#4c6b7a;font-size:.9rem}
-details{border:1px solid var(--line);border-radius:12px;background:#fff;margin:10px 0}
-summary{cursor:pointer;padding:10px 14px;font-weight:700;color:#13506a}
-details[open] summary{border-bottom:1px solid var(--line)}
-details .ans{padding:10px 14px 12px;color:#2a4b5a}
-.map-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
-.footnote,.disclaimer{font-size:.85rem;color:#567789;margin-top:10px}
-/* Mobile embed height handled by Wix (4827px container). */
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DinnerMath — Spiral Ham Quantity Calculator</title>
+  <meta name="description" content="How much spiral ham per person? DinnerMath estimates raw pounds to buy, approximate cooked yield, and an about count of hams (by size), with pricing and quick presets for 10, 25, 50, 100 people.">
+  <meta name="robots" content="index,follow">
+  <style>
+    :root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--bg:#f8fafc;--pill:#374151;--card:#ffffff;--accent:#111827}
+    *{box-sizing:border-box}html,body{margin:0;padding:0}
+    body{background:var(--bg);
+      font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;
+      color:var(--ink);}
+    .wrap{max-width:820px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+    .outline{border:2px solid var(--ink)}
+    h1{font-size:22px;margin:0 0 8px}
+    .lede{color:var(--muted);margin:0 0 16px}
+    h2{font-size:20px;margin:16px 0 8px}
+    h3{font-size:18px;margin:0 0 12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
+    input[type="number"],select{width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px;font-size:14px;background:#fff;color:var(--ink)}
+    .muted{color:var(--muted);font-size:12px}
+    .fine{font-size:13px;color:#374151}
+    .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .preset:hover{background:#f3f4f6}
+    .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:#374151;background:#fff}
+    .divider{height:1px;background:var(--line);margin:12px 0}
+    .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+    .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .kv + .kv{margin-top:8px}.kv b{font-size:1.05rem}
+    .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
+    @media (max-width:720px){.row{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>Spiral Ham Quantity Calculator — How Many per Person (Raw Pounds & Cooked Yield)</h1>
-    <p>Enter your guest mix and appetite. DinnerMath estimates spiral ham to buy in raw pounds and cooked yield—adjusted for bone-in or boneless, event length, and leftovers.</p>
-  </header>
+  <div class="wrap">
 
-  <!-- INPUTS -->
-  <section class="card stack" id="inputs">
-    <h2>Inputs</h2>
-    <div class="grid">
-      <div class="field row-4"><label for="adults">Adults</label><input id="adults" type="number" min="0" step="1" value="12"></div>
-      <div class="field row-4"><label for="teens">Teens</label><input id="teens" type="number" min="0" step="1" value="2"></div>
-      <div class="field row-4"><label for="kids">Kids</label><input id="kids" type="number" min="0" step="1" value="2"></div>
-
-      <div class="field row-6">
-        <label for="style">Ham style</label>
-        <select id="style">
-          <option value="0.65" selected>Bone-in spiral — ~65% cooked yield (edible)</option>
-          <option value="0.90">Boneless ham — ~90% cooked yield</option>
-        </select>
-        <div class="help">Yield is edible portion after bone/trim and slicing.</div>
-      </div>
-
-      <div class="field row-6">
-        <label for="appetite">Appetite</label>
-        <select id="appetite"><option value="0.9">Light</option><option value="1.0" selected>Typical</option><option value="1.2">Hungry</option></select>
-      </div>
-
-      <div class="field row-6">
-        <label for="length">Event length</label>
-        <select id="length"><option value="0.95">1–2 hours</option><option value="1.0" selected>2–3 hours</option><option value="1.08">3–4 hours</option><option value="1.15">4–5 hours</option></select>
-      </div>
-
-      <div class="field row-6">
-        <label for="leftovers">Leftovers</label>
-        <select id="leftovers"><option value="1.0" selected>No</option><option value="1.07">Some leftovers</option><option value="1.12">Extra leftovers</option></select>
-      </div>
-
-      <div class="field row-12"><label for="notes">Notes (optional)</label><input id="notes" type="text" placeholder="e.g., buffet vs plated; other mains; rolls & sides"></div>
+    <!-- Header -->
+    <div class="card" role="region" aria-label="Header">
+      <h1>Spiral Ham Quantity Calculator — How Much per Person</h1>
+      <p class="lede">
+        Enter guests and settings (or tap a quick preset). We’ll estimate
+        <strong>raw pounds to buy</strong>, <strong>approximate cooked yield</strong>, and
+        an <strong>about count of hams</strong> based on size, then show an optional <strong>cost estimate</strong>.
+      </p>
     </div>
-    <div class="actions"><button class="btn" id="calcBtn">Calculate</button><button class="btn secondary" id="resetBtn" type="button">Reset</button></div>
-  </section>
 
-  <!-- RESULTS -->
-  <section class="card stack" id="results" aria-live="polite">
-    <h2>Results</h2>
-    <div class="result">
+    <!-- Inputs -->
+    <div class="card" role="region" aria-label="Inputs">
+      <h3>Inputs</h3>
+      <div class="row" aria-label="Guests">
+        <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="12"></div>
+        <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="6"></div>
+        <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="4"></div>
+        <div>
+          <label for="course">Course mode</label>
+          <select id="course">
+            <option value="main" selected>Main dish</option>
+            <option value="mixed">Mixed buffet</option>
+            <option value="app">Appetizer/snack</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" aria-label="Context">
+        <div>
+          <label for="cut">Ham style</label>
+          <select id="cut">
+            <option value="bonein" selected>Spiral, bone-in (about 40% shrink)</option>
+            <option value="boneless">Spiral, boneless (about 20% shrink)</option>
+          </select>
+          <div class="muted">We convert cooked ounces → raw pounds using the yield for your style.</div>
+        </div>
+        <div>
+          <label for="hamEach">Ham size each (lb)</label>
+          <input id="hamEach" type="number" min="1" step="0.1" value="8.0">
+          <div class="muted">Many bone-in halves are about 8–10 lb; boneless logs are about 3–4 lb.</div>
+        </div>
+        <div>
+          <label for="appetite">Appetite</label>
+          <select id="appetite">
+            <option value="0.90">Light</option>
+            <option value="1.00" selected>Typical</option>
+            <option value="1.20">Hearty</option>
+          </select>
+        </div>
+        <div>
+          <label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">Short — about 1 to 2 hours</option>
+            <option value="1.00" selected>Standard — about 2 to 3 hours</option>
+            <option value="1.08">Long — about 3 to 4 hours</option>
+            <option value="1.15">Extended — about 4 to 5 hours</option>
+          </select>
+        </div>
+        <div>
+          <label for="leftovers">Add leftovers</label>
+          <select id="leftovers">
+            <option value="1.00" selected>No</option>
+            <option value="1.10">+10%</option>
+            <option value="1.20">+20%</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Presets + Reset -->
+      <div class="inline" style="margin-top:8px">
+        <span class="muted">Quick presets:</span>
+        <button class="preset" data-people="10" type="button">10</button>
+        <button class="preset" data-people="25" type="button">25</button>
+        <button class="preset" data-people="50" type="button">50</button>
+        <button class="preset" data-people="100" type="button">100</button>
+        <span class="muted">Presets set all as adults — tweak Teens/Children if needed.</span>
+        <div style="flex:1"></div>
+        <button id="dmReset" type="button" class="preset">Reset</button>
+      </div>
+    </div
+    <!-- Pricing (optional) -->
+    <div class="card" role="region" aria-label="Pricing">
+      <h3>Pricing (optional)</h3>
+      <div class="row">
+        <div><label for="priceLb">Unit price (US dollars per pound)</label><input id="priceLb" type="number" min="0" step="0.01" placeholder="e.g., 3.49"></div>
+        <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="e.g., 7.5"></div>
+        <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="e.g., 8.00"></div>
+      </div>
+      <div class="muted">Cost = <em>rounded raw pounds</em> × price + tax + extra fees.</div>
+    </div>
+
+    <!-- Results -->
+    <div class="card outline" role="region" aria-label="Results" aria-live="polite">
+      <h3 class="results-title">Results</h3>
       <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
-      <div class="kv"><span>Total cooked ham needed</span><b id="outCooked">—</b></div>
-      <div class="kv"><span>Total raw ham to buy</span><b id="outRaw">—</b></div>
-      <div class="muted" id="explain">Enter details and click Calculate.</div>
-    </div>
-    <div class="map-links">
-      <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/spiral+ham+near+me">Find spiral ham near me</a>
-      <a class="btn secondary" target="_blank" rel="noopener" href="https://www.google.com/maps/search/grocery+store+near+me">Grocery stores</a>
-    </div>
-    <div class="footnote">Default cooked portion ~8 ounces (0.5 lb) per adult-equivalent for a main course.</div>
-  </section>
-
-  <!-- PRICING (optional) -->
-  <section class="card stack" id="pricing">
-    <h2>Pricing (optional)</h2>
-    <div class="grid">
-      <div class="field row-4"><label for="price">Price per pound raw (USD)</label><input id="price" type="number" min="0" step="0.01" value="3.49"></div>
-      <div class="field row-4"><label for="tax">Tax percent</label><input id="tax" type="number" min="0" step="0.1" value="0"></div>
-      <div class="field row-4"><label for="fees">Fees or other percent</label><input id="fees" type="number" min="0" step="0.1" value="0"></div>
-    </div>
-    <div class="actions"><button class="btn" id="priceBtn">Estimate cost</button><button class="btn secondary" id="clearPriceBtn" type="button">Clear</button></div>
-    <div class="result" id="priceBlock" style="display:none;margin-top:10px">
+      <div class="kv"><span>Raw spiral ham to buy (pounds, estimated)</span><b id="outRaw">—</b></div>
+      <div class="kv"><span>Approximate cooked yield (pounds)</span><b id="outCooked">—</b></div>
+      <div class="kv"><span>About how many hams</span><b id="outCount">—</b></div>
+      <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$—</b></div>
+      <div class="kv"><span>Tax and fees</span><b id="outAdds">$—</b></div>
       <div class="kv"><span>Estimated total</span><b id="outTotal">$—</b></div>
-      <div class="kv"><span>Per person</span><b id="outPerPerson">$—</b></div>
-      <div class="muted">Pricing varies by brand, cure, and market.</div>
+      <div class="kv"><span>Cost per person</span><b id="outPPP">$—</b></div>
+      <p class="muted" id="outExplain">Enter your guest mix to calculate.</p>
     </div>
-  </section>
 
-  <!-- QUICK NOTES -->
-  <section class="card stack" id="notesBlock">
-    <h2>Quick Notes</h2>
-    <ul class="stack" style="margin:0;padding-left:18px">
-      <li><b>Baseline cooked portion:</b> ~8 ounces (0.5 lb) per adult-equivalent.</li>
-      <li><b>Yield:</b> Bone-in spiral ≈ 65% edible; boneless ≈ 90%.</li>
-      <li><b>Slicing & carve loss</b> can vary—round up slightly.</li>
-      <li><b>Leftovers:</b> Add 7–12% if you want sandwiches next day.</li>
-      <li><b>Counts:</b> Teens = 0.8 adult; kids = 0.5 adult.</li>
-    </ul>
-    <div class="disclaimer">Estimates only for planning — no cooking or food-safety advice.</div>
-  </section>
+    <!-- Finder -->
+    <div class="card finder" role="region" aria-label="Find near me">
+      <div class="inline">
+        <a class="preset" href="#" onclick="try{window.open('https://www.google.com/maps/search/spiral+ham+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/spiral+ham+near+me';}return false;">Find spiral ham near me</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/butcher+shop','_blank');}catch(e){location.href='https://www.google.com/maps/search/butcher+shop';}return false;">Butcher shops</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/grocery+store','_blank');}catch(e){location.href='https://www.google.com/maps/search/grocery+store';}return false;">Grocery stores</a>
+      </div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.7 (auto-calc)</div>
+    </div>
 
-  <!-- FAQS -->
-  <section class="card stack" id="faqs">
-    <h2>FAQs</h2>
-    <details><summary>How much spiral ham per person?</summary><div class="ans">Plan about <b>0.5 lb cooked per adult-equivalent</b>. With ~65% edible yield on bone-in spiral, that’s about <b>0.75 lb raw</b> per adult-equivalent (boneless closer to ~0.55–0.6 lb raw).</div></details>
-    <details><summary>Bone-in vs boneless?</summary><div class="ans">Bone-in has more waste but great presentation; boneless yields more edible meat per pound. Choose the style so the yield matches what you’re buying.</div></details>
-    <details><summary>Buffet vs plated?</summary><div class="ans">For buffets with lots of sides, reduce appetite or event length to scale portions slightly.</div></details>
-    <details><summary>Should I round up?</summary><div class="ans">Yes—yields and carving losses vary by brand and cut. Rounding up avoids shortfalls.</div></details>
-    <div class="footnote">Verify label weight (bone-in/bone-out) and serving plan with your market.</div>
-  </section>
-</div>
+    <!-- FAQs (5 total) -->
+    <div class="card" role="region" aria-label="FAQs">
+      <h2>FAQs</h2>
+      <details open>
+        <summary>How much spiral ham per person?</summary>
+        <div class="fine">
+          As a main dish, plan about <strong>8 ounces cooked per adult</strong> (about 6.5 oz for teens and 4.8 oz for children).
+          For a mixed buffet, plan about <strong>6 ounces cooked per adult</strong>.
+          Appetizers are about <strong>3.5 ounces cooked per adult</strong>.
+        </div>
+      </details>
+      <details>
+        <summary>Bone-in vs. boneless — does it change how much to buy?</summary>
+        <div class="fine">
+          Yes — bone and trim affect yield. We estimate raw pounds by dividing cooked ounces by a style yield:
+          <strong>Bone-in ≈ 60% yield</strong> (about 40% shrink) and <strong>Boneless ≈ 80% yield</strong> (about 20% shrink).
+        </div>
+      </details>
+      <details>
+        <summary>How do you convert pounds to about how many hams?</summary>
+        <div class="fine">
+          Enter <em>Ham size each (lb)</em>. We divide rounded raw pounds by that number to get an <strong>about</strong> count of hams.
+        </div>
+      </details>
+      <details>
+        <summary>How much should I buy for 10, 25, 50, or 100 people?</summary>
+        <div class="fine">
+          For a main with typical appetite and <em>bone-in spiral</em>, rough guides are:
+          <strong>10 people ≈ 8–9 lb raw</strong>, <strong>25 ≈ 20–23 lb</strong>,
+          <strong>50 ≈ 40–46 lb</strong>, <strong>100 ≈ 80–92 lb</strong>.
+          Use the calculator for your exact mix and settings.
+        </div>
+      </details>
+      <details>
+        <summary>How is pricing calculated?</summary>
+        <div class="fine">
+          Subtotal is <em>rounded raw pounds × price per lb</em>. Then we add your tax and any fees to estimate a total and per-person cost.
+        </div>
+      </details>
+    </div>
 
-<script>
-(function(){
-  const $=s=>document.querySelector(s);
-  const val=(s,d=0)=>{const x=parseFloat($(s).value);return isFinite(x)?x:d;};
-  const TEEN=0.8, KID=0.5;
+    <!-- Quick notes -->
+    <div class="card" role="region" aria-label="Quick notes">
+      <h3>Quick notes</h3>
+      <ul class="fine" style="margin:0 0 0 18px;padding:0">
+        <li><strong>Per-adult cooked baselines:</strong> Main about 8 oz; Mixed about 6 oz; Appetizer about 3.5 oz. Teens ≈ 0.8 adult; Children ≈ 0.6 adult.</li>
+        <li><strong>Yield by style (cooked/raw):</strong> Bone-in ≈ 0.60; Boneless ≈ 0.80.</li>
+        <li><strong>Count:</strong> About hams = rounded raw pounds ÷ ham size each (lb).</li>
+        <li><strong>Context multipliers:</strong> Appetite (0.90 / 1.00 / 1.20); Event length (0.95 / 1.00 / 1.08 / 1.15); Leftovers (No / +10% / +20%).</li>
+        <li><strong>Rounding:</strong> Raw purchase rounded to the nearest quarter-pound for easy shopping.</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm with your butcher/grocer and adjust for your crowd.</li>
+      </ul>
+    </div>
 
-  function calc(){
-    const A=val('#adults'), T=val('#teens'), K=val('#kids');
-    const AE = A + TEEN*T + KID*K;
-    const appetite=val('#appetite',1), length=val('#length',1), leftovers=val('#leftovers',1);
-    const yieldCooked = val('#style',0.65);
+  </div>
 
-    const cookedPerAE = 0.5; // lb cooked per adult-equivalent
-    const cookedTotal = AE * cookedPerAE * appetite * length * leftovers;
-    const rawTotal = cookedTotal / yieldCooked;
+  <!-- Calculator logic -->
+  <script>
+  (function(){
+    const $ = id => document.getElementById(id);
+    const N = (v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+    const money = n => (isFinite(n)&&n>=0) ? "$"+n.toFixed(2) : "$—";
+    const fmt = (n,d=0)=> isFinite(n) ? n.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}) : "—";
+    const roundQtr = lbs => Math.round(lbs*4)/4;
 
-    $('#outGuests').textContent = (A+T+K).toFixed(0);
-    $('#outCooked').textContent = cookedTotal.toFixed(1) + ' pounds (cooked)';
-    $('#outRaw').textContent    = rawTotal.toFixed(1) + ' pounds (raw)';
-    return { rawTotal, guests:(A+T+K) };
+    // Cooked-per-person baselines (ounces)
+    function cookedPerAdultOz(course){
+      if(course==="main")  return {adult:8.0, teen:6.5, child:4.8};
+      if(course==="mixed") return {adult:6.0, teen:4.8, child:3.6};
+      return                {adult:3.5, teen:2.8, child:2.1}; // appetizer
+    }
+    // Yield (cooked/raw) by style
+    function yieldForCut(cut){ return (cut==="boneless") ? 0.80 : 0.60; }
+
+    function compute(){
+      const A=N($("A").value,0), T=N($("T").value,0), C=N($("C").value,0);
+      const guests = A+T+C;
+
+      const course = $("course").value;
+      const cut = $("cut").value;
+      const hamEach = Math.max(1, N($("hamEach").value,8.0));
+      const appetite = N($("appetite").value,1.0);
+      const length   = N($("length").value,1.0);
+      const leftovers= N($("leftovers").value,1.0);
+
+      const base = cookedPerAdultOz(course);
+      let cookedOz = (A*base.adult + T*base.teen + C*base.child);
+      cookedOz *= appetite * length * leftovers;
+
+      const cookedLb = cookedOz/16;
+      const yieldFactor = yieldForCut(cut); // cooked = raw * yield
+      const rawLb = (yieldFactor>0) ? (cookedLb / yieldFactor) : 0;
+
+      const rawRounded = roundQtr(Math.max(0, rawLb));
+      const count = hamEach>0 ? Math.max(1, Math.round(rawRounded / hamEach)) : 0;
+
+      // Pricing
+      const p = N($("priceLb").value,0);
+      const tax = N($("taxPct").value,0)/100;
+      const fees = N($("fees").value,0);
+      const subtotal = (p>0 && rawRounded>0) ? rawRounded * p : 0;
+      const adds = subtotal * tax + (fees>0?fees:0);
+      const total = subtotal + adds;
+      const ppp = (guests>0 && total>0) ? total/guests : NaN;
+
+      return {guests, rawRounded, cookedLb, count, subtotal, adds, total, ppp, course, cut, hamEach};
+    }
+
+    function render(){
+      const s = compute();
+
+      const cutTxt = s.cut==="boneless" ? "boneless spiral (about 20% shrink)" : "bone-in spiral (about 40% shrink)";
+      const courseTxt = s.course==="main" ? "main dish" : (s.course==="mixed" ? "mixed buffet" : "appetizer/snack");
+
+      $("outGuests").textContent = s.guests>0 ? s.guests.toString() : "—";
+      $("outRaw").textContent    = s.guests>0 ? fmt(s.rawRounded, (s.rawRounded%1)?2:0) + " lb" : "—";
+      $("outCooked").textContent = s.guests>0 ? fmt(s.cookedLb, (s.cookedLb%1)?2:0) + " lb" : "—";
+      $("outCount").textContent  = s.guests>0 ? s.count.toLocaleString() : "—";
+      $("outSubtotal").textContent = s.subtotal>0 ? money(s.subtotal) : "$—";
+      $("outAdds").textContent     = s.subtotal>0 ? money(s.adds) : "$—";
+      $("outTotal").textContent    = s.subtotal>0 ? money(s.total) : "$—";
+      $("outPPP").textContent      = (s.total>0 && s.guests>0) ? money(s.ppp) : "$—";
+      $("outExplain").textContent = s.guests>0
+        ? `Auto-calculated from guests, ${courseTxt}, ${cutTxt}, ham size, appetite, event length, and leftovers.`
+        : "Enter your guest mix to calculate.";
+    }
+
+    ["A","T","C","course","cut","hamEach","appetite","length","leftovers","priceLb","taxPct","fees"].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }
+    });
+
+    document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const n = parseInt(btn.getAttribute("data-people"),10)||0;
+        document.getElementById("A").value = n;
+        document.getElementById("T").value = 0;
+        document.getElementById("C").value = 0;
+        render();
+      });
+    });
+
+    (function attachReset(){
+      const btn = document.getElementById("dmReset");
+      if(!btn) return;
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("input, select").forEach(el=>{
+          if(el.tagName==="SELECT"){
+            const i = Array.from(el.options).findIndex(o=>o.defaultSelected);
+            el.selectedIndex = i>=0 ? i : 0;
+          } else { el.value = el.defaultValue; }
+        });
+        document.querySelectorAll("input, select").forEach(el=>{
+          el.dispatchEvent(new Event("input",{bubbles:true}));
+          el.dispatchEvent(new Event("change",{bubbles:true}));
+        });
+        render();
+      });
+    })();
+
+    render(); // initial
+  })();
+  </script>
+
+  <!-- FAQPage JSON-LD (5 items) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {"@type":"Question","name":"How much spiral ham per person?","acceptedAnswer":{"@type":"Answer","text":"As a main dish, plan about 8 ounces cooked per adult (about 6.5 ounces for teens and 4.8 ounces for children). For a mixed buffet, plan about 6 ounces cooked per adult. Appetizers are about 3.5 ounces cooked per adult."}},
+      {"@type":"Question","name":"Bone-in vs. boneless — does it change how much to buy?","acceptedAnswer":{"@type":"Answer","text":"Yes — bone and trim affect yield. We estimate raw pounds by dividing cooked ounces by a style yield: Bone-in ≈ 60% yield (about 40% shrink) and Boneless ≈ 80% yield (about 20% shrink)."}},
+      {"@type":"Question","name":"How do you convert pounds to about how many hams?","acceptedAnswer":{"@type":"Answer","text":"Enter Ham size each (lb). We divide rounded raw pounds by that number to get an about count of hams."}},
+      {"@type":"Question","name":"How much should I buy for 10, 25, 50, or 100 people?","acceptedAnswer":{"@type":"Answer","text":"For a main with typical appetite and bone-in spiral: 10 people ≈ 8–9 lb raw, 25 ≈ 20–23 lb, 50 ≈ 40–46 lb, 100 ≈ 80–92 lb. Use the calculator for your exact mix and settings."}},
+      {"@type":"Question","name":"How is pricing calculated?","acceptedAnswer":{"@type":"Answer","text":"Subtotal is rounded raw pounds × price per lb. Then we add your tax and any fees to estimate a total and per-person cost."}}
+    ]
   }
-
-  function money(n){ return isFinite(n)?new Intl.NumberFormat(undefined,{style:'currency',currency:'USD'}).format(n):'$—'; }
-  function priceTotals(){
-    const { rawTotal, guests } = calc();
-    const price=val('#price',0), tax=val('#tax',0)/100, fees=val('#fees',0)/100;
-    const total = rawTotal * price * (1+tax+fees);
-    const per   = guests>0 ? total/guests : NaN;
-    $('#outTotal').textContent = money(total);
-    $('#outPerPerson').textContent = money(per);
-    $('#priceBlock').style.display='block';
-  }
-
-  function resetAll(){
-    $('#adults').value='12';$('#teens').value='2';$('#kids').value='2';
-    $('#style').value='0.65';$('#appetite').value='1.0';$('#length').value='1.0';$('#leftovers').value='1.0';
-    $('#notes').value='';
-    $('#price').value='3.49';$('#tax').value='0';$('#fees').value='0';
-    $('#priceBlock').style.display='none';
-    calc();
-  }
-
-  $('#calcBtn').addEventListener('click',calc);
-  $('#resetBtn').addEventListener('click',resetAll);
-  $('#priceBtn').addEventListener('click',priceTotals);
-  $('#clearPriceBtn')?.addEventListener('click',()=>{ $('#priceBlock').style.display='none'; });
-
-  calc();
-})();
-</script>
+  </script>
 </body>
 </html>
