@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DinnerMath — Pork Tenderloin Quantity Calculator</title>
+  <meta name="description" content="How much pork tenderloin per person? DinnerMath estimates raw pounds to buy and approximate cooked yield for mains or buffet, with pricing and quick presets for 10, 25, 50, 100 people.">
+  <meta name="robots" content="index,follow">
+  <style>
+    :root{
+      --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc;
+      --pill:#374151; --card:#ffffff; --accent:#111827;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      background:var(--bg);
+      font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;
+      color:var(--ink);
+    }
+    .wrap{max-width:820px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+    .outline{border:2px solid var(--ink)}
+    h1{font-size:22px;margin:0 0 8px}
+    .lede{color:var(--muted);margin:0 0 16px}
+    h2{font-size:20px;margin:16px 0 8px}
+    h3{font-size:18px;margin:0 0 12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
+    input[type="number"],select{
+      width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px;
+      font-size:14px;background:#fff;color:var(--ink)
+    }
+    .muted{color:var(--muted);font-size:12px}
+    .fine{font-size:13px;color:#374151}
+    .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .preset:hover{background:#f3f4f6}
+    .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:var(--pill);background:#fff}
+    .divider{height:1px;background:var(--line);margin:12px 0}
+    /* Prominent Results */
+    .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+    .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .kv + .kv{margin-top:8px}
+    .kv b{font-size:1.05rem}
+    .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
+    @media (max-width:720px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- Header -->
+    <div class="card" role="region" aria-label="Header">
+      <h1>Pork Tenderloin Quantity Calculator — Pounds per Person</h1>
+      <p class="lede">
+        Enter guests and settings (or tap a quick preset). We’ll estimate
+        <strong>raw tenderloin to buy</strong> and <strong>approximate cooked yield</strong>, then
+        show an optional <strong>cost estimate</strong>.
+      </p>
+    </div>
+
+    <!-- Inputs -->
+    <div class="card" role="region" aria-label="Inputs">
+      <h3>Inputs</h3>
+      <div class="row" aria-label="Guests">
+        <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="10"></div>
+        <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="0"></div>
+        <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="0"></div>
+        <div>
+          <label for="course">Course mode</label>
+          <select id="course">
+            <option value="main" selected>Main dish</option>
+            <option value="mixed">Mixed buffet</option>
+            <option value="app">Appetizer/snack</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" aria-label="Context">
+        <div>
+          <label for="cut">Trim level</label>
+          <select id="cut">
+            <option value="trimmed" selected>Trimmed (about 20% shrink)</option>
+            <option value="untrimmed">Untrimmed (about 25% shrink)</option>
+          </select>
+          <div class="muted">We convert cooked ounces → raw pounds using the shrink for your trim level.</div>
+        </div>
+        <div>
+          <label for="appetite">Appetite</label>
+          <select id="appetite">
+            <option value="0.90">Light</option>
+            <option value="1.00" selected>Typical</option>
+            <option value="1.20">Hearty</option>
+          </select>
+        </div>
+        <div>
+          <label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">Short — about 1 to 2 hours</option>
+            <option value="1.00" selected>Standard — about 2 to 3 hours</option>
+            <option value="1.08">Long — about 3 to 4 hours</option>
+            <option value="1.15">Extended — about 4 to 5 hours</option>
+          </select>
+        </div>
+        <div>
+          <label for="leftovers">Add leftovers</label>
+          <select id="leftovers">
+            <option value="1.00" selected>No</option>
+            <option value="1.10">+10%</option>
+            <option value="1.20">+20%</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Presets + Reset -->
+      <div class="inline" style="margin-top:8px">
+        <span class="muted">Quick presets:</span>
+        <button class="preset" data-people="10" type="button">10</button>
+        <button class="preset" data-people="25" type="button">25</button>
+        <button class="preset" data-people="50" type="button">50</button>
+        <button class="preset" data-people="100" type="button">100</button>
+        <span class="muted">Presets set all as adults — tweak Teens/Children if needed.</span>
+        <div style="flex:1"></div>
+        <button id="dmReset" type="button" class="preset">Reset</button>
+      </div>
+    </div>
+
+    <!-- Pricing (optional) -->
+    <div class="card" role="region" aria-label="Pricing">
+      <h3>Pricing (optional)</h3>
+      <div class="row">
+        <div><label for="priceLb">Unit price (US dollars per pound)</label><input id="priceLb" type="number" min="0" step="0.01" placeholder="e.g., 5.49"></div>
+        <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="e.g., 7.5"></div>
+        <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="e.g., 8.00"></div>
+      </div>
+      <div class="muted">Cost = <em>rounded raw pounds</em> × price + tax + extra fees.</div>
+    </div>
+
+    <!-- Results -->
+    <div class="card outline" role="region" aria-label="Results" aria-live="polite">
+      <h3 class="results-title">Results</h3>
+      <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
+      <div class="kv"><span>Raw pork tenderloin to buy (pounds, estimated)</span><b id="outRaw">—</b></div>
+      <div class="kv"><span>Approximate cooked yield (pounds)</span><b id="outCooked">—</b></div>
+      <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$—</b></div>
+      <div class="kv"><span>Tax and fees</span><b id="outAdds">$—</b></div>
+      <div class="kv"><span>Estimated total</span><b id="outTotal">$—</b></div>
+      <div class="kv"><span>Cost per person</span><b id="outPPP">$—</b></div>
+      <p class="muted" id="outExplain">Enter your guest mix to calculate.</p>
+    </div>
+
+    <!-- Finder -->
+    <div class="card finder" role="region" aria-label="Find near me">
+      <div class="inline">
+        <a class="preset" href="#" onclick="try{window.open('https://www.google.com/maps/search/pork+tenderloin+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/pork+tenderloin+near+me';}return false;">Find pork tenderloin near me</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/butcher+shop','_blank');}catch(e){location.href='https://www.google.com/maps/search/butcher+shop';}return false;">Butcher shops</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/grocery+store','_blank');}catch(e){location.href='https://www.google.com/maps/search/grocery+store';}return false;">Grocery stores</a>
+      </div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.7 (auto-calc)</div>
+    </div>
+
+    <!-- FAQs (5 total) -->
+    <div class="card" role="region" aria-label="FAQs">
+      <h2>FAQs</h2>
+      <details open>
+        <summary>How much pork tenderloin per person?</summary>
+        <div class="fine">
+          As a main dish, plan about <strong>8 ounces cooked per adult</strong> (about 6.5 oz for teens and 4.8 oz for children).
+          For a mixed buffet, plan about <strong>6 ounces cooked per adult</strong>.
+          Appetizers are about <strong>3.5 ounces cooked per adult</strong>.
+        </div>
+      </details>
+      <details>
+        <summary>Trim level — does it change how much to buy?</summary>
+        <div class="fine">
+          Yes — trimming and cooking loss affect yield. We estimate raw pounds by dividing cooked ounces by a trim yield:
+          <strong>Trimmed ≈ 80% yield</strong>, <strong>Untrimmed ≈ 75% yield</strong>.
+        </div>
+      </details>
+      <details>
+        <summary>How do you calculate raw pounds to buy?</summary>
+        <div class="fine">
+          We estimate total cooked ounces from your guest mix and context (appetite, event length, leftovers), then divide by the yield to get raw pounds.
+          We round to the nearest quarter-pound for easy shopping.
+        </div>
+      </details>
+      <details>
+        <summary>How much should I buy for 10, 25, 50, or 100 people?</summary>
+        <div class="fine">
+          For a main with typical appetite and <em>trimmed</em> tenderloin, rough guides are:
+          <strong>10 people ≈ 8–9 lb raw</strong>, <strong>25 people ≈ 20–23 lb</strong>,
+          <strong>50 people ≈ 40–46 lb</strong>, <strong>100 people ≈ 80–92 lb</strong>.
+          Use the calculator for your exact mix and settings.
+        </div>
+      </details>
+      <details>
+        <summary>Does the estimate include sides?</summary>
+        <div class="fine">
+          No—weights shown are for the meat only. Add sides separately. If your menu is side-heavy, pick “Mixed buffet” to scale portions down.
+        </div>
+      </details>
+    </div>
+
+    <!-- Quick notes -->
+    <div class="card" role="region" aria-label="Quick notes">
+      <h3>Quick notes</h3>
+      <ul class="fine" style="margin:0 0 0 18px;padding:0">
+        <li><strong>Per-adult cooked baselines:</strong> Main about 8 oz; Mixed about 6 oz; Appetizer about 3.5 oz. Teens ≈ 0.8 adult; Children ≈ 0.6 adult.</li>
+        <li><strong>Yield by trim (cooked/raw):</strong> Trimmed ≈ 0.80; Untrimmed ≈ 0.75.</li>
+        <li><strong>Context multipliers:</strong> Appetite (0.90 / 1.00 / 1.20); Event length (0.95 / 1.00 / 1.08 / 1.15); Leftovers (No / +10% / +20%).</li>
+        <li><strong>Rounding:</strong> Raw purchase rounded to the nearest quarter-pound for easy shopping.</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm with your butcher and adjust for your crowd.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Calculator logic -->
+  <script>
+  (function(){
+    const $ = id => document.getElementById(id);
+    const N = (v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+    const money = n => (isFinite(n)&&n>=0) ? "$"+n.toFixed(2) : "$—";
+    const fmt = (n,d=0)=> isFinite(n) ? n.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}) : "—";
+    const roundQtr = lbs => Math.round(lbs*4)/4;
+
+    // Cooked-per-person baselines (ounces)
+    function cookedPerAdultOz(course){
+      if(course==="main")  return {adult:8.0, teen:6.5, child:4.8};
+      if(course==="mixed") return {adult:6.0, teen:4.8, child:3.6};
+      return                {adult:3.5, teen:2.8, child:2.1}; // appetizer
+    }
+    // Yield (cooked/raw) by trim
+    function yieldForTrim(trim){
+      if(trim==="untrimmed") return 0.75;
+      return 0.80; // trimmed default
+    }
+
+    function compute(){
+      const A=N($("A").value,0), T=N($("T").value,0), C=N($("C").value,0);
+      const guests = A+T+C;
+
+      const course = $("course").value;
+      const trim = $("cut").value;
+      const appetite = N($("appetite").value,1.0);
+      const length   = N($("length").value,1.0);
+      const leftovers= N($("leftovers").value,1.0);
+
+      const base = cookedPerAdultOz(course);
+      let cookedOz = (A*base.adult + T*base.teen + C*base.child);
+      cookedOz *= appetite * length * leftovers;
+
+      const cookedLb = cookedOz/16;
+      const yieldFactor = yieldForTrim(trim); // cooked = raw * yield
+      const rawLb = (yieldFactor>0) ? (cookedLb / yieldFactor) : 0;
+
+      const rawRounded = roundQtr(Math.max(0, rawLb));
+
+      return {guests, course, trim, cookedLb, rawRounded};
+    }
+
+    function render(){
+      const s = compute();
+
+      const courseTxt = s.course==="main" ? "main dish"
+                        : s.course==="mixed" ? "mixed buffet" : "appetizer/snack";
+      const trimTxt = s.trim==="untrimmed" ? "untrimmed (about 25% shrink)" : "trimmed (about 20% shrink)";
+
+      $("outGuests").textContent = s.guests>0 ? s.guests.toString() : "—";
+      $("outRaw").textContent    = s.guests>0 ? fmt(s.rawRounded, (s.rawRounded%1)?2:0) + " lb" : "—";
+      $("outCooked").textContent = s.guests>0 ? fmt(s.cookedLb, (s.cookedLb%1)?2:0) + " lb" : "—";
+      $("outExplain").textContent = s.guests>0
+        ? `Auto-calculated from guests, ${courseTxt}, ${trimTxt}, appetite, event length, and leftovers.`
+        : "Enter your guest mix to calculate.";
+
+      // Pricing
+      const p = N($("priceLb").value,0);
+      const tax = N($("taxPct").value,0)/100;
+      const fees = N($("fees").value,0);
+
+      const subtotal = (p>0 && s.rawRounded>0) ? s.rawRounded * p : 0;
+      const adds = subtotal * tax + (fees>0?fees:0);
+      const total = subtotal + adds;
+      const ppp = (s.guests>0 && total>0) ? total/s.guests : NaN;
+
+      $("outSubtotal").textContent = subtotal>0 ? money(subtotal) : "$—";
+      $("outAdds").textContent     = subtotal>0 ? money(adds) : "$—";
+      $("outTotal").textContent    = subtotal>0 ? money(total) : "$—";
+      $("outPPP").textContent      = (subtotal>0 && s.guests>0) ? money(ppp) : "$—";
+    }
+
+    // Listeners
+    ["A","T","C","course","cut","appetite","length","leftovers",
+     "priceLb","taxPct","fees"].forEach(id=>{
+      const el = $(id);
+      if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }
+    });
+
+    // Presets
+    document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const n = parseInt(btn.getAttribute("data-people"),10)||0;
+        $("A").value = n; $("T").value = 0; $("C").value = 0; render();
+      });
+    });
+
+    // Reset
+    (function attachReset(){
+      const btn = $("dmReset");
+      if(!btn) return;
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("input, select").forEach(el=>{
+          if(el.tagName==="SELECT"){
+            const i = Array.from(el.options).findIndex(o=>o.defaultSelected);
+            el.selectedIndex = i>=0 ? i : 0;
+          } else { el.value = el.defaultValue; }
+        });
+        document.querySelectorAll("input, select").forEach(el=>{
+          el.dispatchEvent(new Event("input",{bubbles:true}));
+          el.dispatchEvent(new Event("change",{bubbles:true}));
+        });
+        render();
+      });
+    })();
+
+    render(); // initial
+  })();
+  </script>
+
+  <!-- FAQPage JSON-LD (5 items) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type":"Question",
+        "name":"How much pork tenderloin per person?",
+        "acceptedAnswer":{"@type":"Answer","text":"As a main dish, plan about 8 ounces cooked per adult (about 6.5 ounces for teens and 4.8 ounces for children). For a mixed buffet, plan about 6 ounces cooked per adult. Appetizers are about 3.5 ounces cooked per adult."}
+      },
+      {
+        "@type":"Question",
+        "name":"Trim level — does it change how much to buy?",
+        "acceptedAnswer":{"@type":"Answer","text":"Yes — trimming and cooking loss affect yield. We estimate raw pounds by dividing cooked ounces by a trim yield: Trimmed ≈ 80% yield; Untrimmed ≈ 75% yield."}
+      },
+      {
+        "@type":"Question",
+        "name":"How do you calculate raw pounds to buy?",
+        "acceptedAnswer":{"@type":"Answer","text":"We estimate total cooked ounces from your guest mix and context (appetite, event length, leftovers), then divide by the yield to get raw pounds. We round to the nearest quarter-pound for easy shopping."}
+      },
+      {
+        "@type":"Question",
+        "name":"How much should I buy for 10, 25, 50, or 100 people?",
+        "acceptedAnswer":{"@type":"Answer","text":"For a main with typical appetite and trimmed tenderloin: 10 people ≈ 8–9 lb raw, 25 people ≈ 20–23 lb, 50 people ≈ 40–46 lb, 100 people ≈ 80–92 lb. Use the calculator for your exact mix and settings."}
+      },
+      {
+        "@type":"Question",
+        "name":"Does the estimate include sides?",
+        "acceptedAnswer":{"@type":"Answer","text":"No—weights shown are for the meat only. Add sides separately. If your menu is side-heavy, pick “Mixed buffet” to scale portions down."}
+      }
+    ]
+  }
+  </script>
+</body>
+</html>
