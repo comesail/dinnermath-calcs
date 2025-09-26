@@ -53,7 +53,7 @@
       <h1>Doughnuts Quantity Calculator — How Many per Person</h1>
       <p class="lede">
         Enter guests and settings (or tap a quick preset). We estimate
-        <strong>about doughnuts</strong>, <strong>about dozens</strong>, and <strong>about doughnut pounds</strong> (for pricing).
+        <strong>about doughnuts</strong>, <strong>about dozens</strong>, and <strong>about doughnut pounds</strong>.
       </p>
     </div>
 
@@ -104,14 +104,22 @@
         </div>
         <!-- Item-specific dropdown AFTER Appetite -->
         <div>
-          <label for="size">Doughnut size class (avg weight each)</label>
+          <label for="size">Doughnut size (baked diameter or per-piece weight)</label>
           <select id="size">
-            <option value="2.5">Small — about 2.5 oz each</option>
-            <option value="3.0" selected>Average — about 3.0 oz each</option>
-            <option value="3.5">Large — about 3.5 oz each</option>
-            <option value="4.0">Jumbo — about 4.0 oz each</option>
+            <optgroup label="Baked doughnut size (diameter)">
+              <option value="2.5">Small — about 3 in (about 2.5 oz each)</option>
+              <option value="3.0" selected>Average — about 3.5 in (about 3.0 oz each)</option>
+              <option value="3.5">Large — about 4 in (about 3.5 oz each)</option>
+              <option value="4.0">Jumbo — about 4.5 in (about 4.0 oz each)</option>
+            </optgroup>
+            <optgroup label="Per-piece weight (approx)">
+              <option value="2.5">2.5 oz each (bakes to about 3 in)</option>
+              <option value="3.0">3.0 oz each (bakes to about 3.5 in)</option>
+              <option value="3.5">3.5 oz each (bakes to about 4 in)</option>
+              <option value="4.0">4.0 oz each (bakes to about 4.5 in)</option>
+            </optgroup>
           </select>
-          <div class="muted">We use the class to convert doughnut counts to about doughnut pounds for pricing.</div>
+          <div class="muted">Labels show baked size in inches; the ounces noted are per-doughnut weights we use to convert counts into about doughnut pounds for pricing.</div>
         </div>
       </div>
 
@@ -133,22 +141,21 @@
       <h3>Pricing (optional)</h3>
       <div class="row">
         <div>
-          <label for="priceMode">Pricing mode</label>
+          <label for="priceMode">Price mode</label>
           <select id="priceMode">
-            <option value="lb" selected>By pound</option>
-            <option value="dz">By dozen</option>
-            <option value="each">By each</option>
+            <option value="dozen" selected>Per dozen</option>
+            <option value="each">Per each</option>
+            <option value="pound">Per pound</option>
           </select>
         </div>
         <div>
-          <label for="priceUnit">Unit price</label>
-          <input id="priceUnit" type="number" min="0" step="0.01" placeholder="e.g., 3.99">
-          <div class="muted">If "By pound": dollars per pound. If "By dozen": dollars per dozen. If "By each": dollars per doughnut.</div>
+          <label for="priceUnit" id="priceLabel">Unit price (US dollars per dozen)</label>
+          <input id="priceUnit" type="number" min="0" step="0.01" placeholder="e.g., 12.00">
         </div>
         <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="e.g., 7.5"></div>
         <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="e.g., 6.00"></div>
       </div>
-      <div class="muted">Cost = unit price applied to rounded quantity for your mode + tax + extra fees.</div>
+      <div class="muted">Cost = rounded quantity in your price mode × unit price + tax + extra fees.</div>
     </div>
 
     <!-- Results -->
@@ -190,8 +197,7 @@
       <details>
         <summary>What does the size class do?</summary>
         <div class="fine">
-          We convert counts to pounds using your size class: <strong>Small about 2.5 oz</strong>, <strong>Average about 3.0 oz</strong>,
-          <strong>Large about 3.5 oz</strong>, <strong>Jumbo about 4.0 oz</strong> per doughnut.
+          Sizes are expressed by <strong>baked diameter</strong> with an equivalent <strong>per-doughnut weight</strong>. For example, Small is about 3 in and about 2.5 oz each; Average about 3.5 in and about 3.0 oz; Large about 4 in and about 3.5 oz; Jumbo about 4.5 in and about 4.0 oz. We compute pounds from the per-piece weight.
         </div>
       </details>
 
@@ -213,7 +219,8 @@
       <details>
         <summary>How does pricing work here?</summary>
         <div class="fine">
-          Subtotal = unit price applied to the rounded quantity for your mode: <em>by pound</em> (rounded doughnut pounds × price per pound), <em>by dozen</em> (rounded dozens × price per dozen), or <em>by each</em> (rounded doughnut count × price per doughnut). Then we add your tax and any extra fees to estimate a total and per-person cost.
+          Choose your price mode: <strong>per dozen</strong>, <strong>per each</strong>, or <strong>per pound</strong>.
+          We multiply your unit price by the rounded quantity in that mode (dozens, eaches, or pounds), then add your tax and fees to estimate totals.
         </div>
       </details>
     </div>
@@ -223,10 +230,10 @@
       <h3>Quick notes</h3>
       <ul class="fine" style="margin:0 0 0 18px;padding:0">
         <li><strong>Base portions:</strong> Adults about 1.0 doughnut; Teens about 1.5; Children about 0.5.</li>
-        <li><strong>Size classes (avg weight):</strong> Small 2.5 oz; Average 3.0 oz; Large 3.5 oz; Jumbo 4.0 oz each.</li>
+        <li><strong>Size classes:</strong> Small about 3 in (about 2.5 oz each); Average about 3.5 in (about 3.0 oz); Large about 4 in (about 3.5 oz); Jumbo about 4.5 in (about 4.0 oz).</li>
         <li><strong>Course multipliers:</strong> Breakfast 1.00x; Dessert 0.85x; Coffee break 0.75x; Appetizer 0.50x.</li>
         <li><strong>Context multipliers:</strong> Appetite (0.90 / 1.00 / 1.20); Event length (0.95 / 1.00 / 1.08 / 1.15); Leftovers (No / +10% / +20%).</li>
-        <li><strong>Rounding:</strong> Dozens round up to whole dozens; doughnut count rounds up to whole doughnuts; doughnut pounds round to the nearest 1/4 lb for pricing.</li>
+        <li><strong>Rounding:</strong> Dozens round up to whole dozens. Doughnut pounds round to the nearest 1/4 lb for pricing.</li>
         <li><strong>Disclaimer:</strong> Estimates only; confirm with your grocer/bakery and adjust for your crowd.</li>
       </ul>
     </div>
@@ -266,20 +273,20 @@
       const dozens = donutsRounded>0 ? Math.ceil(donutsRounded/12) : 0;
       const poundsRounded = roundQuarter(Math.max(0,pounds));
 
-      // Pricing by selected mode
-      const mode=(document.getElementById("priceMode")||{}).value||"lb";
+      // Pricing
+      const mode = ($("priceMode").value || "dozen");
       const price=N($("priceUnit").value,0), tax=N($("taxPct").value,0)/100, fees=N($("fees").value,0);
-      let subtotal = 0;
-      if(price>0){
-        if(mode==="lb" && poundsRounded>0){ subtotal = poundsRounded*price; }
-        else if(mode==="dz" && dozens>0){ subtotal = dozens*price; }
-        else if(mode==="each" && donutsRounded>0){ subtotal = donutsRounded*price; }
-      }
+      let billUnits = 0;
+      if(mode==="each"){ billUnits = donutsRounded; }
+      else if(mode==="dozen"){ billUnits = dozens; }
+      else { billUnits = poundsRounded; } // per pound
+
+      const subtotal = (price>0 && billUnits>0) ? billUnits*price : 0;
       const adds = subtotal*tax + (fees>0?fees:0);
       const total = subtotal + adds;
       const ppp = (guests>0 && total>0) ? total/guests : NaN;
 
-      return {guests, donutsRounded, dozens, poundsRounded, subtotal, adds, total, ppp};
+      return {guests, donutsRounded, dozens, poundsRounded, subtotal, adds, total, ppp, mode};
     }
 
     function render(){
@@ -293,12 +300,20 @@
       $("outTotal").textContent    = s.subtotal>0 ? money(s.total) : "$—";
       $("outPPP").textContent      = (s.total>0 && s.guests>0) ? money(s.ppp) : "$—";
       $("outExplain").textContent  = s.guests>0
-        ? "Auto-calculated from guests, course, size class, appetite, event length, and leftovers."
+        ? "Auto-calculated from guests, course, size class, appetite, event length, leftovers, and your selected price mode."
         : "Enter your guest mix to calculate.";
     }
 
-    ["A","T","C","course","length","leftovers","appetite","size","priceMode","priceUnit","taxPct","fees"]
-      .forEach(id=>{const el=$(id); if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }});
+    function updatePriceLabel(){
+      const m = (document.getElementById("priceMode").value||"dozen");
+      const lab = document.getElementById("priceLabel");
+      if(m==="each"){ lab.textContent = "Unit price (US dollars per each)"; }
+      else if(m==="dozen"){ lab.textContent = "Unit price (US dollars per dozen)"; }
+      else { lab.textContent = "Unit price (US dollars per pound)"; }
+    }
+
+    ["A","T","C","course","length","leftovers","appetite","size","priceUnit","taxPct","fees","priceMode"]
+      .forEach(id=>{const el=$(id); if(el){ el.addEventListener("input",()=>{ if(id==='priceMode') updatePriceLabel(); render();}); el.addEventListener("change",()=>{ if(id==='priceMode') updatePriceLabel(); render();}); }});
 
     document.querySelectorAll(".preset[data-people]").forEach(btn=>{
       btn.addEventListener("click",()=>{const n=parseInt(btn.getAttribute("data-people"),10)||0;$("A").value=n;$("T").value=0;$("C").value=0;render();});
@@ -313,6 +328,7 @@
             el.selectedIndex = i>=0 ? i : 0;
           } else { el.value = el.defaultValue; }
         });
+        updatePriceLabel();
         document.querySelectorAll("input, select").forEach(el=>{
           el.dispatchEvent(new Event("input",{bubbles:true}));
           el.dispatchEvent(new Event("change",{bubbles:true}));
@@ -321,6 +337,7 @@
       });
     })();
 
+    updatePriceLabel();
     render();
   })();
   </script>
