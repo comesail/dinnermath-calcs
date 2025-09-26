@@ -4,37 +4,35 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>DinnerMath — Meatballs Quantity Calculator</title>
-  <meta name="robots" content="noindex,nofollow">
+  <meta name="description" content="How many meatballs per person? DinnerMath estimates counts and raw pounds to buy for main, buffet, or appetizer portions — with pricing and quick presets for 10, 25, 50, 100 people.">
+  <meta name="robots" content="index,follow">
   <style>
-    :root{
-      --ink:#111827;--muted:#6b7280;--line:#e5e7eb;--bg:#f8fafc;
-      --pill:#374151;--card:#ffffff
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0}
-    body{background:var(--bg);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;color:var(--ink)}
+    :root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--bg:#f8fafc;--pill:#374151;--card:#ffffff;--accent:#111827}
+    *{box-sizing:border-box}html,body{margin:0;padding:0}
+    body{background:var(--bg);
+      font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;
+      color:var(--ink);}
     .wrap{max-width:820px;margin:24px auto;padding:0 16px}
     .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+    .outline{border:2px solid var(--ink)}
     h1{font-size:22px;margin:0 0 8px}
     .lede{color:var(--muted);margin:0 0 16px}
+    h2{font-size:20px;margin:16px 0 8px}
     h3{font-size:18px;margin:0 0 12px}
     .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
     input[type="number"],select{width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px;font-size:14px;background:#fff;color:var(--ink)}
     .muted{color:var(--muted);font-size:12px}
     .fine{font-size:13px;color:#374151}
-    .result{border:2px solid var(--ink);border-radius:16px;padding:16px;margin-top:6px;background:#fff}
-    .big{font-size:24px;font-weight:800;line-height:1.2}
     .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-    .inline > span{display:inline-block}
-    .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:var(--pill);background:#fff}
+    .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .preset:hover{background:#f3f4f6}
+    .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:#374151;background:#fff}
     .divider{height:1px;background:var(--line);margin:12px 0}
-    a.btn{display:inline-block;border:1px solid var(--ink);border-radius:999px;padding:10px 14px;font-weight:700;text-decoration:none;color:var(--ink)}
-    a.btn:hover{background:#f3f4f6}
-    details{border-top:1px solid var(--line)}
-    summary{cursor:pointer;padding:10px 0;font-weight:700;list-style:none}
-    summary::-webkit-details-marker{display:none}
-    details > div{padding:0 0 10px 0}
+    .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+    .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .kv + .kv{margin-top:8px}.kv b{font-size:1.05rem}
+    .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
     @media (max-width:720px){.row{grid-template-columns:1fr}}
   </style>
 </head>
@@ -43,155 +41,150 @@
 
     <!-- Header -->
     <div class="card" role="region" aria-label="Header">
-      <h1>Meatballs Quantity Calculator — How Many Per Person (How Much to Buy)</h1>
-      <p class="lede">Enter your guests and settings. We’ll estimate the <strong>number of meatballs</strong> and the <strong>total pounds to buy</strong> based on meatball size, appetite, event length, menu variety, and optional leftovers.</p>
+      <h1>Meatballs Quantity Calculator — How Many per Person</h1>
+      <p class="lede">
+        Enter guests and settings (or tap a quick preset). We’ll estimate
+        <strong>meatballs per person</strong> and <strong>raw pounds to buy</strong>,
+        then show an optional <strong>cost estimate</strong>.
+      </p>
     </div>
 
     <!-- Inputs -->
-    <div class="card" role="region" aria-label="Guest mix and settings">
+    <div class="card" role="region" aria-label="Inputs">
       <h3>Inputs</h3>
-
       <div class="row" aria-label="Guests">
-        <div><label for="mbA">Adults</label><input id="mbA" type="number" min="0" step="1" value="8"></div>
-        <div><label for="mbT">Teens</label><input id="mbT" type="number" min="0" step="1" value="2"></div>
-        <div><label for="mbK">Kids</label><input id="mbK" type="number" min="0" step="1" value="2"></div>
+        <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="10"></div>
+        <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="0"></div>
+        <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="0"></div>
         <div>
-          <label for="mbCourse">Course</label>
-          <select id="mbCourse" aria-label="Course type">
-            <option value="main" selected>Main</option>
-            <option value="app">Appetizer</option>
+          <label for="course">Course mode</label>
+          <select id="course">
+            <option value="main" selected>Main dish</option>
+            <option value="mixed">Mixed buffet</option>
+            <option value="app">Appetizer/snack</option>
           </select>
         </div>
       </div>
 
       <div class="row" aria-label="Context">
         <div>
-          <label for="mbAppetite">Appetite</label>
-          <select id="mbAppetite">
-            <option value="light">Light</option>
-            <option value="average" selected>Average</option>
-            <option value="hearty">Hearty</option>
+          <label for="size">Meatball size</label>
+          <select id="size">
+            <option value="1.0" selected>Standard — about 1.0 oz each</option>
+            <option value="1.5">Large — about 1.5 oz each</option>
+            <option value="2.0">Jumbo — about 2.0 oz each</option>
+          </select>
+          <div class="muted">Choose a size to estimate count and weight.</div>
+        </div>
+        <div>
+          <label for="appetite">Appetite</label>
+          <select id="appetite">
+            <option value="0.90">Light</option>
+            <option value="1.00" selected>Typical</option>
+            <option value="1.20">Hearty</option>
           </select>
         </div>
         <div>
-          <label for="mbLength">Event length</label>
-          <select id="mbLength">
-            <option value="0.95">Short — less than 1h 30m</option>
-            <option value="1.00" selected>Standard — 1h 30m to 3h</option>
-            <option value="1.10">Long — more than 3h</option>
+          <label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">Short — about 1 to 2 hours</option>
+            <option value="1.00" selected>Standard — about 2 to 3 hours</option>
+            <option value="1.08">Long — about 3 to 4 hours</option>
+            <option value="1.15">Extended — about 4 to 5 hours</option>
           </select>
         </div>
         <div>
-          <label for="mbMenu">Menu variety</label>
-          <select id="mbMenu">
-            <option value="single" selected>Meatball-focused</option>
-            <option value="few">With 1–2 other mains</option>
-            <option value="buffet">Buffet / lots of options</option>
-          </select>
-        </div>
-        <div>
-          <label for="mbLeftovers">Add leftovers</label>
-          <select id="mbLeftovers">
-            <option value="0" selected>None</option>
-            <option value="10">+10%</option>
-            <option value="20">+20%</option>
+          <label for="leftovers">Add leftovers</label>
+          <select id="leftovers">
+            <option value="1.00" selected>No</option>
+            <option value="1.10">+10%</option>
+            <option value="1.20">+20%</option>
           </select>
         </div>
       </div>
 
-      <div class="row" aria-label="Size">
-        <div>
-          <label for="mbSize">Meatball size (oz each, cooked)</label>
-          <select id="mbSize">
-            <option value="1.0">Small — ~1.0 oz</option>
-            <option value="1.5" selected>Medium — ~1.5 oz</option>
-            <option value="2.0">Large — ~2.0 oz</option>
-          </select>
-          <div class="muted">Used to convert pieces → pounds.</div>
-        </div>
+      <!-- Presets + Reset -->
+      <div class="inline" style="margin-top:8px">
+        <span class="muted">Quick presets:</span>
+        <button class="preset" data-people="10" type="button">10</button>
+        <button class="preset" data-people="25" type="button">25</button>
+        <button class="preset" data-people="50" type="button">50</button>
+        <button class="preset" data-people="100" type="button">100</button>
+        <span class="muted">Presets set all as adults — tweak Teens/Children if needed.</span>
+        <div style="flex:1"></div>
+        <button id="dmReset" type="button" class="preset">Reset</button>
       </div>
     </div>
 
-    <!-- Pricing -->
+    <!-- Pricing (optional) -->
     <div class="card" role="region" aria-label="Pricing">
       <h3>Pricing (optional)</h3>
       <div class="row">
-        <div><label for="mbPriceLb">Price per pound ($)</label><input id="mbPriceLb" type="number" min="0" step="0.01" value="6.99"></div>
-        <div><label for="mbTax">Tax %</label><input id="mbTax" type="number" min="0" step="0.1" value="0"></div>
-        <div><label for="mbFees">Fees %</label><input id="mbFees" type="number" min="0" step="0.1" value="0"></div>
-        <div><label for="mbDelivery">Delivery fee ($)</label><input id="mbDelivery" type="number" min="0" step="0.01" value="0"></div>
+        <div><label for="priceLb">Unit price (US dollars per pound)</label><input id="priceLb" type="number" min="0" step="0.01" placeholder="e.g., 4.99"></div>
+        <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="e.g., 7.5"></div>
+        <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="e.g., 8.00"></div>
       </div>
+      <div class="muted">Cost = <em>rounded raw pounds</em> × price + tax + extra fees.</div>
     </div>
 
     <!-- Results -->
-    <div class="card" role="region" aria-label="Results" aria-live="polite" aria-atomic="true">
-      <h3>Results</h3>
-      <div class="result">
-        <div class="big" id="mbTotalPieces">—</div>
-        <div class="fine" id="mbBreakdown">—</div>
-        <div class="divider"></div>
-        <div class="inline">
-          <span class="pill" id="mbPoundsOut">—</span>
-          <span class="pill" id="mbPerPersonOut">—</span>
-          <span class="pill" id="mbGuestsOut">—</span>
-        </div>
-      </div>
+    <div class="card outline" role="region" aria-label="Results" aria-live="polite">
+      <h3 class="results-title">Results</h3>
+      <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
+      <div class="kv"><span>Meatballs needed (about)</span><b id="outCount">—</b></div>
+      <div class="kv"><span>Raw pounds to buy (estimated)</span><b id="outRaw">—</b></div>
+      <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$—</b></div>
+      <div class="kv"><span>Tax and fees</span><b id="outAdds">$—</b></div>
+      <div class="kv"><span>Estimated total</span><b id="outTotal">$—</b></div>
+      <div class="kv"><span>Cost per person</span><b id="outPPP">$—</b></div>
+      <p class="muted" id="outExplain">Enter your guest mix to calculate.</p>
+    </div>
 
-      <div class="row" style="margin-top:12px">
-        <div class="card" style="margin:0">
-          <h3>Cost estimate</h3>
-          <div class="inline">
-            <div><label>Subtotal</label><div id="mbSubtotal" class="fine">$—</div></div>
-            <div><label>Tax + fees</label><div id="mbAdds" class="fine">$—</div></div>
-            <div><label>Delivery fee</label><div id="mbDelFee" class="fine">$—</div></div>
-            <div><label>Estimated total</label><div id="mbTotalCost" class="fine">$—</div></div>
-            <div><label>Per person</label><div id="mbPPP" class="fine">$—</div></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-      <!-- Finder links -->
+    <!-- Finder -->
+    <div class="card finder" role="region" aria-label="Find near me">
       <div class="inline">
-        <a class="btn" href="#" onclick="try{window.open('https://www.google.com/maps/search/frozen+meatballs+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/frozen+meatballs+near+me';}return false;">Find meatballs near me</a>
-        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/butcher+shop','_blank');}catch(e){location.href='https://www.google.com/maps/search/butcher+shop';}return false;">Butcher shops</a>
+        <a class="preset" href="#" onclick="try{window.open('https://www.google.com/maps/search/meatballs+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/meatballs+near+me';}return false;">Find meatballs near me</a>
         <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/grocery+store','_blank');}catch(e){location.href='https://www.google.com/maps/search/grocery+store';}return false;">Grocery stores</a>
-        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/italian+deli','_blank');}catch(e){location.href='https://www.google.com/maps/search/italian+deli';}return false;">Italian delis</a>
       </div>
-      <div class="muted" style="margin-top:8px">DinnerMath v1.3</div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.7 (auto-calc)</div>
     </div>
 
-    <!-- Quick Notes -->
-    <div class="card" role="region" aria-label="Quick Notes">
-      <h3>Quick Notes</h3>
-      <ul class="fine" style="margin:0 0 0 18px;padding:0">
-        <li><strong>Event length:</strong> Short &lt; 1h30m; Long &gt; 3h; Standard is baseline.</li>
-        <li><strong>How we plan:</strong> We plan by <em>pieces</em> and convert to pounds using your size (oz per meatball).</li>
-        <li><strong>Menu variety:</strong> Meatball-focused events increase the amount; big buffets reduce it.</li>
-        <li><strong>Leftovers:</strong> Add 10–20% if you want extras for the next day.</li>
-        <li><strong>Disclaimer:</strong> Estimates only; actual needs vary by crowd, menu, and product size. Please double-check before you buy.</li>
-      </ul>
-    </div>
-
-    <!-- Mini FAQ -->
-    <div class="card" role="region" aria-label="Mini FAQ">
-      <h3>Mini FAQ</h3>
-      <details>
+    <!-- FAQs (5 total) -->
+    <div class="card" role="region" aria-label="FAQs">
+      <h2>FAQs</h2>
+      <details open>
         <summary>How many meatballs per person?</summary>
-        <div class="fine">As a main, plan about <strong>5–7 medium</strong> meatballs per adult (3–4 for teens, 2–3 for kids). As an appetizer, about <strong>2–3 per adult</strong>. This calculator adjusts for appetite, event length, and menu variety.</div>
+        <div class="fine">As a main dish, plan about <strong>6 standard (or 4 large) meatballs per adult</strong>. For a mixed buffet, about <strong>4–5 standard per adult</strong>. Appetizers are about <strong>2–3 standard per adult</strong>. Teens trend between adults and children; children usually eat about half an adult portion.</div>
       </details>
       <details>
-        <summary>What size does this assume?</summary>
-        <div class="fine">Default is <strong>~1.5 oz cooked</strong> per meatball. Change the size if yours are smaller or larger; pounds will update automatically.</div>
+        <summary>How do you convert to pounds?</summary>
+        <div class="fine">We multiply number of meatballs × size (oz) ÷ 16 to get raw pounds, then round to the nearest quarter-pound for easy shopping.</div>
       </details>
       <details>
-        <summary>Beef, pork, turkey—does it change the math?</summary>
-        <div class="fine">Flavor blend doesn’t change counts. Only <strong>size</strong>, <strong>appetite</strong>, and <strong>event context</strong> affect totals.</div>
+        <summary>Does meat type matter?</summary>
+        <div class="fine">Beef, pork, turkey, or mixed meats shrink differently when cooked, but this tool calculates <strong>raw weight to buy</strong> before cooking, which avoids under-buying.</div>
       </details>
       <details>
-        <summary>Do the results include sauce?</summary>
-        <div class="fine">Weights are for meatballs only. Add sauce separately if you’re budgeting by weight.</div>
+        <summary>How much for 10, 25, 50, 100 people?</summary>
+        <div class="fine">As a main with typical appetite and standard size: <strong>10 ≈ 60 meatballs (≈4 lb)</strong>, <strong>25 ≈ 150 (≈10 lb)</strong>, <strong>50 ≈ 300 (≈20 lb)</strong>, <strong>100 ≈ 600 (≈40 lb)</strong>. Use the calculator for your exact mix and settings.</div>
       </details>
+      <details>
+        <summary>Does this include sauce or sides?</summary>
+        <div class="fine">No — estimates are for meatballs only. Add pasta, bread, and sides separately. Pick “Mixed buffet” if the menu is side-heavy.</div>
+      </details>
+    </div>
+
+    <!-- Quick notes -->
+    <div class="card" role="region" aria-label="Quick notes">
+      <h3>Quick notes</h3>
+      <ul class="fine" style="margin:0 0 0 18px;padding:0">
+        <li><strong>Assumptions (standard size):</strong> Adults 6; Teens 5; Children 3 meatballs.</li>
+        <li><strong>Course multipliers:</strong> Main 1.00; Mixed 0.75; Appetizer 0.50.</li>
+        <li><strong>Math:</strong> Meatballs × size (oz) ÷ 16 = raw pounds, rounded to the nearest 0.25 lb.</li>
+        <li><strong>Context multipliers:</strong> Appetite (0.90 / 1.00 / 1.20); Event length (0.95 / 1.00 / 1.08 / 1.15); Leftovers (No / +10% / +20%).</li>
+        <li><strong>Rounding:</strong> We round purchase to the nearest quarter-pound for easy shopping.</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm with your grocer and adjust for your crowd.</li>
+      </ul>
     </div>
 
   </div>
@@ -199,77 +192,74 @@
   <!-- Calculator logic -->
   <script>
   (function(){
-    const $ = id => document.getElementById(id);
-    const fmt = (n, d=0) => n.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d});
-    const roundQtr = lbs => Math.round(lbs*4)/4; // nearest 0.25 lb
+    const $=id=>document.getElementById(id);
+    const N=(v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+    const money=n=>(isFinite(n)&&n>=0)?"$"+n.toFixed(2):"$—";
+    const fmt=(n,d=0)=>isFinite(n)?n.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}):"—";
+    const roundQtr=lbs=>Math.round(lbs*4)/4;
 
-    function calc(){
-      const A=+$("mbA").value||0, T=+$("mbT").value||0, K=+$("mbK").value||0;
-      const course=$("mbCourse").value;
-      const appetite=$("mbAppetite").value;
-      const lenMul=parseFloat($("mbLength").value)||1.0;
-      const menu=$("mbMenu").value;
-      const leftovers=(+$("mbLeftovers").value||0)/100;
-      const ozPer = +$("mbSize").value||1.5;
+    function courseMult(c){if(c==="main")return 1.0;if(c==="mixed")return 0.75;return 0.5;}
+    function lenMult(v){if(v==1.15)return 1.15;if(v==1.08)return 1.08;if(v==0.95)return 0.95;return 1.0;}
 
-      // Baseline pieces/person by course
-      let perAdult = (course==="main") ? 6 : 3;
-      let perTeen  = (course==="main") ? 4 : 2;
-      let perKid   = (course==="main") ? 3 : 1.5;
+    function compute(){
+      const A=N($("A").value,0),T=N($("T").value,0),C=N($("C").value,0);
+      const guests=A+T+C;
+      const course=$("course").value;
+      const appetite=N($("appetite").value,1.0);
+      const length=N($("length").value,1.0);
+      const leftovers=N($("leftovers").value,1.0);
+      const size=N($("size").value,1.0);
 
-      // Multipliers
-      const appMul = appetite==="light" ? 0.90 : appetite==="hearty" ? 1.25 : 1.00;
-      const menuMul = menu==="few" ? 0.85 : menu==="buffet" ? 0.70 : 1.00;
+      const base={adult:6,teen:5,child:3}; // counts standard size for main dish
+      let count=(A*base.adult+T*base.teen+C*base.child)*courseMult(course)*appetite*lenMult(length)*leftovers;
 
-      perAdult *= appMul * lenMul * menuMul;
-      perTeen  *= appMul * lenMul * menuMul;
-      perKid   *= appMul * lenMul * menuMul;
-
-      const guests = A+T+K;
-      let pieces = (A*perAdult + T*perTeen + K*perKid) * (1+leftovers);
-      const totalPieces = Math.max(0, Math.ceil(pieces));
-      const perPerson = guests>0 ? Math.ceil(totalPieces/guests) : 0;
-
-      // Convert to pounds (using cooked oz per piece)
-      const pounds = totalPieces * ozPer / 16;
-      const poundsRounded = roundQtr(pounds);
+      const raw=(count*size)/16.0;
+      const rounded=roundQtr(Math.max(0,raw));
+      const roundedCount=Math.max(0,Math.round(count));
 
       // Pricing
-      const pLb = +$("mbPriceLb").value||0;
-      const taxPct = (+$("mbTax").value||0)/100;
-      const feePct = (+$("mbFees").value||0)/100;
-      const delivery = +$("mbDelivery").value||0;
+      const p=N($("priceLb").value,0),tax=N($("taxPct").value,0)/100,fees=N($("fees").value,0);
+      const sub=rounded*p;
+      const adds=sub*tax+(fees>0?fees:0);
+      const tot=sub+adds;
+      const ppp=(guests>0&&tot>0)?tot/guests:NaN;
 
-      let subtotal = poundsRounded * pLb;
-      const adds = subtotal * (taxPct + feePct);
-      const totalCost = subtotal + adds + delivery;
-      const ppp = guests>0 ? totalCost/guests : 0;
-
-      // UI
-      $("mbTotalPieces").textContent = totalPieces>0 ? `${fmt(totalPieces)} meatballs (est.)` : "—";
-      $("mbBreakdown").textContent = guests>0
-        ? `Based on ${A} adults, ${T} teens, ${K} kids · ${course==="main"?"main":"appetizer"} · appetite ${appetite}, ${$("mbLength").selectedOptions[0].text.split(" — ")[0].toLowerCase()}, menu: ${menu}.`
-        : "Enter your guest mix to calculate.";
-
-      $("mbPoundsOut").textContent = totalPieces>0 ? `${fmt(poundsRounded, (poundsRounded%1)?2:0)} lb (est.)` : "—";
-      $("mbPerPersonOut").textContent = perPerson>0 ? `${fmt(perPerson)} pieces/person` : "—";
-      $("mbGuestsOut").textContent = guests>0 ? `${guests} guests total` : "—";
-
-      $("mbSubtotal").textContent = subtotal>0 ? "$"+subtotal.toFixed(2) : "$—";
-      $("mbAdds").textContent = subtotal>0 ? "$"+adds.toFixed(2) : "$—";
-      $("mbDelFee").textContent = (delivery>0) ? "$"+delivery.toFixed(2) : "$0.00";
-      $("mbTotalCost").textContent = subtotal>0 ? "$"+totalCost.toFixed(2) : "$—";
-      $("mbPPP").textContent = (subtotal>0 && guests>0) ? "$"+ppp.toFixed(2) : "$—";
+      return{guests,roundedCount,rounded,sub,adds,tot,ppp};
     }
 
-    ["mbA","mbT","mbK","mbCourse","mbAppetite","mbLength","mbMenu","mbLeftovers","mbSize",
-     "mbPriceLb","mbTax","mbFees","mbDelivery"]
-      .forEach(id=>{ const el=$(id); if(el){ el.addEventListener("input", calc); el.addEventListener("change", calc);} });
+    function render(){
+      const s=compute();
+      $("outGuests").textContent=s.guests>0?s.guests:"—";
+      $("outCount").textContent=s.guests>0?s.roundedCount:"—";
+      $("outRaw").textContent=s.guests>0?fmt(s.rounded,(s.rounded%1)?2:0)+" lb":"—";
+      $("outSubtotal").textContent=s.sub>0?money(s.sub):"$—";
+      $("outAdds").textContent=s.sub>0?money(s.adds):"$—";
+      $("outTotal").textContent=s.sub>0?money(s.tot):"$—";
+      $("outPPP").textContent=(s.tot>0&&s.guests>0)?money(s.ppp):"$—";
+      $("outExplain").textContent=s.guests>0?"Auto-calculated from guests, meatball size, course, appetite, event length, and leftovers.":"Enter your guest mix to calculate.";
+    }
 
-    calc();
+    ["A","T","C","course","size","appetite","length","leftovers","priceLb","taxPct","fees"].forEach(id=>{
+      const el=$(id);if(el){el.addEventListener("input",render);el.addEventListener("change",render);} });
+
+    document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+      btn.addEventListener("click",()=>{const n=parseInt(btn.getAttribute("data-people"),10)||0;$("A").value=n;$("T").value=0;$("C").value=0;render();});
+    });
+
+    (function(){const btn=$("dmReset");if(!btn)return;btn.addEventListener("click",()=>{
+      document.querySelectorAll("input, select").forEach(el=>{
+        if(el.tagName==="SELECT"){const i=Array.from(el.options).findIndex(o=>o.defaultSelected);el.selectedIndex=i>=0?i:0;}
+        else{el.value=el.defaultValue;}
+      });
+      document.querySelectorAll("input, select").forEach(el=>{
+        el.dispatchEvent(new Event("input",{bubbles:true}));
+        el.dispatchEvent(new Event("change",{bubbles:true}));
+      });
+      render();
+    });})();
+
+    render();
   })();
   </script>
 </body>
 </html>
-
-
