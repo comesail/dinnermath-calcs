@@ -1,138 +1,329 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="description" content="Enter guests and style—DinnerMath estimates how many doughnuts to buy (mini, ring, filled), scaled for appetite, event length, and leftovers.">
-<title>Doughnuts Quantity Calculator — How Many per Person (Mini, Ring, Filled)</title>
-<style>
-*,*::before,*::after{box-sizing:border-box}
-html,body{margin:0;padding:0;overflow-x:hidden;background:#eaf6fb;color:#0b2a3a;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-.wrap{width:100%;max-width:480px;margin:0 auto;padding:16px}
-@media(min-width:640px){.wrap{max-width:720px;padding:20px}}
-@media(min-width:980px){.wrap{max-width:980px;padding:28px 16px 56px}}
-:root{--ink2:#13506a;--paper:#fff;--line:#d7e8ef;--accent:#2f8db3;--shadow:0 6px 20px rgba(11,42,58,.08);--radius:18px}
-header{margin:0 0 18px}
-header h1{font-size:clamp(22px,3.2vw,34px);margin:0 0 8px;color:var(--ink2)}
-header p{margin:0;color:#274757}
-.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-.stack{display:grid;gap:14px}
-h2{font-size:clamp(18px,2.5vw,22px);margin:0 0 8px;color:var(--ink2)}
-.grid{display:grid;gap:12px}
-@media(min-width:760px){.grid{grid-template-columns:repeat(12,1fr)}}
-.field{display:flex;flex-direction:column;gap:6px;background:#f7fbfd;border:1px solid var(--line);border-radius:12px;padding:10px}
-label{font-weight:600;font-size:.95rem}
-input[type=number],select{border:1px solid #cfe3eb;border-radius:10px;padding:9px 10px;background:#fff;font-size:1rem}
-.row-4{grid-column:span 12}@media(min-width:760px){.row-4{grid-column:span 4}}
-.row-6{grid-column:span 12}@media(min-width:760px){.row-6{grid-column:span 6}}
-.row-12{grid-column:span 12}
-.btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer}
-.btn.secondary{background:#fff;color:var(--accent)}
-.result{display:grid;gap:10px;background:#f6fbfe;border:1px dashed #b7d7e6;border-radius:16px;padding:14px}
-.kv{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:12px}
-.kv b{font-size:1.05rem}
-.muted{color:#4c6b7a;font-size:.9rem}
-details{border:1px solid var(--line);border-radius:12px;background:#fff;margin:10px 0}
-summary{cursor:pointer;padding:10px 14px;font-weight:700;color:#13506a}
-details[open] summary{border-bottom:1px solid var(--line)}
-details .ans{padding:10px 14px 12px;color:#2a4b5a}
-/* Mobile embed height handled by Wix (4827px). Hide the “KEEP PLANNING” label on mobile in Wix per v1.4. */
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DinnerMath — Doughnuts Quantity Calculator</title>
+  <meta name="description" content="How many doughnuts per person? DinnerMath estimates about doughnuts, dozens, and doughnut pounds for pricing—plus quick presets for 10, 25, 50, 100 people.">
+  <meta name="robots" content="index,follow">
+  <style>
+    :root{
+      --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc;
+      --pill:#374151; --card:#ffffff; --accent:#111827;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      background:var(--bg);
+      font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;
+      color:var(--ink);
+    }
+    .wrap{max-width:820px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+    .outline{border:2px solid var(--ink)}
+    h1{font-size:22px;margin:0 0 8px}
+    .lede{color:var(--muted);margin:0 0 16px}
+    h2{font-size:20px;margin:16px 0 8px}
+    h3{font-size:18px;margin:0 0 12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
+    input[type="number"],select{
+      width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px;
+      font-size:14px;background:#fff;color:var(--ink)
+    }
+    .muted{color:var(--muted);font-size:12px}
+    .fine{font-size:13px;color:#374151}
+    .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .preset:hover{background:#f3f4f6}
+    .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:#374151;background:#fff}
+    .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+    .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .kv + .kv{margin-top:8px}
+    .kv b{font-size:1.05rem}
+    .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
+    @media (max-width:720px){.row{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>Doughnuts Quantity Calculator — How Many per Person (Mini, Ring, Filled)</h1>
-    <p>Enter guest mix and doughnut style. DinnerMath estimates how many doughnuts to buy—scaled for appetite, event length, and leftovers.</p>
-  </header>
+  <div class="wrap">
 
-  <section class="card stack" id="inputs">
-    <h2>Inputs</h2>
-    <div class="grid">
-      <div class="field row-4"><label for="adults">Adults</label><input id="adults" type="number" min="0" step="1" value="48"></div>
-      <div class="field row-4"><label for="teens">Teens</label><input id="teens" type="number" min="0" step="1" value="6"></div>
-      <div class="field row-4"><label for="kids">Kids</label><input id="kids" type="number" min="0" step="1" value="8"></div>
-
-      <div class="field row-6">
-        <label for="style">Style / size</label>
-        <select id="style">
-          <option value="2.0">Mini doughnuts (~2 per adult-equivalent)</option>
-          <option value="1.2" selected>Ring/glazed (~1.2 per adult-equivalent)</option>
-          <option value="1.0">Filled/large (~1 per adult-equivalent)</option>
-        </select>
-      </div>
-
-      <div class="field row-6">
-        <label for="appetite">Appetite</label>
-        <select id="appetite"><option value="0.9">Light</option><option value="1.0" selected>Typical</option><option value="1.15">Sweet tooth</option></select>
-      </div>
-
-      <div class="field row-6">
-        <label for="length">Event length</label>
-        <select id="length"><option value="0.95">≤2 hours</option><option value="1.0" selected>2–3 hours</option><option value="1.05">3–4 hours</option><option value="1.1">4–5 hours</option></select>
-      </div>
-
-      <div class="field row-6">
-        <label for="leftovers">Leftovers</label>
-        <select id="leftovers"><option value="1.0" selected>No</option><option value="1.07">Some leftovers</option><option value="1.12">Extra leftovers</option></select>
-      </div>
-
-      <div class="field row-12"><label for="notes">Notes (optional)</label><input id="notes" type="text" placeholder="e.g., breakfast spread vs dessert table, coffee service"></div>
+    <!-- Header -->
+    <div class="card" role="region" aria-label="Header">
+      <h1>Doughnuts Quantity Calculator — How Many per Person</h1>
+      <p class="lede">
+        Enter guests and settings (or tap a quick preset). We estimate
+        <strong>about doughnuts</strong>, <strong>about dozens</strong>, and <strong>about doughnut pounds</strong> (for pricing).
+      </p>
     </div>
-    <div class="actions"><button class="btn" id="calcBtn">Calculate</button><button class="btn secondary" id="resetBtn" type="button">Reset</button></div>
-  </section>
 
-  <section class="card stack" id="results" aria-live="polite">
-    <h2>Results</h2>
-    <div class="result">
+    <!-- Inputs -->
+    <div class="card" role="region" aria-label="Inputs">
+      <h3>Inputs</h3>
+
+      <div class="row" aria-label="Guests">
+        <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="10"></div>
+        <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="0"></div>
+        <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="0"></div>
+        <div>
+          <label for="course">Course mode</label>
+          <select id="course">
+            <option value="breakfast" selected>Breakfast pastry</option>
+            <option value="dessert">Dessert table</option>
+            <option value="coffee">Coffee break</option>
+            <option value="app">Appetizer tasting</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" aria-label="Context">
+        <div>
+          <label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">Short — about 1 to 2 hours</option>
+            <option value="1.00" selected>Standard — about 2 to 3 hours</option>
+            <option value="1.08">Long — about 3 to 4 hours</option>
+            <option value="1.15">Extended — about 4 to 5 hours</option>
+          </select>
+        </div>
+        <div>
+          <label for="leftovers">Add leftovers</label>
+          <select id="leftovers">
+            <option value="1.00" selected>No</option>
+            <option value="1.10">+10%</option>
+            <option value="1.20">+20%</option>
+          </select>
+        </div>
+        <div>
+          <label for="appetite">Appetite</label>
+          <select id="appetite">
+            <option value="0.90">Light</option>
+            <option value="1.00" selected>Typical</option>
+            <option value="1.20">Hearty</option>
+          </select>
+        </div>
+        <!-- Item-specific dropdown AFTER Appetite -->
+        <div>
+          <label for="size">Doughnut size class (avg weight each)</label>
+          <select id="size">
+            <option value="2.5">Small — about 2.5 oz each</option>
+            <option value="3.0" selected>Average — about 3.0 oz each</option>
+            <option value="3.5">Large — about 3.5 oz each</option>
+            <option value="4.0">Jumbo — about 4.0 oz each</option>
+          </select>
+          <div class="muted">We use the class to convert doughnut counts to about doughnut pounds for pricing.</div>
+        </div>
+      </div>
+
+      <!-- Presets + Reset -->
+      <div class="inline" style="margin-top:8px">
+        <span class="muted">Quick presets:</span>
+        <button class="preset" data-people="10" type="button">10</button>
+        <button class="preset" data-people="25" type="button">25</button>
+        <button class="preset" data-people="50" type="button">50</button>
+        <button class="preset" data-people="100" type="button">100</button>
+        <span class="muted">Presets set all as adults — tweak Teens/Children if needed.</span>
+        <div style="flex:1"></div>
+        <button id="dmReset" type="button" class="preset">Reset</button>
+      </div>
+    </div>
+
+    <!-- Pricing -->
+    <div class="card" role="region" aria-label="Pricing">
+      <h3>Pricing (optional)</h3>
+      <div class="row">
+        <div>
+          <label for="priceMode">Pricing mode</label>
+          <select id="priceMode">
+            <option value="lb" selected>By pound</option>
+            <option value="dz">By dozen</option>
+            <option value="each">By each</option>
+          </select>
+        </div>
+        <div>
+          <label for="priceUnit">Unit price</label>
+          <input id="priceUnit" type="number" min="0" step="0.01" placeholder="e.g., 3.99">
+          <div class="muted">If "By pound": dollars per pound. If "By dozen": dollars per dozen. If "By each": dollars per doughnut.</div>
+        </div>
+        <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="e.g., 7.5"></div>
+        <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="e.g., 6.00"></div>
+      </div>
+      <div class="muted">Cost = unit price applied to rounded quantity for your mode + tax + extra fees.</div>
+    </div>
+
+    <!-- Results -->
+    <div class="card outline" role="region" aria-label="Results" aria-live="polite">
+      <h3 class="results-title">Results</h3>
       <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
-      <div class="kv"><span>Total doughnuts needed</span><b id="outPieces">—</b></div>
-      <div class="muted" id="explain">Enter details and click Calculate.</div>
+      <div class="kv"><span>Doughnuts needed (about)</span><b id="outCount">—</b></div>
+      <div class="kv"><span>About dozens (round up)</span><b id="outDozens">—</b></div>
+      <div class="kv"><span>Doughnut pounds (about)</span><b id="outPounds">—</b></div>
+      <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$—</b></div>
+      <div class="kv"><span>Tax and fees</span><b id="outAdds">$—</b></div>
+      <div class="kv"><span>Estimated total</span><b id="outTotal">$—</b></div>
+      <div class="kv"><span>Cost per person</span><b id="outPPP">$—</b></div>
+      <p class="muted" id="outExplain">Enter your guest mix to calculate.</p>
     </div>
-    <div class="footnote">Dessert adult-equivalents: teens = 0.8 adult; kids = 0.6 adult.</div>
-  </section>
 
-  <section class="card stack">
-    <h2>Quick Notes</h2>
-    <ul style="margin:0;padding-left:18px">
-      <li><b>Baseline per adult-equivalent:</b> Mini ≈2 • Ring ≈1.2 • Filled/large ≈1.</li>
-      <li><b>Morning events:</b> People often take seconds—consider “Some leftovers.”</li>
-      <li><b>Mixed dessert tables:</b> Use Light appetite or shorten event length.</li>
-    </ul>
-    <div class="disclaimer">Estimates only for planning — sizes and fillings vary.</div>
-  </section>
+    <!-- Finder -->
+    <div class="card finder" role="region" aria-label="Find near me">
+      <div class="inline">
+        <a class="preset" href="#" onclick="try{window.open('https://www.google.com/maps/search/donuts+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/donuts+near+me';}return false;">Find doughnuts near me</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/bakery','_blank');}catch(e){location.href='https://www.google.com/maps/search/bakery';}return false;">Bakeries</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/grocery+store','_blank');}catch(e){location.href='https://www.google.com/maps/search/grocery+store';}return false;">Grocery stores</a>
+      </div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.7 (auto-calc)</div>
+    </div>
 
-  <section class="card stack">
-    <h2>FAQs</h2>
-    <details><summary>How many doughnuts per person?</summary><div class="ans">Plan ~1.2 ring doughnuts per adult-equivalent (or ~1 filled / ~2 minis), then adjust appetite and event length.</div></details>
-    <details><summary>How many dozen should I buy?</summary><div class="ans">Divide the total by 12 and round up. Add a small buffer for late arrivals.</div></details>
-    <details><summary>What if I offer multiple flavors?</summary><div class="ans">Add a small buffer so popular flavors last; minis are great for variety.</div></details>
-  </section>
-</div>
+    <!-- FAQs (5) -->
+    <div class="card" role="region" aria-label="FAQs">
+      <h2>FAQs</h2>
 
-<script>
-(function(){
-  const $=s=>document.querySelector(s);
-  const N=(s,d=0)=>{const x=parseFloat($(s).value);return isFinite(x)?x:d;};
-  const TEEN=0.8, KID=0.6;
-  function calc(){
-    const A=N('#adults'), T=N('#teens'), K=N('#kids');
-    const AE = A + TEEN*T + KID*K;
-    const perAE=N('#style',1.2);
-    const appetite=N('#appetite',1), length=N('#length',1), leftovers=N('#leftovers',1);
-    const pieces=Math.ceil(AE*perAE*appetite*length*leftovers);
-    $('#outGuests').textContent=(A+T+K).toFixed(0);
-    $('#outPieces').textContent=pieces.toFixed(0);
-    $('#explain').textContent='Per-AE: mini≈2, ring≈1.2, filled≈1. Adjusted by appetite/length/leftovers.';
-  }
-  $('#calcBtn').addEventListener('click',calc);
-  $('#resetBtn').addEventListener('click',()=>{ 
-    $('#adults').value='48';$('#teens').value='6';$('#kids').value='8';
-    $('#style').value='1.2';$('#appetite').value='1.0';$('#length').value='1.0';$('#leftovers').value='1.0';$('#notes').value='';
-    calc();
-  });
-  calc();
-})();
-</script>
+      <details open>
+        <summary>How many doughnuts per person?</summary>
+        <div class="fine">
+          For breakfast or dessert, plan about <strong>1.0 doughnut per adult</strong>, about <strong>1.5 for teens</strong>,
+          and about <strong>0.5 for children</strong>. Coffee-break trays often run a bit lighter.
+        </div>
+      </details>
+
+      <details>
+        <summary>What does the size class do?</summary>
+        <div class="fine">
+          We convert counts to pounds using your size class: <strong>Small about 2.5 oz</strong>, <strong>Average about 3.0 oz</strong>,
+          <strong>Large about 3.5 oz</strong>, <strong>Jumbo about 4.0 oz</strong> per doughnut.
+        </div>
+      </details>
+
+      <details>
+        <summary>Breakfast, dessert table, or coffee break — what changes?</summary>
+        <div class="fine">
+          Course mode multipliers: Breakfast 1.00x, Dessert table 0.85x, Coffee break 0.75x, Appetizer 0.50x.
+          Combine with appetite, event length, and leftovers to fit your crowd.
+        </div>
+      </details>
+
+      <details>
+        <summary>How are dozens calculated?</summary>
+        <div class="fine">
+          We divide by 12 and round up to whole dozens. You can tweak appetite/leftovers to add a buffer for popular flavors.
+        </div>
+      </details>
+
+      <details>
+        <summary>How does pricing work here?</summary>
+        <div class="fine">
+          Subtotal = unit price applied to the rounded quantity for your mode: <em>by pound</em> (rounded doughnut pounds × price per pound), <em>by dozen</em> (rounded dozens × price per dozen), or <em>by each</em> (rounded doughnut count × price per doughnut). Then we add your tax and any extra fees to estimate a total and per-person cost.
+        </div>
+      </details>
+    </div>
+
+    <!-- Quick notes -->
+    <div class="card" role="region" aria-label="Quick notes">
+      <h3>Quick notes</h3>
+      <ul class="fine" style="margin:0 0 0 18px;padding:0">
+        <li><strong>Base portions:</strong> Adults about 1.0 doughnut; Teens about 1.5; Children about 0.5.</li>
+        <li><strong>Size classes (avg weight):</strong> Small 2.5 oz; Average 3.0 oz; Large 3.5 oz; Jumbo 4.0 oz each.</li>
+        <li><strong>Course multipliers:</strong> Breakfast 1.00x; Dessert 0.85x; Coffee break 0.75x; Appetizer 0.50x.</li>
+        <li><strong>Context multipliers:</strong> Appetite (0.90 / 1.00 / 1.20); Event length (0.95 / 1.00 / 1.08 / 1.15); Leftovers (No / +10% / +20%).</li>
+        <li><strong>Rounding:</strong> Dozens round up to whole dozens; doughnut count rounds up to whole doughnuts; doughnut pounds round to the nearest 1/4 lb for pricing.</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm with your grocer/bakery and adjust for your crowd.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Calculator logic -->
+  <script>
+  (function(){
+    const $ = id => document.getElementById(id);
+    const N = (v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+    const money = n => (isFinite(n)&&n>=0) ? "$"+n.toFixed(2) : "$—";
+    const roundQuarter = n => Math.round(n*4)/4;
+
+    const courseMult = c => (c==="breakfast"?1.00:c==="dessert"?0.85:c==="coffee"?0.75:0.50);
+    const lenMult = v => (v==1.15?1.15:v==1.08?1.08:v==0.95?0.95:1.00);
+
+    function compute(){
+      const A=N($("A").value,0), T=N($("T").value,0), C=N($("C").value,0);
+      const guests = A+T+C;
+      const appetite=N($("appetite").value,1.0);
+      const leftovers=N($("leftovers").value,1.0);
+      const length=N($("length").value,1.0);
+      const course=$("course").value;
+      const ozEach=N($("size").value,3.0);
+
+      // base doughnuts per person
+      const base={adult:1.0, teen:1.5, child:0.5};
+      let donuts = (A*base.adult + T*base.teen + C*base.child);
+      donuts *= courseMult(course) * appetite * lenMult(length) * leftovers;
+
+      // pounds from count and size
+      const totalOz = donuts * ozEach;
+      const pounds = totalOz / 16;
+
+      const donutsRounded = Math.ceil(Math.max(0,donuts)); // whole donuts
+      const dozens = donutsRounded>0 ? Math.ceil(donutsRounded/12) : 0;
+      const poundsRounded = roundQuarter(Math.max(0,pounds));
+
+      // Pricing by selected mode
+      const mode=(document.getElementById("priceMode")||{}).value||"lb";
+      const price=N($("priceUnit").value,0), tax=N($("taxPct").value,0)/100, fees=N($("fees").value,0);
+      let subtotal = 0;
+      if(price>0){
+        if(mode==="lb" && poundsRounded>0){ subtotal = poundsRounded*price; }
+        else if(mode==="dz" && dozens>0){ subtotal = dozens*price; }
+        else if(mode==="each" && donutsRounded>0){ subtotal = donutsRounded*price; }
+      }
+      const adds = subtotal*tax + (fees>0?fees:0);
+      const total = subtotal + adds;
+      const ppp = (guests>0 && total>0) ? total/guests : NaN;
+
+      return {guests, donutsRounded, dozens, poundsRounded, subtotal, adds, total, ppp};
+    }
+
+    function render(){
+      const s=compute();
+      $("outGuests").textContent = s.guests>0 ? s.guests.toString() : "—";
+      $("outCount").textContent  = s.guests>0 ? s.donutsRounded.toString() : "—";
+      $("outDozens").textContent = s.guests>0 ? s.dozens.toString() : "—";
+      $("outPounds").textContent = s.guests>0 ? (s.poundsRounded.toFixed(2).replace(/\.00$/,''))+" lb" : "—";
+      $("outSubtotal").textContent = s.subtotal>0 ? money(s.subtotal) : "$—";
+      $("outAdds").textContent     = s.subtotal>0 ? money(s.adds) : "$—";
+      $("outTotal").textContent    = s.subtotal>0 ? money(s.total) : "$—";
+      $("outPPP").textContent      = (s.total>0 && s.guests>0) ? money(s.ppp) : "$—";
+      $("outExplain").textContent  = s.guests>0
+        ? "Auto-calculated from guests, course, size class, appetite, event length, and leftovers."
+        : "Enter your guest mix to calculate.";
+    }
+
+    ["A","T","C","course","length","leftovers","appetite","size","priceMode","priceUnit","taxPct","fees"]
+      .forEach(id=>{const el=$(id); if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }});
+
+    document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+      btn.addEventListener("click",()=>{const n=parseInt(btn.getAttribute("data-people"),10)||0;$("A").value=n;$("T").value=0;$("C").value=0;render();});
+    });
+
+    (function attachReset(){
+      const btn=$("dmReset"); if(!btn) return;
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("input, select").forEach(el=>{
+          if(el.tagName==="SELECT"){
+            const i=Array.from(el.options).findIndex(o=>o.defaultSelected);
+            el.selectedIndex = i>=0 ? i : 0;
+          } else { el.value = el.defaultValue; }
+        });
+        document.querySelectorAll("input, select").forEach(el=>{
+          el.dispatchEvent(new Event("input",{bubbles:true}));
+          el.dispatchEvent(new Event("change",{bubbles:true}));
+        });
+        render();
+      });
+    })();
+
+    render();
+  })();
+  </script>
+
 </body>
 </html>
