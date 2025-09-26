@@ -77,9 +77,13 @@
           <div class="muted">Style sets the baseline pieces per person.</div>
         </div>
         <div>
-          <label for="panYield">Homemade pan yield (pieces)</label>
-          <input id="panYield" type="number" min="4" step="1" value="16">
-          <div class="muted">9×13&quot; pan commonly yields about 16 squares.</div>
+          <label for="panSize">Homemade pan size</label>
+          <select id="panSize">
+            <option value="16" selected>9×13 inch — about 16 pieces</option>
+            <option value="12">9×9 inch — about 12 pieces</option>
+            <option value="9">8×8 inch — about 9 pieces</option>
+          </select>
+          <div class="muted">Choose your pan. We set an about piece yield for each size.</div>
         </div>
         <div>
           <label for="packYield">Store pack yield (pieces)</label>
@@ -251,7 +255,7 @@
       pieces *= courseMult(course) * appetite * lenMult(length) * leftovers;
 
       const source=$("source").value;
-      const panYield=Math.max(4, N($("panYield").value,16));
+      const panYield = Math.max(4, N($("panSize").value,16));
       const packYield=Math.max(4, N($("packYield").value,12));
       const unitYield = source==="store" ? packYield : panYield;
 
@@ -283,7 +287,7 @@
         : "Enter your guest mix to calculate.";
     }
 
-    ["A","T","C","course","style","panYield","packYield","source","appetite","length","leftovers","priceUnit","taxPct","fees"]
+    ["A","T","C","course","style","panSize","packYield","source","appetite","length","leftovers","priceUnit","taxPct","fees"]
     .forEach(id=>{const el=$(id); if(el){el.addEventListener("input",render); el.addEventListener("change",render);}});
 
     document.querySelectorAll(".preset[data-people]").forEach(btn=>{
