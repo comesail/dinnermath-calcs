@@ -92,8 +92,13 @@
           </select>
         </div>
         <div>
-          <label for="note">Notes</label>
-          <div class="muted">Assumes boneless, skin-off fillets. Adjust for very rich or delicate fish if needed.</div>
+          <label for="filletType">Fillet type</label>
+          <select id="filletType">
+            <option value="1.00" selected>Skinless, boneless (baseline)</option>
+            <option value="1.05">Skin-on</option>
+            <option value="1.15">Bone-in / steak-cut</option>
+          </select>
+          <div class="muted">We apply a small buffer for skin-on or bone-in fish.</div>
         </div>
       </div>
 
@@ -152,7 +157,7 @@
       </details>
       <details>
         <summary>Does this account for bones and skin?</summary>
-        <div class="fine">Assumes trimmed, boneless, skin-off fillets. If buying bone-in or skin-on, add a small buffer.</div>
+        <div class="fine">Assumes trimmed, boneless, skin-off fillets by default. Choose <em>Fillet type</em> to add a buffer for skin-on or bone-in/steak-cut.</div>
       </details>
       <details>
         <summary>How do appetite and event length change amounts?</summary>
@@ -172,10 +177,11 @@
     <div class="card" role="region" aria-label="Quick notes">
       <h3>Quick notes</h3>
       <ul class="fine" style="margin:0 0 0 18px;padding:0">
-        <li><strong>Per-person baselines (raw fillet):</strong> Adults 0.5 lb; Teens 0.4 lb; Children 0.3 lb.</li>
+        <li><strong>Assumptions (raw fillet):</strong> Adults 0.5 lb; Teens 0.4 lb; Children 0.3 lb.</li>
         <li><strong>Course multipliers:</strong> Main 1.00; Mixed 0.75; Appetizer 0.50.</li>
-        <li><strong>Event length multipliers:</strong> 0.95 / 1.00 / 1.08 / 1.15.</li>
-        <li><strong>Rounding:</strong> Nearest quarter-pound.</li>
+        <li><strong>Context multipliers:</strong> Appetite (0.90 / 1.00 / 1.20); Event length (0.95 / 1.00 / 1.08 / 1.15); Leftovers (No / +10% / +20%).</li>
+        <li><strong>Fillet type buffer:</strong> Skinless/boneless 1.00; Skin-on 1.05; Bone-in/steak-cut 1.15.</li>
+        <li><strong>Rounding:</strong> Raw purchase rounded to the nearest quarter-pound for easy shopping.</li>
         <li><strong>Disclaimer:</strong> Estimates only; confirm with your seafood market/fishmonger and adjust for your crowd.</li>
       </ul>
     </div>
@@ -197,7 +203,8 @@
     function compute(){
       const A=N($("A").value,0), T=N($("T").value,0), C=N($("C").value,0);
       const guests=A+T+C;
-      let raw=(A*0.5 + T*0.4 + C*0.3) * courseMult($("course").value) * N($("appetite").value,1.0) * lenMult(N($("length").value,1.0)) * N($("leftovers").value,1.0);
+      const type = N($("filletType").value,1.00);
+      let raw=(A*0.5 + T*0.4 + C*0.3) * courseMult($("course").value) * N($("appetite").value,1.0) * lenMult(N($("length").value,1.0)) * N($("leftovers").value,1.0) * type;
       const rounded = roundQtr(Math.max(0, raw));
 
       const price=N($("priceLb").value,0), tax=N($("taxPct").value,0)/100, fees=N($("fees").value,0);
@@ -214,11 +221,11 @@
       $("outTotal").textContent    = s.sub>0 ? money(s.tot) : "$—";
       $("outPPP").textContent      = (s.tot>0 && s.guests>0) ? money(s.ppp) : "$—";
       $("outExplain").textContent  = s.guests>0
-        ? "Auto-calculated from guests, course, event length, leftovers, and appetite."
+        ? "Auto-calculated from guests, course, event length, leftovers, appetite, and fillet type."
         : "Enter your guest mix to calculate.";
     }
 
-    ["A","T","C","course","length","leftovers","appetite","priceLb","taxPct","fees"].forEach(id=>{
+    ["A","T","C","course","length","leftovers","appetite","filletType","priceLb","taxPct","fees"].forEach(id=>{
       const el=$(id); if(el){el.addEventListener("input",render); el.addEventListener("change",render);}
     });
 
