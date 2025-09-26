@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DinnerMath — Cranberry Sauce Quantity Calculator</title>
+  <meta name="description" content="How much cranberry sauce per person? DinnerMath estimates about ounces, cups, quarts, and—if premade—about how many containers. Pricing and quick presets included.">
+  <meta name="robots" content="index,follow">
+  <style>
+    :root{
+      --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc;
+      --pill:#374151; --card:#ffffff; --accent:#111827;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      background:var(--bg);
+      font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;
+      color:var(--ink);
+    }
+    .wrap{max-width:820px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+    .outline{border:2px solid var(--ink)}
+    h1{font-size:22px;margin:0 0 8px}
+    .lede{color:var(--muted);margin:0 0 16px}
+    h2{font-size:20px;margin:16px 0 8px}
+    h3{font-size:18px;margin:0 0 12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
+    input[type="number"],select{
+      width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px;
+      font-size:14px;background:#fff;color:var(--ink)
+    }
+    .muted{color:var(--muted);font-size:12px}
+    .fine{font-size:13px;color:#374151}
+    .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .preset:hover{background:#f3f4f6}
+    .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:#374151;background:#fff}
+    .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+    .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .kv + .kv{margin-top:8px}
+    .kv b{font-size:1.05rem}
+    .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
+    @media (max-width:720px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- Header -->
+    <div class="card" role="region" aria-label="Header">
+      <h1>Cranberry Sauce Quantity Calculator — How Much per Person</h1>
+      <p class="lede">
+        Enter guests and settings (or tap a quick preset). We estimate
+        <strong>about ounces, cups, and quarts</strong> to make. If you pick premade,
+        we’ll also show <strong>about how many containers</strong>. Optional pricing included.
+      </p>
+    </div>
+
+    <!-- Inputs -->
+    <div class="card" role="region" aria-label="Inputs">
+      <h3>Inputs</h3>
+
+      <div class="row" aria-label="Guests">
+        <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="10"></div>
+        <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="0"></div>
+        <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="0"></div>
+        <div>
+          <label for="course">Course mode</label>
+          <select id="course">
+            <option value="side" selected>Side sauce</option>
+            <option value="mixed">Mixed buffet</option>
+            <option value="heavy">Heavy sauce meal</option>
+            <option value="app">Appetizer tasting</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" aria-label="Context">
+        <div>
+          <label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">Short — about 1 to 2 hours</option>
+            <option value="1.00" selected>Standard — about 2 to 3 hours</option>
+            <option value="1.08">Long — about 3 to 4 hours</option>
+            <option value="1.15">Extended — about 4 to 5 hours</option>
+          </select>
+        </div>
+        <div>
+          <label for="leftovers">Add leftovers</label>
+          <select id="leftovers">
+            <option value="1.00" selected>No</option>
+            <option value="1.10">+10%</option>
+            <option value="1.20">+20%</option>
+          </select>
+        </div>
+        <div>
+          <label for="appetite">Appetite</label>
+          <select id="appetite">
+            <option value="0.90">Light</option>
+            <option value="1.00" selected>Typical</option>
+            <option value="1.20">Hearty</option>
+          </select>
+        </div>
+        <!-- Item-specific dropdown AFTER Appetite -->
+        <div>
+          <label for="style">Sauce style (portion or container)</label>
+          <select id="style">
+            <option value="H|2.0" selected>Homemade — about 2.0 oz per person (about 1/4 cup)</option>
+            <option value="H|3.0">Homemade — about 3.0 oz per person (about 3/8 cup)</option>
+            <option value="H|4.0">Homemade — about 4.0 oz per person (about 1/2 cup)</option>
+            <option value="P|8">Premade — 8 oz jar</option>
+            <option value="P|14">Premade — 14 oz can</option>
+            <option value="P|16">Premade — 16 oz jar</option>
+            <option value="P|24">Premade — 24 oz jar</option>
+            <option value="P|32">Premade — 32 oz tub/jar</option>
+          </select>
+          <div class="muted">Homemade uses ounces-per-person. Premade uses common container sizes to estimate about how many to buy.</div>
+        </div>
+      </div>
+
+      <!-- Presets + Reset -->
+      <div class="inline" style="margin-top:8px">
+        <span class="muted">Quick presets:</span>
+        <button class="preset" data-people="10" type="button">10</button>
+        <button class="preset" data-people="25" type="button">25</button>
+        <button class="preset" data-people="50" type="button">50</button>
+        <button class="preset" data-people="100" type="button">100</button>
+        <span class="muted">Presets set all as adults — tweak Teens/Children if needed.</span>
+        <div style="flex:1"></div>
+        <button id="dmReset" type="button" class="preset">Reset</button>
+      </div>
+    </div>
+
+    <!-- Pricing -->
+    <div class="card" role="region" aria-label="Pricing">
+      <h3>Pricing (optional)</h3>
+      <div class="row">
+        <div><label for="priceUnit">Unit price (US dollars per pound)</label><input id="priceUnit" type="number" min="0" step="0.01" placeholder="e.g., 2.20"></div>
+        <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="e.g., 7.5"></div>
+        <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="e.g., 5.00"></div>
+      </div>
+      <div class="muted">Cost = rounded raw pounds × price + tax + extra fees.</div>
+    </div>
+
+    <!-- Results -->
+    <div class="card outline" role="region" aria-label="Results" aria-live="polite">
+      <h3 class="results-title">Results</h3>
+      <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
+      <div class="kv"><span>Raw sauce pounds to make (about)</span><b id="outPounds">—</b></div>
+      <div class="kv"><span>About cups (fluid)</span><b id="outCups">—</b></div>
+      <div class="kv"><span>About quarts (fluid)</span><b id="outQuarts">—</b></div>
+      <div class="kv"><span>About how many premade containers</span><b id="outContainers">—</b></div>
+      <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$—</b></div>
+      <div class="kv"><span>Tax and fees</span><b id="outAdds">$—</b></div>
+      <div class="kv"><span>Estimated total</span><b id="outTotal">$—</b></div>
+      <div class="kv"><span>Cost per person</span><b id="outPPP">$—</b></div>
+      <p class="muted" id="outExplain">Enter your guest mix to calculate.</p>
+    </div>
+
+    <!-- Finder -->
+    <div class="card finder" role="region" aria-label="Find near me">
+      <div class="inline">
+        <a class="preset" href="#" onclick="try{window.open('https://www.google.com/maps/search/cranberry+sauce+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/cranberry+sauce+near+me';}return false;">Find cranberry sauce near me</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/grocery+store','_blank');}catch(e){location.href='https://www.google.com/maps/search/grocery+store';}return false;">Grocery stores</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/catering','_blank');}catch(e){location.href='https://www.google.com/maps/search/catering';}return false;">Catering</a>
+      </div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.7 (auto-calc)</div>
+    </div>
+
+    <!-- Quick notes -->
+    <div class="card" role="region" aria-label="Quick notes">
+      <h3>Quick notes</h3>
+      <ul class="fine" style="margin:0 0 0 18px;padding:0">
+        <li><strong>Base portions (ounces per person):</strong> Adults about 2.5 oz; Teens about 2.0 oz; Children about 1.5 oz.</li>
+        <li><strong>Homemade options:</strong> 2.0 oz (about 1/4 cup), 3.0 oz (about 3/8 cup), 4.0 oz (about 1/2 cup) per person.</li>
+        <li><strong>Premade containers:</strong> 8 oz jar, 14 oz can, 16 oz jar, 24 oz jar, 32 oz tub/jar.</li>
+        <li><strong>Course multipliers:</strong> Side 1.00x; Mixed 0.75x; Heavy 1.25x; Appetizer 0.50x.</li>
+        <li><strong>Context multipliers:</strong> Appetite (0.90 / 1.00 / 1.20); Event length (0.95 / 1.00 / 1.08 / 1.15); Leftovers (No / +10% / +20%).</li>
+        <li><strong>Rounding:</strong> Cups and quarts round to the nearest 1/4; Raw pounds round to the nearest 1/4 lb. Containers round up to whole containers.</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm with your grocer/caterer and adjust for your crowd.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Calculator logic -->
+  <script>
+  (function(){
+    const $ = id => document.getElementById(id);
+    const N = (v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+    const money = n => (isFinite(n)&&n>=0) ? "$"+n.toFixed(2) : "$—";
+    const roundQuarter = n => Math.round(n*4)/4;
+    const courseMult = c => (c==="side"?1.00:c==="mixed"?0.75:c==="heavy"?1.25:0.50);
+    const lenMult = v => (v==1.15?1.15:v==1.08?1.08:v==0.95?0.95:1.00);
+
+    function compute(){
+      const A=N($("A").value,0), T=N($("T").value,0), C=N($("C").value,0);
+      const guests = A+T+C;
+      const appetite=N($("appetite").value,1.0);
+      const leftovers=N($("leftovers").value,1.0);
+      const length=N($("length").value,1.0);
+      const course=$("course").value;
+      const styleVal=$("style").value||"H|2.0";
+      const [mode, valStr] = styleVal.split("|");
+      const val = N(valStr,2.0);
+
+      // base ounces per person
+      const base={adult:2.5, teen:2.0, child:1.5};
+      let ozPerCrowd = (A*base.adult + T*base.teen + C*base.child);
+      ozPerCrowd *= (courseMult(course) * appetite * lenMult(length) * leftovers);
+
+      // homemade uses val oz per person baseline 2.5; premade uses container oz
+      const portionScale = (mode==="H") ? (val/2.5) : 1.0;
+      const totalOz = ozPerCrowd * portionScale;
+
+      const pounds = totalOz/16;
+      const cups = totalOz/8;
+      const quarts = totalOz/32;
+
+      const lbRounded = roundQuarter(Math.max(0,pounds));
+      const cupsRounded = roundQuarter(Math.max(0,cups));
+      const qtRounded = roundQuarter(Math.max(0,quarts));
+
+      const containers = (mode==="P" and val>0) and int(-(-totalOz//val)) or 0  // ceil without math
+
+      // Pricing by pound
+      const price=N($("priceUnit").value,0), tax=N($("taxPct").value,0)/100, fees=N($("fees").value,0);
+      const subtotal = (price>0 && lbRounded>0) ? lbRounded*price : 0;
+      const adds = subtotal*tax + (fees>0?fees:0);
+      const total = subtotal + adds;
+      const ppp = (guests>0 && total>0) ? total/guests : NaN;
+
+      return {guests, lbRounded, cupsRounded, qtRounded, containers, subtotal, adds, total, ppp, mode};
+    }
+
+    function render(){
+      const s=compute();
+      $("outGuests").textContent = s.guests>0 ? s.guests.toString() : "—";
+      $("outPounds").textContent = s.guests>0 ? (s.lbRounded.toFixed(2).replace(/\.00$/,''))+" lb" : "—";
+      $("outCups").textContent   = s.guests>0 ? (s.cupsRounded.toFixed(2).replace(/\.00$/,''))+" cups" : "—";
+      $("outQuarts").textContent = s.guests>0 ? (s.qtRounded.toFixed(2).replace(/\.00$/,''))+" qt" : "—";
+      $("outContainers").textContent = (s.guests>0 && s.mode==="P") ? (s.containers>0?String(s.containers):"0") : "—";
+      $("outSubtotal").textContent = s.subtotal>0 ? money(s.subtotal) : "$—";
+      $("outAdds").textContent     = s.subtotal>0 ? money(s.adds) : "$—";
+      $("outTotal").textContent    = s.subtotal>0 ? money(s.total) : "$—";
+      $("outPPP").textContent      = (s.total>0 && s.guests>0) ? money(s.ppp) : "$—";
+      $("outExplain").textContent  = s.guests>0
+        ? "Auto-calculated from guests, course, ounces/cups, appetite, event length, and leftovers. Premade shows containers."
+        : "Enter your guest mix to calculate.";
+    }
+
+    ["A","T","C","course","length","leftovers","appetite","style","priceUnit","taxPct","fees"]
+      .forEach(id=>{const el=$(id); if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }});
+
+    document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+      btn.addEventListener("click",()=>{const n=parseInt(btn.getAttribute("data-people"),10)||0;$("A").value=n;$("T").value=0;$("C").value=0;render();});
+    });
+
+    (function attachReset(){
+      const btn=$("dmReset"); if(!btn) return;
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("input, select").forEach(el=>{
+          if(el.tagName==="SELECT"){
+            const i=Array.from(el.options).findIndex(o=>o.defaultSelected);
+            el.selectedIndex = i>=0 ? i : 0;
+          } else { el.value = el.defaultValue; }
+        });
+        document.querySelectorAll("input, select").forEach(el=>{
+          el.dispatchEvent(new Event("input",{bubbles:true}));
+          el.dispatchEvent(new Event("change",{bubbles:true}));
+        });
+        render();
+      });
+    })();
+
+    render();
+  })();
+  </script>
+
+</body>
+</html>
