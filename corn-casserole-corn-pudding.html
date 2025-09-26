@@ -105,14 +105,14 @@
         </div>
         <!-- Item-specific dropdown AFTER Appetite -->
         <div>
-          <label for="pan">Pan size (approx servings • raw lb per pan)</label>
+          <label for="pan">Pan size (approx servings - raw lb per pan)</label>
           <select id="pan">
-            <option value="2|6">8×8 (about 6 servings • ≈2.0 lb)</option>
-            <option value="4|12" selected>9×13 (about 12 servings • ≈4.0 lb)</option>
-            <option value="5.5|16">Deep 9×13 (about 16 servings • ≈5.5 lb)</option>
-            <option value="8|24">Half sheet 12×18 (about 24 servings • ≈8.0 lb)</option>
+            <option value="2|6">8x8 (about 6 servings - about 2.0 lb)</option>
+            <option value="4|12" selected>9x13 (about 12 servings - about 4.0 lb)</option>
+            <option value="5.5|16">Deep 9x13 (about 16 servings - about 5.5 lb)</option>
+            <option value="8|24">Half sheet 12x18 (about 24 servings - about 8.0 lb)</option>
           </select>
-          <div class="muted">We convert needed servings to <em>about pans</em> and raw pounds using your selected pan size.</div>
+          <div class="muted">We convert needed servings to about pans and raw pounds using your selected pan size.</div>
         </div>
       </div>
 
@@ -137,7 +137,7 @@
         <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="e.g., 7.5"></div>
         <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="e.g., 6.00"></div>
       </div>
-      <div class="muted">Cost = <em>rounded raw pounds</em> × price + tax + extra fees.</div>
+      <div class="muted">Cost = rounded raw pounds × price + tax + extra fees.</div>
     </div>
 
     <!-- Results -->
@@ -178,16 +178,16 @@
       <details>
         <summary>What do the pan-size labels mean?</summary>
         <div class="fine">
-          Typical yields: <strong>8×8 ≈ 6 side servings (≈2.0 lb raw mix)</strong>,
-          <strong>9×13 ≈ 12 (≈4.0 lb)</strong>, <strong>Deep 9×13 ≈ 16 (≈5.5 lb)</strong>,
-          <strong>Half sheet ≈ 24 (≈8.0 lb)</strong>. We convert your crowd to <em>pans</em> and <em>raw pounds</em> using the chosen size.
+          Typical yields: <strong>8x8 about 6 side servings (about 2.0 lb raw mix)</strong>,
+          <strong>9x13 about 12 (about 4.0 lb)</strong>, <strong>Deep 9x13 about 16 (about 5.5 lb)</strong>,
+          <strong>Half sheet 12x18 about 24 (about 8.0 lb)</strong>. We convert your crowd to pans and raw pounds using the chosen size.
         </div>
       </details>
 
       <details>
         <summary>Side, mixed buffet, or vegetarian main — what changes?</summary>
         <div class="fine">
-          The <em>Course mode</em> adjusts portions: Side (1.00×), Mixed buffet (0.75×), Vegetarian main (1.40×), Appetizer tasting (0.50×).
+          The Course mode adjusts portions: Side (1.00x), Mixed buffet (0.75x), Vegetarian main (1.40x), Appetizer tasting (0.50x).
           Combine with appetite, event length, and leftovers to fit your crowd.
         </div>
       </details>
@@ -195,7 +195,7 @@
       <details>
         <summary>How does pricing work here?</summary>
         <div class="fine">
-          Subtotal = <em>rounded raw pounds × unit price per pound</em>. Then we add your tax and any extra fees to estimate a total and per-person cost.
+          Subtotal = rounded raw pounds × unit price per pound. Then we add your tax and any extra fees to estimate a total and per-person cost.
           Use your average ingredient cost per pound for the recipe (corn + dairy + mix-ins).
         </div>
       </details>
@@ -203,7 +203,7 @@
       <details>
         <summary>Can I switch pans after planning?</summary>
         <div class="fine">
-          Yes. Change the pan dropdown to see <strong>about how many pans</strong> of each size you’d need for the same crowd and settings.
+          Yes. Change the pan dropdown to see about how many pans of each size you’d need for the same crowd and settings.
         </div>
       </details>
     </div>
@@ -213,10 +213,10 @@
       <h3>Quick notes</h3>
       <ul class="fine" style="margin:0 0 0 18px;padding:0">
         <li><strong>Base portions (raw mix):</strong> Adults about 6 oz; Teens about 5 oz; Children about 3.5 oz.</li>
-        <li><strong>Course multipliers:</strong> Side 1.00; Mixed 0.75; Vegetarian main 1.40; Appetizer 0.50.</li>
-        <li><strong>Pan yields (approx):</strong> 8×8 ≈ 2.0 lb; 9×13 ≈ 4.0 lb; Deep 9×13 ≈ 5.5 lb; Half sheet ≈ 8.0 lb.</li>
+        <li><strong>Course multipliers:</strong> Side 1.00x; Mixed 0.75x; Vegetarian main 1.40x; Appetizer 0.50x.</li>
+        <li><strong>Pan yields (approx):</strong> 8x8 about 2.0 lb; 9x13 about 4.0 lb; Deep 9x13 about 5.5 lb; Half sheet about 8.0 lb.</li>
         <li><strong>Context multipliers:</strong> Appetite (0.90 / 1.00 / 1.20); Event length (0.95 / 1.00 / 1.08 / 1.15); Leftovers (No / +10% / +20%).</li>
-        <li><strong>Rounding:</strong> Pans round up to whole pans. Raw pounds round to the nearest ¼ lb for easy shopping.</li>
+        <li><strong>Rounding:</strong> Pans round up to whole pans. Raw pounds round to the nearest 1/4 lb for easy shopping.</li>
         <li><strong>Disclaimer:</strong> Estimates only; confirm with your grocer/caterer and adjust for your crowd.</li>
       </ul>
     </div>
@@ -309,17 +309,17 @@
   })();
   </script>
 
-  <!-- FAQPage JSON-LD -->
+  <!-- FAQPage JSON-LD (ASCII-friendly pan wording) -->
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
       {"@type":"Question","name":"How much corn casserole per person?","acceptedAnswer":{"@type":"Answer","text":"As a side dish, plan about 6 oz per adult, about 5 oz per teen, and about 3.5 oz per child (before baking). Mixed buffets run lighter; vegetarian mains run heavier."}},
-      {"@type":"Question","name":"What do the pan-size labels mean?","acceptedAnswer":{"@type":"Answer","text":"Typical yields: 8×8 ≈ 6 side servings (≈2.0 lb raw mix), 9×13 ≈ 12 (≈4.0 lb), Deep 9×13 ≈ 16 (≈5.5 lb), Half sheet ≈ 24 (≈8.0 lb)."}},
-      {"@type":"Question","name":"Side, mixed buffet, or vegetarian main — what changes?","acceptedAnswer":{"@type":"Answer","text":"Course mode multipliers: Side 1.00, Mixed buffet 0.75, Vegetarian main 1.40, Appetizer tasting 0.50."}},
+      {"@type":"Question","name":"What do the pan-size labels mean?","acceptedAnswer":{"@type":"Answer","text":"Typical yields: 8x8 about 6 side servings (about 2.0 lb raw mix), 9x13 about 12 (about 4.0 lb), Deep 9x13 about 16 (about 5.5 lb), Half sheet 12x18 about 24 (about 8.0 lb)."}},
+      {"@type":"Question","name":"Side, mixed buffet, or vegetarian main — what changes?","acceptedAnswer":{"@type":"Answer","text":"Course mode multipliers: Side 1.00x, Mixed buffet 0.75x, Vegetarian main 1.40x, Appetizer tasting 0.50x."}},
       {"@type":"Question","name":"How does pricing work here?","acceptedAnswer":{"@type":"Answer","text":"Subtotal = rounded raw pounds × unit price per pound. Then we add your tax and any extra fees to estimate a total and per-person cost."}},
-      {"@type":"Question","name":"Can I switch pans after planning?","acceptedAnswer":{"@type":"Answer","text":"Yes. Change the pan dropdown to see about how many pans of each size you’d need for the same crowd and settings."}}
+      {"@type":"Question","name":"Can I switch pans after planning?","acceptedAnswer":{"@type":"Answer","text":"Yes. Change the pan dropdown to see about how many pans of each size you would need for the same crowd and settings."}}
     ]
   }
   </script>
