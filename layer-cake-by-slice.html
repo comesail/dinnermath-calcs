@@ -1,204 +1,413 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="description" content="Enter guests and slice style—DinnerMath estimates layer cake slices needed and suggests round cake sizes or tiers.">
-<title>Layer Cake Quantity Calculator — How Many Slices per Person (Rounds & Tiers)</title>
-<style>
-*,*::before,*::after{box-sizing:border-box}
-html,body{margin:0;padding:0;overflow-x:hidden;background:#eaf6fb;color:#0b2a3a;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-.wrap{width:100%;max-width:480px;margin:0 auto;padding:16px}
-@media(min-width:640px){.wrap{max-width:720px;padding:20px}}
-@media(min-width:980px){.wrap{max-width:980px;padding:28px 16px 56px}}
-:root{--ink2:#13506a;--paper:#fff;--line:#d7e8ef;--accent:#2f8db3;--shadow:0 6px 20px rgba(11,42,58,.08);--radius:18px}
-header{margin:0 0 18px}
-header h1{font-size:clamp(22px,3.2vw,34px);margin:0 0 8px;color:var(--ink2)}
-header p{margin:0;color:#274757}
-.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-.stack{display:grid;gap:14px}
-h2{font-size:clamp(18px,2.5vw,22px);margin:0 0 8px;color:var(--ink2)}
-.grid{display:grid;gap:12px}
-@media(min-width:760px){.grid{grid-template-columns:repeat(12,1fr)}}
-.field{display:flex;flex-direction:column;gap:6px;background:#f7fbfd;border:1px solid var(--line);border-radius:12px;padding:10px}
-label{font-weight:600;font-size:.95rem}
-input[type=number],select{border:1px solid #cfe3eb;border-radius:10px;padding:9px 10px;background:#fff;font-size:1rem}
-.row-4{grid-column:span 12}@media(min-width:760px){.row-4{grid-column:span 4}}
-.row-6{grid-column:span 12}@media(min-width:760px){.row-6{grid-column:span 6}}
-.row-12{grid-column:span 12}
-.btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer}
-.btn.secondary{background:#fff;color:var(--accent)}
-.result{display:grid;gap:10px;background:#f6fbfe;border:1px dashed #b7d7e6;border-radius:16px;padding:14px}
-.kv{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:12px}
-.kv b{font-size:1.05rem}
-.muted{color:#4c6b7a;font-size:.9rem}
-table{width:100%;border-collapse:separate;border-spacing:0 8px}
-td,th{padding:10px 12px;background:#fff;border:1px solid var(--line)}
-th{font-weight:700;color:#13506a}
-tr td:first-child, tr th:first-child{border-top-left-radius:10px;border-bottom-left-radius:10px}
-tr td:last-child, tr th:last-child{border-top-right-radius:10px;border-bottom-right-radius:10px}
-details{border:1px solid var(--line);border-radius:12px;background:#fff;margin:10px 0}
-summary{cursor:pointer;padding:10px 14px;font-weight:700;color:#13506a}
-details[open] summary{border-bottom:1px solid var(--line)}
-details .ans{padding:10px 14px 12px;color:#2a4b5a}
-.footnote,.disclaimer{font-size:.85rem;color:#567789;margin-top:10px}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DinnerMath — Layer Cake by Slice Quantity Calculator</title>
+  <meta name="description" content="How much layer cake per person? Estimate about slices, about how many tiered cakes, and cake pounds for pricing. Build multi-tier sets and choose tier height.">
+  <meta name="robots" content="index,follow">
+  <style>
+    :root{
+      --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc;
+      --pill:#374151; --card:#ffffff; --accent:#111827;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      background:var(--bg);
+      font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;
+      color:var(--ink);
+    }
+    .wrap{max-width:920px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+    .outline{border:2px solid var(--ink)}
+    h1{font-size:22px;margin:0 0 8px}
+    .lede{color:var(--muted);margin:0 0 16px}
+    h2{font-size:20px;margin:16px 0 8px}
+    h3{font-size:18px;margin:0 0 12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
+    input[type="number"],select,button.addrow{
+      width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px;
+      font-size:14px;background:#fff;color:var(--ink)
+    }
+    .muted{color:var(--muted);font-size:12px}
+    .fine{font-size:13px;color:#374151}
+    .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .preset:hover{background:#f3f4f6}
+    .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:#374151;background:#fff}
+    .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+    .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .kv + .kv{margin-top:8px}
+    .kv b{font-size:1.05rem}
+    .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
+    .tiers{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:8px}
+    .rm{border:1px solid #d1d5db;border-radius:8px;background:#fff;padding:6px 10px;cursor:pointer}
+    .rm:hover{background:#f3f4f6}
+    .hint{font-size:11px;color:#6b7280}
+    @media (max-width:720px){.row{grid-template-columns:1fr} .tiers{grid-template-columns:1fr auto}}
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>Layer Cake Quantity Calculator — How Many Slices per Person (Rounds & Tiers)</h1>
-    <p>Enter your guest mix and slice style. DinnerMath estimates how many cake slices you need and suggests round cakes or tiers—adjusted for appetite, event length, and leftovers.</p>
-  </header>
+  <div class="wrap">
 
-  <section class="card stack" id="inputs">
-    <h2>Inputs</h2>
-    <div class="grid">
-      <div class="field row-4"><label for="adults">Adults</label><input id="adults" type="number" min="0" step="1" value="24"></div>
-      <div class="field row-4"><label for="teens">Teens</label><input id="teens" type="number" min="0" step="1" value="4"></div>
-      <div class="field row-4"><label for="kids">Kids</label><input id="kids" type="number" min="0" step="1" value="6"></div>
-
-      <div class="field row-6">
-        <label for="slice">Slice style</label>
-        <select id="slice">
-          <option value="1.0" selected>Party slice (~1 slice per adult-equivalent)</option>
-          <option value="0.85">Small slice (wedding style)</option>
-          <option value="1.2">Generous slice</option>
-        </select>
-      </div>
-
-      <div class="field row-6">
-        <label for="tiers">Suggest tiers?</label>
-        <select id="tiers">
-          <option value="yes">Yes — propose a tiered combo</option>
-          <option value="no" selected>No — suggest single-size rounds</option>
-        </select>
-      </div>
-
-      <div class="field row-6">
-        <label for="appetite">Appetite</label>
-        <select id="appetite"><option value="0.9">Light</option><option value="1.0" selected>Typical</option><option value="1.15">Sweet tooth</option></select>
-      </div>
-
-      <div class="field row-6">
-        <label for="length">Event length</label>
-        <select id="length"><option value="0.95">≤2 hours</option><option value="1.0" selected>2–3 hours</option><option value="1.05">3–4 hours</option><option value="1.1">4–5 hours</option></select>
-      </div>
-
-      <div class="field row-6">
-        <label for="leftovers">Leftovers</label>
-        <select id="leftovers"><option value="1.0" selected>No</option><option value="1.07">Some leftovers</option><option value="1.12">Extra leftovers</option></select>
-      </div>
-
-      <div class="field row-12"><label for="notes">Notes (optional)</label><input id="notes" type="text" placeholder="e.g., other desserts, smash cake, to-go boxes"></div>
+    <!-- Header -->
+    <div class="card" role="region" aria-label="Header">
+      <h1>Layer Cake by Slice — Quantity Calculator</h1>
+      <p class="lede">
+        Enter guests and settings (or tap a quick preset). Build a multi-tier cake set and choose tier height.
+        We estimate <strong>about slices</strong>, <strong>about how many cakes (sets)</strong>, and <strong>cake pounds (for pricing)</strong>.
+      </p>
     </div>
-    <div class="actions"><button class="btn" id="calcBtn">Calculate</button><button class="btn secondary" id="resetBtn" type="button">Reset</button></div>
-  </section>
 
-  <section class="card stack" id="results" aria-live="polite">
-    <h2>Results</h2>
-    <div class="result">
+    <!-- Inputs -->
+    <div class="card" role="region" aria-label="Inputs">
+      <h3>Inputs</h3>
+
+      <div class="row" aria-label="Guests">
+        <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="10"></div>
+        <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="0"></div>
+        <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="0"></div>
+        <div>
+          <label for="course">Course mode</label>
+          <select id="course">
+            <option value="dessert" selected>Dessert table</option>
+            <option value="party">Party main dessert (bigger slices)</option>
+            <option value="wedding">Wedding slivers (smaller slices)</option>
+            <option value="coffee">Coffee break</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" aria-label="Context">
+        <div>
+          <label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">Short — about 1 to 2 hours</option>
+            <option value="1.00" selected>Standard — about 2 to 3 hours</option>
+            <option value="1.08">Long — about 3 to 4 hours</option>
+            <option value="1.15">Extended — about 4 to 5 hours</option>
+          </select>
+        </div>
+        <div>
+          <label for="leftovers">Add leftovers</label>
+          <select id="leftovers">
+            <option value="1.00" selected>No</option>
+            <option value="1.10">+10%</option>
+            <option value="1.20">+20%</option>
+          </select>
+        </div>
+        <div>
+          <label for="appetite">Appetite</label>
+          <select id="appetite">
+            <option value="0.90">Light</option>
+            <option value="1.00" selected>Typical</option>
+            <option value="1.20">Hearty</option>
+          </select>
+        </div>
+        <!-- Item-specific controls AFTER Appetite -->
+        <div>
+          <label for="tierHeight">Tier height (layers per tier)</label>
+          <select id="tierHeight">
+            <option value="1.00" selected>2 layers (standard)</option>
+            <option value="1.15">3 layers (taller tiers)</option>
+            <option value="1.25">4 layers (extra tall tiers)</option>
+          </select>
+          <div class="muted">Taller tiers are often sliced a bit thinner; we nudge slice yield: 0%, +15%, +25%.</div>
+        </div>
+      </div>
+
+      <!-- Multi-tier builder -->
+      <div class="row" aria-label="Tier builder">
+        <div style="grid-column:1/-1">
+          <label>Tier sizes (build one cake set)</label>
+          <div id="tiers" class="tiers">
+            <!-- rows injected by JS -->
+          </div>
+          <div class="inline" style="margin-top:8px">
+            <button type="button" id="addTier" class="preset">Add tier</button>
+            <span class="hint">Common stacks: 6/9/12 in or 8/10/12 in. We total slices per set from your tiers.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Presets + Reset -->
+      <div class="inline" style="margin-top:8px">
+        <span class="muted">Quick presets:</span>
+        <button class="preset" data-people="10" type="button">10</button>
+        <button class="preset" data-people="25" type="button">25</button>
+        <button class="preset" data-people="50" type="button">50</button>
+        <button class="preset" data-people="100" type="button">100</button>
+        <span class="muted">Presets set all as adults — tweak Teens/Children if needed.</span>
+        <div style="flex:1"></div>
+        <button id="dmReset" type="button" class="preset">Reset</button>
+      </div>
+    </div>
+
+    <!-- Pricing -->
+    <div class="card" role="region" aria-label="Pricing">
+      <h3>Pricing (optional)</h3>
+      <div class="row">
+        <div><label for="priceUnit">Unit price (US dollars per pound)</label><input id="priceUnit" type="number" min="0" step="0.01" placeholder="e.g., 7.50"></div>
+        <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="e.g., 7.5"></div>
+        <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="e.g., 12.00"></div>
+      </div>
+      <div class="muted">Cost = cake pounds (rounded) × price + tax + extra fees.</div>
+    </div>
+
+    <!-- Results -->
+    <div class="card outline" role="region" aria-label="Results" aria-live="polite">
+      <h3 class="results-title">Results</h3>
       <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
-      <div class="kv"><span>Total slices needed</span><b id="outSlices">—</b></div>
-      <div class="kv"><span>Suggested round cakes</span><b id="outRounds">—</b></div>
-      <div class="kv"><span>Tier suggestion</span><b id="outTiers">—</b></div>
-      <div class="muted" id="explain">Enter details and click Calculate.</div>
+      <div class="kv"><span>Slices needed (about)</span><b id="outSlices">—</b></div>
+      <div class="kv"><span>Slices per cake set (about)</span><b id="outSlicesPerSet">—</b></div>
+<div class="kv"><span>Tiers per cake set</span><b id="outTierCount">—</b></div>
+      <div class="kv"><span>About how many cakes (sets)</span><b id="outCakes">—</b></div>
+      <div class="kv"><span>Cake pounds (about)</span><b id="outPounds">—</b></div>
+      <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$—</b></div>
+      <div class="kv"><span>Tax and fees</span><b id="outAdds">$—</b></div>
+      <div class="kv"><span>Estimated total</span><b id="outTotal">$—</b></div>
+      <div class="kv"><span>Cost per person</span><b id="outPPP">$—</b></div>
+      <p class="muted" id="outExplain">Enter your guest mix to calculate.</p>
     </div>
 
-    <div class="footnote">Adult-equivalent counts: teens = 0.8 adult; kids = 0.6 adult (desserts).</div>
-  </section>
+    <!-- Finder -->
+    <div class="card finder" role="region" aria-label="Find near me">
+      <div class="inline">
+        <a class="preset" href="#" onclick="try{window.open('https://www.google.com/maps/search/wedding+cake+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/wedding+cake+near+me';}return false;">Find wedding cake near me</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/bakery','_blank');}catch(e){location.href='https://www.google.com/maps/search/bakery';}return false;">Bakeries</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/catering','_blank');}catch(e){location.href='https://www.google.com/maps/search/catering';}return false;">Catering</a>
+      </div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.7 (auto-calc)</div>
+    </div>
 
-  <section class="card stack">
-    <h2>Quick Notes</h2>
-    <ul style="margin:0;padding-left:18px">
-      <li><b>Baseline:</b> ~1 slice per adult-equivalent for desserts.</li>
-      <li><b>Typical round yields (2–3 layers):</b> 8″ ≈ 12, 9″ ≈ 16, 10″ ≈ 20 slices (party style).</li>
-      <li><b>Wedding-style slices</b> are smaller; choose “Small slice” to reduce per-person needs.</li>
-      <li><b>Round up:</b> Cakes vary by height & richness; extra slices rarely go to waste.</li>
-    </ul>
-    <div class="disclaimer">Estimates only for planning — no baking or food-safety advice.</div>
-  </section>
+    <!-- FAQs (5) -->
+    <div class="card" role="region" aria-label="FAQs">
+      <h2>FAQs</h2>
 
-  <section class="card stack">
-    <h2>FAQs</h2>
-    <details><summary>How many slices per round cake?</summary><div class="ans">As a rule of thumb: 8″ ≈ 12, 9″ ≈ 16, 10″ ≈ 20 slices for typical party slices.</div></details>
-    <details><summary>What is “wedding-style” slicing?</summary><div class="ans">Thinner rectangular slices that increase yield; pick “Small slice” to scale down per-person needs.</div></details>
-    <details><summary>Tier suggestions vs single rounds?</summary><div class="ans">Tiered combos (e.g., 10″+8″) add up yields cleanly and look festive; single-size rounds simplify serving.</div></details>
-    <details><summary>Should I add cupcakes or sheet cake?</summary><div class="ans">If you’re short a few slices, cupcakes or a small sheet cake topper fills the gap without buying another full round.</div></details>
-  </section>
-</div>
+      <details open>
+        <summary>How many cake slices per person?</summary>
+        <div class="fine">
+          Plan about <strong>1 slice per adult</strong>, about <strong>1.25 for teens</strong>, and about <strong>0.5 for children</strong> as a dessert.
+          Wedding slivers run lighter; party main-dessert servings run heavier.
+        </div>
+      </details>
 
-<script>
-(function(){
-  const $=s=>document.querySelector(s);
-  const N=(s,d=0)=>{const x=parseFloat($(s).value);return isFinite(x)?x:d;};
-  const TEEN=0.8, KID=0.6; // dessert AE factors
+      <details>
+        <summary>What do tier height and tier sizes mean?</summary>
+        <div class="fine">
+          Each <em>tier</em> is one round cake of a given diameter (e.g., 6, 8, 9, 10, 12 in). Most tiers are <strong>2 layers</strong>; some are <strong>3–4 layers</strong> tall.
+          Taller tiers are sliced a bit thinner, so we gently increase yield: 2 layers = baseline, 3 layers = about +15%, 4 layers = about +25%.
+          A <em>cake set</em> is your selected stack of tiers (for example 6/9/12 in). We total slices per set from your tiers.
+        </div>
+      </details>
 
-  // Party-slice round yields (approx.)
-  const Y8=12, Y9=16, Y10=20;
+      <details>
+        <summary>Dessert table, wedding slivers, or party main dessert — what changes?</summary>
+        <div class="fine">
+          Course multipliers: Dessert 1.00x, Wedding slivers 0.65x, Party main dessert 1.20x, Coffee break 0.75x.
+          Combine with appetite, event length, and leftovers to fit your crowd.
+        </div>
+      </details>
 
-  function needSlices(){
-    const A=N('#adults'), T=N('#teens'), K=N('#kids');
-    const AE = A + TEEN*T + KID*K;
-    const appetite=N('#appetite',1), length=N('#length',1), leftovers=N('#leftovers',1), slice=N('#slice',1);
-    const guests = A+T+K;
-    const slices = Math.ceil(AE * 1.0 * slice * appetite * length * leftovers);
-    return { guests, slices };
-  }
+      <details>
+        <summary>How are cake pounds estimated?</summary>
+        <div class="fine">
+          We assume about <strong>4.0 oz per dessert slice</strong> on average (wedding slivers less, party servings more),
+          and convert slices to cake pounds for pricing. Pounds round to the nearest 1/4 lb.
+        </div>
+      </details>
 
-  function roundsGreedy(n){
-    // Greedy combo using 10", 9", 8" to meet/exceed n
-    let rem=n, c10=0, c9=0, c8=0;
-    while(rem>0){
-      if(rem>=Y10){ c10++; rem-=Y10; }
-      else if(rem>=Y9){ c9++; rem-=Y9; }
-      else { c8++; rem-=Y8; }
+      <details>
+        <summary>How does pricing work here?</summary>
+        <div class="fine">
+          Subtotal = <em>rounded cake pounds × unit price per pound</em>. Then we add your tax and any extra fees
+          to estimate a total and per-person cost. If your bakery prices per cake or per slice, enter an equivalent per-pound price from your quote.
+        </div>
+      </details>
+    </div>
+
+    <!-- Quick notes -->
+    <div class="card" role="region" aria-label="Quick notes">
+      <h3>Quick notes</h3>
+      <ul class="fine" style="margin:0 0 0 18px;padding:0">
+        <li><strong>Base portions (by slice):</strong> Adults about 1; Teens about 1.25; Children about 0.5.</li>
+        <li><strong>Course multipliers:</strong> Dessert 1.00x; Wedding slivers 0.65x; Party main dessert 1.20x; Coffee 0.75x.</li>
+        <li><strong>Tier height:</strong> 2 layers baseline; 3 layers about +15% yield; 4 layers about +25% yield.</li>
+        <li><strong>Common tier diameters (approx slices at baseline):</strong> 6 in ~ 10; 8 in ~ 12; 9 in ~ 16; 10 in ~ 21; 12 in ~ 28.</li>
+        <li><strong>Context multipliers:</strong> Appetite (0.90 / 1.00 / 1.20); Event length (0.95 / 1.00 / 1.08 / 1.15); Leftovers (No / +10% / +20%).</li>
+        <li><strong>Rounding:</strong> Cakes (sets) round up to whole sets. Cake pounds round to the nearest 1/4 lb.</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm with your bakery/caterer and adjust for your crowd.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Calculator logic -->
+  <script>
+  (function(){
+    const $ = id => document.getElementById(id);
+    const N = (v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+    const money = n => (isFinite(n)&&n>=0) ? "$"+n.toFixed(2) : "$—";
+    const roundQuarter = n => Math.round(n*4)/4;
+
+    const courseMult = c => (c==="dessert"?1.00:c==="party"?1.20:c==="wedding"?0.65:0.75);
+    const lenMult = v => (v==1.15?1.15:v==1.08?1.08:v==0.95?0.95:1.00);
+
+    // Slices per tier at baseline (2-layer, dessert-style slicing)
+    const baseSlicesByDia = {6:10, 8:12, 9:16, 10:21, 12:28};
+
+    function tierYieldFactor(){
+      const v = ($("tierHeight")||{}).value || "1.00";
+      return N(v,1.00);
     }
-    return {c10,c9,c8};
-  }
 
-  function tiersSuggestion(n){
-    // Simple common tier pairs that look nice
-    const options=[
-      {name:'10″ + 8″', slices:Y10+Y8},
-      {name:'9″ + 8″',  slices:Y9+Y8},
-      {name:'10″ + 9″', slices:Y10+Y9},
-      {name:'10″ + 9″ + 8″', slices:Y10+Y9+Y8}
-    ];
-    // Find first that meets or just exceeds n; else max
-    let pick=options[0];
-    for(const opt of options){
-      if(opt.slices>=n){ pick=opt; break; }
-      if(opt.slices>pick.slices) pick=opt;
+    function readTiers(){
+      // Collect selected diameters
+      const nodes = document.querySelectorAll(".tier-select");
+      const list = [];
+      nodes.forEach(n=>{
+        const dia = N(n.value, 0);
+        if(dia && baseSlicesByDia[dia]) list.push(dia);
+      });
+      return list;
     }
-    return pick;
-  }
 
-  function calc(){
-    const {guests,slices} = needSlices();
-    const suggestTiers = $('#tiers').value==='yes';
-    const r = roundsGreedy(slices);
-    const roundsText = `${r.c10}×10″, ${r.c9}×9″, ${r.c8}×8″`.replace(/(^|, )0×[^,]+/g,'').replace(/^, /,'') || '—';
-    const tier = tiersSuggestion(slices);
+    function slicesPerSet(){
+      const tiers = readTiers();
+      if(tiers.length===0) return 0;
+      const factor = tierYieldFactor();
+      let total = 0;
+      tiers.forEach(d=> total += baseSlicesByDia[d]);
+      return Math.round(total * factor);
+    }
 
-    $('#outGuests').textContent = guests.toFixed(0);
-    $('#outSlices').textContent = slices.toFixed(0);
-    $('#outRounds').textContent = roundsText;
-    $('#outTiers').textContent  = suggestTiers ? `${tier.name} (~${tier.slices} slices)` : 'Skipped';
-    $('#explain').textContent   = 'Yields assume party-style slices and 2–3 layer rounds.';
-  }
+    function compute(){
+      const A=N($("A").value,0), T=N($("T").value,0), C=N($("C").value,0);
+      const guests = A+T+C;
+      const appetite=N($("appetite").value,1.0);
+      const leftovers=N($("leftovers").value,1.0);
+      const length=N($("length").value,1.0);
+      const course=$("course").value;
 
-  $('#calcBtn').addEventListener('click',calc);
-  $('#resetBtn').addEventListener('click',()=>{ 
-    $('#adults').value='24';$('#teens').value='4';$('#kids').value='6';
-    $('#slice').value='1.0';$('#tiers').value='no';
-    $('#appetite').value='1.0';$('#length').value='1.0';$('#leftovers').value='1.0';
-    $('#notes').value='';
-    calc();
-  });
+      // base slices per person
+      const base={adult:1.0, teen:1.25, child:0.5};
+      let slices = (A*base.adult + T*base.teen + C*base.child);
+      slices *= courseMult(course) * appetite * lenMult(length) * leftovers;
 
-  calc();
-})();
-</script>
+      const perSet = slicesPerSet();
+      const slicesRounded = Math.ceil(Math.max(0,slices));
+
+      // number of cakes (sets)
+      const sets = (perSet>0 && slicesRounded>0) ? Math.ceil(slicesRounded / perSet) : 0;
+
+      // cake pounds: assume ~4.0 oz per dessert slice baseline; adjust slightly for wedding/party via course multiplier already in slices
+      const ozPerSlice = 4.0;
+      const pounds = (slicesRounded * ozPerSlice) / 16.0;
+      const poundsRounded = roundQuarter(Math.max(0,pounds));
+
+      // Pricing by pound
+      const price=N($("priceUnit").value,0), tax=N($("taxPct").value,0)/100, fees=N($("fees").value,0);
+      const subtotal = (price>0 && poundsRounded>0) ? poundsRounded*price : 0;
+      const adds = subtotal*tax + (fees>0?fees:0);
+      const total = subtotal + adds;
+      const ppp = (guests>0 && total>0) ? total/guests : NaN;
+
+      return {guests, slicesRounded, perSet, sets, poundsRounded, subtotal, adds, total, ppp, tierCount: readTiers().length};
+    }
+
+    function render(){
+      const s=compute();
+      $("outGuests").textContent = s.guests>0 ? s.guests.toString() : "—";
+      $("outSlices").textContent = s.guests>0 ? s.slicesRounded.toString() : "—";
+      $("outSlicesPerSet").textContent = s.perSet>0 ? s.perSet.toString() : "—";
+      $("outTierCount").textContent   = (s.tierCount && s.tierCount>0) ? s.tierCount.toString() : "—";
+      $("outCakes").textContent  = s.sets>0 ? s.sets.toString() : "—";
+      $("outPounds").textContent = s.guests>0 ? (s.poundsRounded.toFixed(2).replace(/\.00$/,''))+" lb" : "—";
+      $("outSubtotal").textContent = s.subtotal>0 ? money(s.subtotal) : "$—";
+      $("outAdds").textContent     = s.subtotal>0 ? money(s.adds) : "$—";
+      $("outTotal").textContent    = s.subtotal>0 ? money(s.total) : "$—";
+      $("outPPP").textContent      = (s.total>0 && s.guests>0) ? money(s.ppp) : "$—";
+      $("outExplain").textContent  = s.guests>0
+        ? "Auto-calculated from guests, course, tier height, your selected tiers, appetite, event length, and leftovers."
+        : "Enter your guest mix to calculate.";
+    }
+
+    function addTierRow(diameter){
+      const wrap = document.getElementById("tiers");
+      const row = document.createElement("div");
+      row.className = "tier-row";
+      const sel = document.createElement("select");
+      sel.className = "tier-select";
+      sel.innerHTML = `
+        <option value="6">6 in — about ${baseSlicesByDia[6]} slices</option>
+        <option value="8" selected>8 in — about ${baseSlicesByDia[8]} slices</option>
+        <option value="9">9 in — about ${baseSlicesByDia[9]} slices</option>
+        <option value="10">10 in — about ${baseSlicesByDia[10]} slices</option>
+        <option value="12">12 in — about ${baseSlicesByDia[12]} slices</option>
+      `;
+      if(diameter && baseSlicesByDia[diameter]) sel.value = String(diameter);
+      const rm = document.createElement("button");
+      rm.type = "button";
+      rm.className = "rm";
+      rm.textContent = "Remove";
+      const cellSel = document.createElement("div");
+      const cellBtn = document.createElement("div");
+      cellSel.appendChild(sel);
+      cellBtn.appendChild(rm);
+      row.appendChild(cellSel);
+      row.appendChild(cellBtn);
+      wrap.appendChild(row);
+
+      sel.addEventListener("change", render);
+      sel.addEventListener("input", render);
+      rm.addEventListener("click", ()=>{ row.remove(); render(); });
+    }
+
+    function bootstrap(){
+      // default tiers: start with one 9 in tier
+      addTierRow(9);
+      // wire add button
+      const add = document.getElementById("addTier");
+      add.addEventListener("click", ()=>{ addTierRow(); render(); });
+
+      // inputs
+      ["A","T","C","course","length","leftovers","appetite","tierHeight","priceUnit","taxPct","fees"]
+        .forEach(id=>{const el=$(id); if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }});
+
+      // presets
+      document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+        btn.addEventListener("click",()=>{const n=parseInt(btn.getAttribute("data-people"),10)||0;$("A").value=n;$("T").value=0;$("C").value=0;render();});
+      });
+
+      // reset
+      const btn=$("dmReset");
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("input, select").forEach(el=>{
+          if(el.tagName==="SELECT"){
+            const i=Array.from(el.options).findIndex(o=>o.defaultSelected);
+            el.selectedIndex = i>=0 ? i : 0;
+          } else { el.value = el.defaultValue; }
+        });
+        // reset tiers to one 9 in
+        const container = document.getElementById("tiers");
+        container.innerHTML = "";
+        addTierRow(9);
+
+        document.querySelectorAll("input, select").forEach(el=>{
+          el.dispatchEvent(new Event("input",{bubbles:true}));
+          el.dispatchEvent(new Event("change",{bubbles:true}));
+        });
+        render();
+      });
+
+      render();
+    }
+
+    document.addEventListener("DOMContentLoaded", bootstrap);
+  })();
+  </script>
+
 </body>
 </html>
