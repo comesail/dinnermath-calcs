@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DinnerMath - Crudite and Dip Quantity Calculator</title>
+  <meta name="description" content="How much crudite and dip per person? Estimate about raw vegetable pounds, dip cups, jars, and cost. Auto calculates with appetite, event length, leftovers, course mode, dip type, and jar size.">
+  <meta name="robots" content="index,follow">
+  <style>
+    :root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--bg:#f8fafc;--card:#ffffff;--accent:#111827}
+    *{box-sizing:border-box}html,body{margin:0;padding:0}
+    body{background:var(--bg);font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;color:var(--ink)}
+    .wrap{max-width:860px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+    .outline{border:2px solid var(--ink)}
+    h1{font-size:22px;margin:0 0 8px}.lede{color:var(--muted);margin:0 0 16px}
+    h2{font-size:20px;margin:16px 0 8px}h3{font-size:18px;margin:0 0 12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
+    input[type="number"],select{width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px;font-size:14px;background:#fff;color:var(--ink)}
+    .muted{color:var(--muted);font-size:12px}.fine{font-size:13px;color:#374151}
+    .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .preset:hover{background:#f3f4f6}
+    .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:#374151;background:#fff}
+    .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+    .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .kv + .kv{margin-top:8px}.kv b{font-size:1.05rem}
+    .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
+    @media (max-width:720px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- Header -->
+    <div class="card" role="region" aria-label="Header">
+      <h1>Crudite and Dip - Quantity Calculator</h1>
+      <p class="lede">Enter guests and choose dip type and a common jar size. We estimate about raw vegetable pounds, dip cups or jars, and cost.</p>
+    </div>
+
+    <!-- Inputs -->
+    <div class="card" role="region" aria-label="Inputs">
+      <h3>Inputs</h3>
+      <div class="row">
+        <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="10"></div>
+        <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="0"></div>
+        <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="0"></div>
+        <div>
+          <label for="course">Course mode</label>
+          <select id="course">
+            <option value="app" selected>Appetizer</option>
+            <option value="buffet">Grazing table</option>
+            <option value="side">Side with meal</option>
+            <option value="tasting">Tasting plate</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">Short - about 1 to 2 hours</option>
+            <option value="1.00" selected>Standard - about 2 to 3 hours</option>
+            <option value="1.08">Long - about 3 to 4 hours</option>
+            <option value="1.15">Extended - about 4 to 5 hours</option>
+          </select>
+        </div>
+        <div>
+          <label for="leftovers">Leftovers</label>
+          <select id="leftovers">
+            <option value="1.00" selected>No</option>
+            <option value="1.10">+10 percent</option>
+            <option value="1.20">+20 percent</option>
+          </select>
+        </div>
+        <div>
+          <label for="appetite">Appetite</label>
+          <select id="appetite">
+            <option value="0.90">Light</option>
+            <option value="1.00" selected>Typical</option>
+            <option value="1.20">Hearty</option>
+          </select>
+        </div>
+        <div>
+          <label for="dipType">Dip type</label>
+          <select id="dipType">
+            <option value="homemade" selected>Homemade</option>
+            <option value="jar">Jar or canned</option>
+          </select>
+        </div>
+        <div>
+          <label for="jarSize">Jar size</label>
+          <select id="jarSize">
+            <option value="8">8 oz</option>
+            <option value="12">12 oz</option>
+            <option value="15">15 oz</option>
+            <option value="16" selected>16 oz</option>
+            <option value="24">24 oz</option>
+            <option value="32">32 oz</option>
+          </select>
+          <div class="muted">Used when Dip type is Jar or canned to convert cups to containers.</div>
+        </div>
+      </div>
+
+      <!-- Presets + Reset -->
+      <div class="inline" style="margin-top:8px">
+        <span class="muted">Quick presets:</span>
+        <button class="preset" data-people="10" type="button">10</button>
+        <button class="preset" data-people="25" type="button">25</button>
+        <button class="preset" data-people="50" type="button">50</button>
+        <button class="preset" data-people="100" type="button">100</button>
+        <div style="flex:1"></div>
+        <button id="dmReset" type="button" class="preset">Reset</button>
+      </div>
+    </div>
+
+    <!-- Pricing -->
+    <div class="card" role="region" aria-label="Pricing">
+      <h3>Pricing (optional)</h3>
+      <div class="row">
+        <div>
+          <label for="vegPrice">Vegetables unit price - per pound raw (US dollars)</label>
+          <input id="vegPrice" type="number" min="0" step="0.01" placeholder="example: 2.49">
+        </div>
+        <div>
+          <label for="dipPrice">Dip unit price</label>
+          <input id="dipPrice" type="number" min="0" step="0.01" placeholder="example: 3.99">
+          <div class="muted">If Homemade, this is per cup. If Jar or canned, this is per jar of the selected size.</div>
+        </div>
+        <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="example: 7.5"></div>
+        <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="example: 10.00"></div>
+      </div>
+      <div class="muted">Subtotal equals vegetables plus dip: (rounded veg pounds x veg price) + (rounded dip cups or jars x dip price). Then we add sales tax and fees.</div>
+    </div>
+
+    <!-- Results -->
+    <div class="card outline" role="region" aria-label="Results" aria-live="polite">
+      <h3 class="results-title">Results</h3>
+      <div class="kv"><span>Total guests counted</span><b id="outGuests">-</b></div>
+      <div class="kv"><span>Buy about vegetables</span><b id="outVegLb">- lb raw</b></div>
+      <div class="kv"><span>Plan about dip</span><b id="outDipCups">- cups</b></div>
+      <div class="kv"><span>Or about dip containers</span><b id="outDipJars">- jars</b></div>
+      <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$-</b></div>
+      <div class="kv"><span>Tax and fees</span><b id="outAdds">$-</b></div>
+      <div class="kv"><span>Estimated total</span><b id="outTotal">$-</b></div>
+      <div class="kv"><span>Cost per person</span><b id="outPPP">$-</b></div>
+      <p class="muted" id="outExplain">Auto calculated from guests, course, appetite, event length, leftovers, dip type, and jar size.</p>
+    </div>
+
+    <!-- Finder -->
+    <div class="card finder" role="region" aria-label="Find near me">
+      <div class="inline">
+        <a class="preset" href="#" onclick="window.open('https://www.google.com/maps/search/crudite+or+veggie+tray+near+me','_blank');return false;">Find crudite or veggie tray near me</a>
+        <a class="pill" href="#" onclick="window.open('https://www.google.com/maps/search/produce+market','_blank');return false;">Produce markets</a>
+        <a class="pill" href="#" onclick="window.open('https://www.google.com/maps/search/grocery+store','_blank');return false;">Grocery stores</a>
+      </div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.7 - auto calculate</div>
+    </div>
+
+    <!-- FAQs -->
+    <div class="card" role="region" aria-label="FAQs">
+      <h2>FAQs</h2>
+      <details open>
+        <summary>How much crudite and dip per person?</summary>
+        <div class="fine">
+          As an appetizer, plan about 5 oz raw vegetables per adult or teen and about 3 oz per child.
+          Dip baseline is about 1.5 oz per adult or teen and about 1.0 oz per child.
+          Use Course mode, Appetite, Event length, and Leftovers to adjust. Grazing tables often need a little more.
+        </div>
+      </details>
+      <details>
+        <summary>Homemade vs jar or canned dip?</summary>
+        <div class="fine">
+          Homemade shows cups to prepare and can price per cup. Jar or canned shows cups and also converts to common jar sizes so you can buy whole containers and price per jar.
+        </div>
+      </details>
+      <details>
+        <summary>What jar sizes are supported?</summary>
+        <div class="fine">
+          Options include 8 oz, 12 oz, 15 oz, 16 oz, 24 oz, and 32 oz. The calculator rounds up to whole jars.
+        </div>
+      </details>
+      <details>
+        <summary>How are cups and pounds converted?</summary>
+        <div class="fine">
+          Dip uses fluid ounces to cups at 8 fl oz per cup. Vegetables are planned by raw weight. For convenience, we assume about 0.80 cooked yield if you blanch some items, but this tool outputs raw pounds to buy.
+        </div>
+      </details>
+      <details>
+        <summary>How is price calculated?</summary>
+        <div class="fine">
+          Vegetables subtotal equals rounded raw pounds times unit price per pound. Dip subtotal equals rounded cups times price per cup for Homemade or rounded jars times price per jar for Jar or canned. Estimated total adds sales tax and any fees, and cost per person divides by total guests.
+        </div>
+      </details>
+    </div>
+
+    <!-- Quick notes -->
+    <div class="card" role="region" aria-label="Quick notes">
+      <h3>Quick notes</h3>
+      <ul class="fine" style="margin:0 0 0 18px;padding:0">
+        <li><strong>Baseline per person:</strong> Adults and Teens about 5 oz raw vegetables and 1.5 oz dip. Children about 3 oz raw vegetables and 1.0 oz dip.</li>
+        <li><strong>Course multipliers:</strong> Appetizer 1.00x, Grazing table 1.15x, Side with meal 0.85x, Tasting plate 0.70x.</li>
+        <li><strong>Leftovers:</strong> No, +10 percent, or +20 percent applies at the end.</li>
+        <li><strong>Jar sizes:</strong> 8, 12, 15, 16, 24, and 32 oz. Rounds up to whole jars.</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm with your grocer or caterer and adjust for your crowd.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Calculator logic -->
+  <script>
+  (function(){
+    const $=id=>document.getElementById(id);
+    const N=(v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+    const money=n=>(isFinite(n)&&n>=0)?"$"+n.toFixed(2):"$-";
+
+    function courseMult(c){
+      if(c==="buffet") return 1.15;
+      if(c==="side") return 0.85;
+      if(c==="tasting") return 0.70;
+      return 1.00; // appetizer
+    }
+    function lenMult(v){return v==1.15?1.15:(v==1.08?1.08:(v==0.95?0.95:1.00));}
+
+    function perPerson(){
+      // raw veg oz and dip oz per person baseline for appetizer
+      const c = $("course").value;
+      let vegAdult=5, vegChild=3, dipAdult=1.5, dipChild=1.0;
+      if(c==="buffet"){ vegAdult=5.5; vegChild=3.5; dipAdult=1.7; dipChild=1.2; }
+      if(c==="side"){ vegAdult=4.0; vegChild=2.5; dipAdult=1.0; dipChild=0.8; }
+      if(c==="tasting"){ vegAdult=3.0; vegChild=2.0; dipAdult=0.8; dipChild=0.6; }
+      const vegTeen=vegAdult, dipTeen=dipAdult;
+      return {vegAdult, vegTeen, vegChild, dipAdult, dipTeen, dipChild};
+    }
+
+    function compute(){
+      const A=N($("A").value,0), T=N($("T").value,0), C=N($("C").value,0);
+      const guests=A+T+C;
+      const appet=N($("appetite").value,1.0);
+      const length=N($("length").value,1.0);
+      const left=N($("leftovers").value,1.0);
+
+      const jarSize=N($("jarSize").value,16);
+      const dipType=$("dipType").value;
+
+      const pp = perPerson();
+      let vegOz = (A*pp.vegAdult + T*pp.vegTeen + C*pp.vegChild);
+      let dipOz = (A*pp.dipAdult + T*pp.dipTeen + C*pp.dipChild);
+
+      const mult = appet * lenMult(length) * courseMult($("course").value);
+      vegOz *= mult; dipOz *= mult;
+      vegOz *= left; dipOz *= left;
+
+      const vegLb = vegOz/16;
+      const dipCups = dipOz/8; // 8 fl oz per cup
+      const dipJars = Math.ceil((dipOz)/jarSize);
+
+      const roundedVegLb = Math.ceil(Math.max(0, vegLb));
+      const roundedDipCups = Math.ceil(Math.max(0, dipCups));
+
+      // Dip purchase units: homemade uses cups, jar uses jars
+      const dipUnits = dipType==="homemade" ? roundedDipCups : dipJars;
+
+      // Pricing
+      const vegPrice=N($("vegPrice").value,0);
+      const dipPrice=N($("dipPrice").value,0);
+      const tax=N($("taxPct").value,0)/100;
+      const fees=N($("fees").value,0);
+
+      const vegSub = roundedVegLb * vegPrice;
+      const dipSub = dipUnits * dipPrice;
+      const subtotal = vegSub + dipSub;
+      const adds = subtotal*tax + (fees>0?fees:0);
+      const total = subtotal + adds;
+      const ppp = (guests>0 && total>0) ? total/guests : NaN;
+
+      return {guests, roundedVegLb, roundedDipCups, dipJars, subtotal, adds, total, ppp, dipType};
+    }
+
+    function render(){
+      const s=compute();
+      $("outGuests").textContent = s.guests>0 ? String(s.guests) : "-";
+      $("outVegLb").textContent = s.guests>0 ? String(s.roundedVegLb)+" lb raw" : "- lb raw";
+      $("outDipCups").textContent = s.guests>0 ? String(s.roundedDipCups)+" cups" : "- cups";
+      $("outDipJars").textContent = s.guests>0 ? (s.dipType==="jar"? String(s.dipJars)+" jars" : "- jars") : "- jars";
+      $("outSubtotal").textContent = s.subtotal>0 ? money(s.subtotal) : "$-";
+      $("outAdds").textContent = s.subtotal>0 ? money(s.adds) : "$-";
+      $("outTotal").textContent = s.subtotal>0 ? money(s.total) : "$-";
+      $("outPPP").textContent = (s.total>0 && s.guests>0) ? money(s.ppp) : "$-";
+    }
+
+    ["A","T","C","course","length","leftovers","appetite","dipType","jarSize","vegPrice","dipPrice","taxPct","fees"].forEach(id=>{
+      const el=document.getElementById(id); if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }
+    });
+
+    document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const n=parseInt(btn.getAttribute("data-people"),10)||0;
+        document.getElementById("A").value=n;
+        document.getElementById("T").value=0;
+        document.getElementById("C").value=0;
+        render();
+      });
+    });
+
+    (function attachReset(){
+      const btn=document.getElementById("dmReset"); if(!btn) return;
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("input, select").forEach(el=>{
+          if(el.tagName==="SELECT"){
+            const i=Array.from(el.options).findIndex(o=>o.defaultSelected);
+            el.selectedIndex = i>=0 ? i : 0;
+          } else { el.value = el.defaultValue; }
+        });
+        ["input","change"].forEach(evt=>document.querySelectorAll("input,select").forEach(el=>el.dispatchEvent(new Event(evt,{bubbles:true}))));
+        render();
+      });
+    })();
+
+    render();
+  })();
+  </script>
+
+</body>
+</html>
