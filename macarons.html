@@ -1,144 +1,326 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="description" content="Enter guests and macaron size—DinnerMath estimates macarons to buy, scaled for appetite, event length, and leftovers.">
-<title>Macarons Quantity Calculator — How Many per Person (Standard & Mini)</title>
-<style>
-*,*::before,*::after{box-sizing:border-box}
-html,body{margin:0;padding:0;overflow-x:hidden;background:#eaf6fb;color:#0b2a3a;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-.wrap{width:100%;max-width:480px;margin:0 auto;padding:16px}
-@media(min-width:640px){.wrap{max-width:720px;padding:20px}}
-@media(min-width:980px){.wrap{max-width:980px;padding:28px 16px 56px}}
-:root{--ink2:#13506a;--paper:#fff;--line:#d7e8ef;--accent:#2f8db3;--shadow:0 6px 20px rgba(11,42,58,.08);--radius:18px}
-header{margin:0 0 18px}
-header h1{font-size:clamp(22px,3.2vw,34px);margin:0 0 8px;color:var(--ink2)}
-header p{margin:0;color:#274757}
-.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-.stack{display:grid;gap:14px}
-h2{font-size:clamp(18px,2.5vw,22px);margin:0 0 8px;color:var(--ink2)}
-.grid{display:grid;gap:12px}
-@media(min-width:760px){.grid{grid-template-columns:repeat(12,1fr)}}
-.field{display:flex;flex-direction:column;gap:6px;background:#f7fbfd;border:1px solid var(--line);border-radius:12px;padding:10px}
-label{font-weight:600;font-size:.95rem}
-input[type=number],select{border:1px solid #cfe3eb;border-radius:10px;padding:9px 10px;background:#fff;font-size:1rem}
-.row-4{grid-column:span 12}@media(min-width:760px){.row-4{grid-column:span 4}}
-.row-6{grid-column:span 12}@media(min-width:760px){.row-6{grid-column:span 6}}
-.row-12{grid-column:span 12}
-.btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer}
-.btn.secondary{background:#fff;color:var(--accent)}
-.result{display:grid;gap:10px;background:#f6fbfe;border:1px dashed #b7d7e6;border-radius:16px;padding:14px}
-.kv{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:12px}
-.kv b{font-size:1.05rem}
-.muted{color:#4c6b7a;font-size:.9rem}
-details{border:1px solid var(--line);border-radius:12px;background:#fff;margin:10px 0}
-summary{cursor:pointer;padding:10px 14px;font-weight:700;color:#13506a}
-details[open] summary{border-bottom:1px solid var(--line)}
-details .ans{padding:10px 14px 12px;color:#2a4b5a}
-/* Mobile embed height handled by Wix (4827px container). */
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DinnerMath - Macarons Quantity Calculator</title>
+  <meta name="description" content="How many macarons per person? Choose course mode and size to estimate about pieces, dozens, and cost. Pricing per piece or per dozen. Auto calculates with appetite, event length, and leftovers.">
+  <meta name="robots" content="index,follow">
+  <style>
+    :root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--bg:#f8fafc;--card:#ffffff;--accent:#111827}
+    *{box-sizing:border-box}html,body{margin:0;padding:0}
+    body{background:var(--bg);font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;color:var(--ink)}
+    .wrap{max-width:860px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+    .outline{border:2px solid var(--ink)}
+    h1{font-size:22px;margin:0 0 8px}.lede{color:var(--muted);margin:0 0 16px}
+    h2{font-size:20px;margin:16px 0 8px}h3{font-size:18px;margin:0 0 12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
+    input[type="number"],select{width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px;font-size:14px;background:#fff;color:var(--ink)}
+    .muted{color:var(--muted);font-size:12px}.fine{font-size:13px;color:#374151}
+    .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .preset:hover{background:#f3f4f6}
+    .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:#374151;background:#fff}
+    .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+    .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .kv + .kv{margin-top:8px}.kv b{font-size:1.05rem}
+    .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
+    @media (max-width:720px){.row{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>Macarons Quantity Calculator — How Many per Person (Standard & Mini)</h1>
-    <p>Enter your guest mix and macaron size. DinnerMath estimates how many macarons to buy—scaled for appetite, event length, and leftovers.</p>
-  </header>
+  <div class="wrap">
 
-  <section class="card stack" id="inputs">
-    <h2>Inputs</h2>
-    <div class="grid">
-      <div class="field row-4"><label for="adults">Adults</label><input id="adults" type="number" min="0" step="1" value="60"></div>
-      <div class="field row-4"><label for="teens">Teens</label><input id="teens" type="number" min="0" step="1" value="8"></div>
-      <div class="field row-4"><label for="kids">Kids</label><input id="kids" type="number" min="0" step="1" value="10"></div>
-
-      <div class="field row-6">
-        <label for="size">Macaron size</label>
-        <select id="size">
-          <option value="2.0" selected>Standard (≈2 per adult-equivalent)</option>
-          <option value="3.0">Mini (≈3 per adult-equivalent)</option>
-          <option value="1.5">Large (≈1.5 per adult-equivalent)</option>
-        </select>
-        <div class="help">Pieces per adult-equivalent depend on size and richness.</div>
-      </div>
-
-      <div class="field row-6">
-        <label for="appetite">Appetite</label>
-        <select id="appetite"><option value="0.9">Light</option><option value="1.0" selected>Typical</option><option value="1.15">Sweet tooth</option></select>
-      </div>
-
-      <div class="field row-6">
-        <label for="length">Event length</label>
-        <select id="length"><option value="0.95">≤2 hours</option><option value="1.0" selected>2–3 hours</option><option value="1.05">3–4 hours</option><option value="1.1">4–5 hours</option></select>
-      </div>
-
-      <div class="field row-6">
-        <label for="leftovers">Leftovers</label>
-        <select id="leftovers"><option value="1.0" selected>No</option><option value="1.07">Some leftovers</option><option value="1.12">Extra leftovers</option></select>
-      </div>
-
-      <div class="field row-12"><label for="notes">Notes (optional)</label><input id="notes" type="text" placeholder="e.g., assorted flavors, favors/boxes, other desserts"></div>
+    <!-- Header -->
+    <div class="card" role="region" aria-label="Header">
+      <h1>Macarons - Quantity Calculator</h1>
+      <p class="lede">
+        Choose a course mode and macaron size. We estimate about pieces,
+        about dozens, and cost with tax and fees.
+      </p>
     </div>
-    <div class="actions"><button class="btn" id="calcBtn">Calculate</button><button class="btn secondary" id="resetBtn" type="button">Reset</button></div>
-  </section>
 
-  <section class="card stack" id="results" aria-live="polite">
-    <h2>Results</h2>
-    <div class="result">
-      <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
-      <div class="kv"><span>Total macarons needed</span><b id="outPieces">—</b></div>
-      <div class="muted" id="explain">Enter details and click Calculate.</div>
+    <!-- Inputs -->
+    <div class="card" role="region" aria-label="Inputs">
+      <h3>Inputs</h3>
+
+      <div class="row" aria-label="Guests">
+        <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="10"></div>
+        <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="0"></div>
+        <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="0"></div>
+        <div>
+          <label for="course">Course mode</label>
+          <select id="course">
+            <option value="side" selected>Dessert plate</option>
+            <option value="party">Sweets table (party)</option>
+            <option value="tasting">Coffee break or tasting</option>
+            <option value="entree">Favor heavy event</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" aria-label="Context">
+        <div>
+          <label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">Short - about 1 to 2 hours</option>
+            <option value="1.00" selected>Standard - about 2 to 3 hours</option>
+            <option value="1.08">Long - about 3 to 4 hours</option>
+            <option value="1.15">Extended - about 4 to 5 hours</option>
+          </select>
+        </div>
+        <div>
+          <label for="leftovers">Add leftovers</label>
+          <select id="leftovers">
+            <option value="1.00" selected>No</option>
+            <option value="1.10">+10 percent</option>
+            <option value="1.20">+20 percent</option>
+          </select>
+        </div>
+        <div>
+          <label for="appetite">Appetite</label>
+          <select id="appetite">
+            <option value="0.90">Light</option>
+            <option value="1.00" selected>Typical</option>
+            <option value="1.20">Hearty</option>
+          </select>
+        </div>
+
+        <!-- Item-specific AFTER Appetite -->
+        <div>
+          <label for="size">Macaron size</label>
+          <select id="size">
+            <option value="1.10">Small - about 1.3 inches</option>
+            <option value="1.00" selected>Average - about 1.8 inches</option>
+            <option value="0.90">Large - about 2.2 inches</option>
+            <option value="0.80">Jumbo - about 3.0 inches</option>
+          </select>
+          <div class="muted">Size lightly nudges how many pieces to plan.</div>
+        </div>
+      </div>
+
+      <!-- Presets + Reset -->
+      <div class="inline" style="margin-top:8px">
+        <span class="muted">Quick presets:</span>
+        <button class="preset" data-people="10" type="button">10</button>
+        <button class="preset" data-people="25" type="button">25</button>
+        <button class="preset" data-people="50" type="button">50</button>
+        <button class="preset" data-people="100" type="button">100</button>
+        <span class="muted">Presets set all as adults. Tweak Teens or Children if needed.</span>
+        <div style="flex:1"></div>
+        <button id="dmReset" type="button" class="preset">Reset</button>
+      </div>
     </div>
-    <div class="footnote">Dessert adult-equivalent factors: teens = 0.8 adult; kids = 0.6 adult.</div>
-  </section>
 
-  <section class="card stack" id="notesBlock">
-    <h2>Quick Notes</h2>
-    <ul class="stack" style="margin:0;padding-left:18px">
-      <li><b>Baseline per adult-equivalent:</b> Standard ≈2, Mini ≈3, Large ≈1.5 macarons.</li>
-      <li><b>Flavor variety:</b> Mixed boxes encourage guests to try more—consider a small buffer.</li>
-      <li><b>Round up:</b> Macarons store well refrigerated; extras make great favors.</li>
-    </ul>
-    <div class="disclaimer">Estimates only for planning — sizes and fillings vary by bakery.</div>
-  </section>
+    <!-- Pricing -->
+    <div class="card" role="region" aria-label="Pricing">
+      <h3>Pricing (optional)</h3>
+      <div class="row">
+        <div>
+          <label for="priceMode">Pricing mode</label>
+          <select id="priceMode">
+            <option value="piece" selected>Per piece</option>
+            <option value="dozen">Per dozen</option>
+          </select>
+        </div>
+        <div>
+          <label for="priceUnit">Unit price</label>
+          <input id="priceUnit" type="number" min="0" step="0.01" placeholder="example: 2.50">
+          <div class="muted">If Per piece, enter dollars per macaron. If Per dozen, enter dollars per dozen. Uses rounded quantity for the selected mode.</div>
+        </div>
+        <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="example: 7.5"></div>
+        <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="example: 10.00"></div>
+      </div>
+      <div class="muted">Subtotal equals rounded quantity for your mode times unit price. Then we add sales tax and fees.</div>
+    </div>
 
-  <section class="card stack" id="faqs">
-    <h2>FAQs</h2>
-    <details><summary>How many macarons per person?</summary><div class="ans">Plan about <b>2 standard</b> macarons per adult-equivalent (or ~3 mini / ~1.5 large). Adjust with appetite and event length.</div></details>
-    <details><summary>How many boxes should I order?</summary><div class="ans">Take the total macarons and divide by your box size (e.g., 6, 12). Round up for favors and display refills.</div></details>
-    <details><summary>What if there are many other desserts?</summary><div class="ans">Use <b>Light appetite</b> or shorten event length to reduce the total.</div></details>
-  </section>
-</div>
+    <!-- Results -->
+    <div class="card outline" role="region" aria-label="Results" aria-live="polite">
+      <h3 class="results-title">Results</h3>
+      <div class="kv"><span>Total guests counted</span><b id="outGuests">-</b></div>
+      <div class="kv"><span>Buy about (pieces)</span><b id="outPieces">-</b></div>
+      <div class="kv"><span>Or about (dozens)</span><b id="outDozens">-</b></div>
+      <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$-</b></div>
+      <div class="kv"><span>Tax and fees</span><b id="outAdds">$-</b></div>
+      <div class="kv"><span>Estimated total</span><b id="outTotal">$-</b></div>
+      <div class="kv"><span>Cost per person</span><b id="outPPP">$-</b></div>
+      <p class="muted" id="outExplain">Enter your guest mix to calculate.</p>
+    </div>
 
-<script>
-(function(){
-  const $=s=>document.querySelector(s);
-  const N=(s,d=0)=>{const x=parseFloat($(s).value);return isFinite(x)?x:d;};
-  const TEEN=0.8, KID=0.6;
+    <!-- Finder -->
+    <div class="card finder" role="region" aria-label="Find near me">
+      <div class="inline">
+        <a class="preset" href="#" onclick="try{window.open('https://www.google.com/maps/search/macarons+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/macarons+near+me';}return false;">Find macarons near me</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/bakery','_blank');}catch(e){location.href='https://www.google.com/maps/search/bakery';}return false;">Bakeries</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/grocery+store','_blank');}catch(e){location.href='https://www.google.com/maps/search/grocery+store';}return false;">Grocery stores</a>
+      </div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.7 - auto calculate</div>
+    </div>
 
-  function calc(){
-    const A=N('#adults'), T=N('#teens'), K=N('#kids');
-    const AE = A + TEEN*T + KID*K;
-    const perAE=N('#size',2.0);
-    const appetite=N('#appetite',1), length=N('#length',1), leftovers=N('#leftovers',1);
-    const pieces = Math.ceil(AE * perAE * appetite * length * leftovers);
+    <!-- FAQs -->
+    <div class="card" role="region" aria-label="FAQs">
+      <h2>FAQs</h2>
+      <details open>
+        <summary>How many macarons per person?</summary>
+        <div class="fine">
+          Dessert plate - plan about 3 per adult or teen and about 2 per child.
+          Sweets table or grazing - plan about 4 per adult or teen and 2 to 3 per child.
+          Party favors - plan about 2 per guest. Coffee break - about 1 to 2 each.
+          Adjust with Appetite, Event length, and Leftovers.
+        </div>
+      </details>
+      <details>
+        <summary>What do the macaron sizes mean?</summary>
+        <div class="fine">
+          Sizes refer to typical diameters: Small about 1.3 inches, Average about 1.8 inches, Large about 2.2 inches, Jumbo about 3.0 inches.
+          The calculator lightly adjusts counts - Small a bit more, Large and Jumbo a bit fewer - to keep portions reasonable.
+        </div>
+      </details>
+      <details>
+        <summary>How do Appetite, Event length, and Leftovers affect totals?</summary>
+        <div class="fine">
+          Appetite applies 0.90 Light, 1.00 Typical, or 1.20 Hearty. Event length applies 0.95, 1.00, 1.08, or 1.15.
+          Leftovers adds 0 percent, 10 percent, or 20 percent to the final rounded amount.
+        </div>
+      </details>
+      <details>
+        <summary>How does pricing work?</summary>
+        <div class="fine">
+          Subtotal equals the unit price applied to the rounded quantity for your mode.
+          Per piece uses rounded pieces. Per dozen uses rounded dozens.
+          We then add sales tax and any extra fees for an estimated total and cost per person.
+        </div>
+      </details>
+      <details>
+        <summary>Do you round up?</summary>
+        <div class="fine">
+          We round to whole macarons and whole dozens for convenience, and show results as "about".
+          Use +10 percent or +20 percent leftovers if you want an extra buffer.
+        </div>
+      </details>
+    </div>
 
-    $('#outGuests').textContent=(A+T+K).toFixed(0);
-    $('#outPieces').textContent=pieces.toFixed(0);
-    $('#explain').textContent='Standard ≈2/AE, Mini ≈3/AE, Large ≈1.5/AE. Tweak appetite/length/leftovers as needed.';
+    <!-- Quick notes -->
+    <div class="card" role="region" aria-label="Quick notes">
+      <h3>Quick notes</h3>
+      <ul class="fine" style="margin:0 0 0 18px;padding:0">
+        <li><strong>Base per person - dessert:</strong> Adults and Teens about 3. Children about 2.</li>
+        <li><strong>Course multipliers:</strong> Dessert plate 1.00x, Sweets table 1.20x, Coffee or tasting 0.70x, Favor heavy 1.60x.</li>
+        <li><strong>Size options:</strong> Small 1.10x, Average 1.00x, Large 0.90x, Jumbo 0.80x.</li>
+        <li><strong>Leftovers:</strong> No, +10 percent, +20 percent.</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm with your grocer or caterer and adjust for your crowd.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Calculator logic -->
+  <script>
+  (function(){
+    const $=id=>document.getElementById(id);
+    const N=(v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+    const money=n=>(isFinite(n)&&n>=0)?"$"+n.toFixed(2):"$-";
+    const courseMult=c=>(
+      c==="side"?1.00 :
+      c==="party"?1.20 :
+      c==="tasting"?0.70 :
+      1.60
+    );
+    const lenMult=v=>(v==1.15?1.15:v==1.08?1.08:v==0.95?0.95:1.00);
+    const sizeMult=s=>(s==="1.10"?1.10:s==="0.90"?0.90:s==="0.80"?0.80:1.00);
+
+    function compute(){
+      const A=N($("A").value,0), T=N($("T").value,0), C=N($("C").value,0);
+      const guests=A+T+C;
+      const appetite=N($("appetite").value,1.0);
+      const leftovers=N($("leftovers").value,1.0);
+      const length=N($("length").value,1.0);
+      const course=$("course").value;
+      const size=$("size").value;
+
+      const base={adult:3, teen:3, child:2};
+      let pieces=(A*base.adult + T*base.teen + C*base.child);
+      pieces*=courseMult(course)*appetite*lenMult(length)*leftovers*sizeMult(size);
+
+      const roundedPieces = Math.ceil(Math.max(0,pieces));
+      const dozens = roundedPieces>0 ? Math.ceil(roundedPieces/12) : 0;
+
+      const mode=(document.getElementById("priceMode")||{}).value||"piece";
+      const price=N($("priceUnit").value,0), tax=N($("taxPct").value,0)/100, fees=N($("fees").value,0);
+      let subtotal=0;
+      if(price>0){
+        if(mode==="piece" && roundedPieces>0){ subtotal = roundedPieces*price; }
+        else if(mode==="dozen" && dozens>0){ subtotal = dozens*price; }
+      }
+      const adds=subtotal*tax + (fees>0?fees:0);
+      const total=subtotal+adds;
+      const ppp=(guests>0 && total>0)?total/guests:NaN;
+
+      return {guests, roundedPieces, dozens, subtotal, adds, total, ppp};
+    }
+
+    function render(){
+      const s=compute();
+      $("outGuests").textContent  = s.guests>0 ? String(s.guests) : "-";
+      $("outPieces").textContent  = s.guests>0 ? String(s.roundedPieces) : "-";
+      $("outDozens").textContent  = s.guests>0 ? (s.dozens>0?String(s.dozens):"-") : "-";
+      $("outSubtotal").textContent = s.subtotal>0 ? money(s.subtotal) : "$-";
+      $("outAdds").textContent     = s.subtotal>0 ? money(s.adds) : "$-";
+      $("outTotal").textContent    = s.subtotal>0 ? money(s.total) : "$-";
+      $("outPPP").textContent      = (s.total>0 && s.guests>0) ? money(s.ppp) : "$-";
+      $("outExplain").textContent  = s.guests>0 ? "Auto calculated from guests, course, size, appetite, event length, and leftovers with pricing by piece or dozen." : "Enter your guest mix to calculate.";
+    }
+
+    ["A","T","C","course","length","leftovers","appetite","size","priceMode","priceUnit","taxPct","fees"].forEach(id=>{
+      const el=document.getElementById(id); if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }
+    });
+
+    document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const n=parseInt(btn.getAttribute("data-people"),10)||0;
+        document.getElementById("A").value=n;
+        document.getElementById("T").value=0;
+        document.getElementById("C").value=0;
+        render();
+      });
+    });
+
+    (function attachReset(){
+      const btn=document.getElementById("dmReset"); if(!btn) return;
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("input, select").forEach(el=>{
+          if(el.tagName==="SELECT"){
+            const i=Array.from(el.options).findIndex(o=>o.defaultSelected);
+            el.selectedIndex = i>=0 ? i : 0;
+          } else { el.value = el.defaultValue; }
+        });
+        document.querySelectorAll("input, select").forEach(el=>{
+          el.dispatchEvent(new Event("input",{bubbles:true}));
+          el.dispatchEvent(new Event("change",{bubbles:true}));
+        });
+        render();
+      });
+    })();
+
+    render();
+  })();
+  </script>
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {"@type":"Question","name":"How many macarons per person?","acceptedAnswer":{"@type":"Answer","text":"Dessert plate - about 3 per adult or teen and about 2 per child. Sweets table - about 4 per adult or teen and 2 to 3 per child. Party favors - about 2 per guest. Coffee break - about 1 to 2 each."}},
+      {"@type":"Question","name":"What do the macaron sizes mean?","acceptedAnswer":{"@type":"Answer","text":"Sizes refer to typical diameters: Small about 1.3 inches, Average about 1.8 inches, Large about 2.2 inches, Jumbo about 3.0 inches."}},
+      {"@type":"Question","name":"How do Appetite, Event length, and Leftovers affect totals?","acceptedAnswer":{"@type":"Answer","text":"Appetite applies 0.90 Light, 1.00 Typical, or 1.20 Hearty. Event length applies 0.95, 1.00, 1.08, or 1.15. Leftovers adds 0, 10, or 20 percent."}},
+      {"@type":"Question","name":"How does pricing work?","acceptedAnswer":{"@type":"Answer","text":"Subtotal equals the unit price applied to the rounded quantity for your mode. Per piece uses rounded pieces. Per dozen uses rounded dozens. We then add sales tax and any extra fees."}},
+      {"@type":"Question","name":"Do you round up?","acceptedAnswer":{"@type":"Answer","text":"We round to whole macarons and whole dozens and show results as about. Use +10 percent or +20 percent leftovers if you want extra buffer."}}
+    ]
   }
-
-  $('#calcBtn').addEventListener('click',calc);
-  $('#resetBtn').addEventListener('click',()=>{
-    $('#adults').value='60';$('#teens').value='8';$('#kids').value='10';
-    $('#size').value='2.0';$('#appetite').value='1.0';$('#length').value='1.0';$('#leftovers').value='1.0';
-    $('#notes').value='';
-    calc();
-  });
-
-  calc();
-})();
-</script>
+  </script>
 </body>
 </html>
