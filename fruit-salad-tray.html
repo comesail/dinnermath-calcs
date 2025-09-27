@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DinnerMath — Fruit Salad / Fruit Tray Quantity Calculator</title>
+  <meta name="description" content="How much fruit salad or fruit tray per person? Choose serving style and package or tray size to estimate about ounces, cups, pounds, tubs or trays, and cost. Auto-calculates with appetite, event length, and leftovers.">
+  <meta name="robots" content="index,follow">
+  <style>
+    :root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--bg:#f8fafc;--card:#ffffff;--accent:#111827}
+    *{box-sizing:border-box}html,body{margin:0;padding:0}
+    body{background:var(--bg);font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;color:var(--ink)}
+    .wrap{max-width:860px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+    .outline{border:2px solid var(--ink)}
+    h1{font-size:22px;margin:0 0 8px}.lede{color:var(--muted);margin:0 0 16px}
+    h2{font-size:20px;margin:16px 0 8px}h3{font-size:18px;margin:0 0 12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
+    input[type="number"],select{width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px;font-size:14px;background:#fff;color:var(--ink)}
+    .muted{color:var(--muted);font-size:12px}.fine{font-size:13px;color:#374151}
+    .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .preset:hover{background:#f3f4f6}
+    .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:#374151;background:#fff}
+    .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+    .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .kv + .kv{margin-top:8px}.kv b{font-size:1.05rem}
+    .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
+    .hidden{display:none}
+    @media (max-width:720px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- Header -->
+    <div class="card" role="region" aria-label="Header">
+      <h1>Fruit Salad / Fruit Tray — Quantity Calculator</h1>
+      <p class="lede">
+        Choose <strong>Fruit salad</strong> or <strong>Fruit tray</strong>, then a package or tray size.
+        We estimate <strong>about ounces</strong>, <strong>about cups</strong>, <strong>about pounds</strong>, <strong>about tubs or trays</strong>, and cost.
+      </p>
+    </div>
+
+    <!-- Inputs -->
+    <div class="card" role="region" aria-label="Inputs">
+      <h3>Inputs</h3>
+
+      <div class="row" aria-label="Guests">
+        <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="10"></div>
+        <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="0"></div>
+        <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="0"></div>
+        <div>
+          <label for="course">Course mode</label>
+          <select id="course">
+            <option value="side" selected>Side</option>
+            <option value="entree">Entree</option>
+            <option value="party">Party buffet</option>
+            <option value="tasting">Tasting flight</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" aria-label="Context">
+        <div>
+          <label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">Short — about 1 to 2 hours</option>
+            <option value="1.00" selected>Standard — about 2 to 3 hours</option>
+            <option value="1.08">Long — about 3 to 4 hours</option>
+            <option value="1.15">Extended — about 4 to 5 hours</option>
+          </select>
+        </div>
+        <div>
+          <label for="leftovers">Add leftovers</label>
+          <select id="leftovers">
+            <option value="1.00" selected>No</option>
+            <option value="1.10">+10%</option>
+            <option value="1.20">+20%</option>
+          </select>
+        </div>
+        <div>
+          <label for="appetite">Appetite</label>
+          <select id="appetite">
+            <option value="0.90">Light</option>
+            <option value="1.00" selected>Typical</option>
+            <option value="1.20">Hearty</option>
+          </select>
+        </div>
+
+        <!-- Item-specific AFTER Appetite -->
+        <div>
+          <label for="style">Serving style</label>
+          <select id="style">
+            <option value="salad" selected>Fruit salad (bowl)</option>
+            <option value="tray">Fruit tray (platter)</option>
+          </select>
+          <div class="muted">We adjust how we count packages based on the style you choose.</div>
+        </div>
+      </div>
+
+      <!-- Item-specific: packaging for salad vs tray -->
+      <div class="row" aria-label="Packaging">
+        <div id="tubWrap">
+          <label for="tub">Fruit salad package size (ounces per tub)</label>
+          <select id="tub">
+            <option value="16">Small tub about 16 oz</option>
+            <option value="32" selected>Average tub about 32 oz</option>
+            <option value="48">Large tub about 48 oz</option>
+          </select>
+          <div class="muted">We convert total ounces to about how many tubs using your selection.</div>
+        </div>
+
+        <div id="trayWrap" class="hidden">
+          <label for="tray">Fruit tray size (about pounds per tray)</label>
+          <select id="tray">
+            <option value="5">Round 12 inch platter about 5 lb</option>
+            <option value="8" selected>Round 16 inch platter about 8 lb</option>
+            <option value="12">Half steam pan 12x10x2.5 in about 12 lb</option>
+            <option value="20">Full steam pan 20x12x2.5 in about 20 lb</option>
+          </select>
+          <div class="muted">We convert total pounds to about how many trays using your selection.</div>
+        </div>
+      </div>
+
+      <!-- Presets + Reset -->
+      <div class="inline" style="margin-top:8px">
+        <span class="muted">Quick presets:</span>
+        <button class="preset" data-people="10" type="button">10</button>
+        <button class="preset" data-people="25" type="button">25</button>
+        <button class="preset" data-people="50" type="button">50</button>
+        <button class="preset" data-people="100" type="button">100</button>
+        <span class="muted">Presets set all as adults — tweak Teens or Children if needed.</span>
+        <div style="flex:1"></div>
+        <button id="dmReset" type="button" class="preset">Reset</button>
+      </div>
+    </div>
+
+    <!-- Pricing -->
+    <div class="card" role="region" aria-label="Pricing">
+      <h3>Pricing (optional)</h3>
+      <div class="row">
+        <div>
+          <label for="priceMode">Pricing mode</label>
+          <select id="priceMode">
+            <option value="tub" selected>Per tub</option>
+            <option value="lb">Per pound</option>
+            <option value="tray">Per tray</option>
+          </select>
+        </div>
+        <div>
+          <label for="priceUnit">Unit price</label>
+          <input id="priceUnit" type="number" min="0" step="0.01" placeholder="e.g., 7.99">
+          <div class="muted">If Per tub: dollars per tub. If Per pound: dollars per pound. If Per tray: dollars per tray.</div>
+        </div>
+        <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="e.g., 7.5"></div>
+        <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="e.g., 10.00"></div>
+      </div>
+      <div class="muted">Subtotal = rounded quantity for your mode × unit price; then we add tax and fees.</div>
+    </div>
+
+    <!-- Results -->
+    <div class="card outline" role="region" aria-label="Results" aria-live="polite">
+      <h3 class="results-title">Results</h3>
+      <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
+      <div class="kv"><span>Fruit total (about ounces)</span><b id="outOz">—</b></div>
+      <div class="kv"><span>About cups (salad)</span><b id="outCups">—</b></div>
+      <div class="kv"><span>About pounds</span><b id="outLb">—</b></div>
+      <div class="kv"><span>About tubs (salad)</span><b id="outTubs">—</b></div>
+      <div class="kv"><span>About trays (platter)</span><b id="outTrays">—</b></div>
+      <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$—</b></div>
+      <div class="kv"><span>Tax and fees</span><b id="outAdds">$—</b></div>
+      <div class="kv"><span>Estimated total</span><b id="outTotal">$—</b></div>
+      <div class="kv"><span>Cost per person</span><b id="outPPP">$—</b></div>
+      <p class="muted" id="outExplain">Enter your guest mix to calculate.</p>
+    </div>
+
+    <!-- Finder -->
+    <div class="card finder" role="region" aria-label="Find near me">
+      <div class="inline">
+        <a class="preset" href="#" onclick="try{window.open('https://www.google.com/maps/search/fruit+tray+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/fruit+tray+near+me';}return false;">Find fruit tray near me</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/fruit+salad+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/fruit+salad+near+me';}return false;">Find fruit salad near me</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/grocery+store','_blank');}catch(e){location.href='https://www.google.com/maps/search/grocery+store';}return false;">Grocery stores</a>
+      </div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.7 (auto-calc)</div>
+    </div>
+
+    <!-- FAQs -->
+    <div class="card" role="region" aria-label="FAQs">
+      <h2>FAQs</h2>
+      <details open>
+        <summary>How much fruit per person?</summary>
+        <div class="fine">
+          As a side, plan about <strong>6 oz per adult</strong>, about <strong>7 oz for teens</strong>, and about <strong>4 oz for children</strong>.
+          Entree portions are heavier; tasting flights are lighter. Appetite, event length, and leftovers adjust the estimate.
+        </div>
+      </details>
+      <details>
+        <summary>Fruit salad vs fruit tray — what changes?</summary>
+        <div class="fine">
+          Fruit salad shows cups and tubs; fruit tray uses pounds and trays. The total fruit estimate is the same for both, but the packaging units differ.
+        </div>
+      </details>
+      <details>
+        <summary>What do the package and tray sizes mean?</summary>
+        <div class="fine">
+          Fruit salad tubs are common retail sizes: 16 oz, 32 oz, and 48 oz. Fruit trays are common platters and pans: round 12 inch about 5 lb, round 16 inch about 8 lb, half steam pan 12x10x2.5 in about 12 lb, full steam pan 20x12x2.5 in about 20 lb.
+        </div>
+      </details>
+      <details>
+        <summary>How does pricing work here?</summary>
+        <div class="fine">
+          Subtotal equals the unit price applied to the rounded quantity for your mode: per tub, per pound, or per tray. Then we add your tax and any extra fees to estimate total and per-person cost.
+        </div>
+      </details>
+      <details>
+        <summary>Do you round up?</summary>
+        <div class="fine">
+          Tubs and trays round up to whole units; pounds display to one decimal; cups are whole numbers. Use leftovers of plus 10 percent or plus 20 percent for buffer.
+        </div>
+      </details>
+    </div>
+
+    <!-- Quick notes -->
+    <div class="card" role="region" aria-label="Quick notes">
+      <h3>Quick notes</h3>
+      <ul class="fine" style="margin:0 0 0 18px;padding:0">
+        <li><strong>Base per-person (side):</strong> Adults about 6 oz; Teens about 7 oz; Children about 4 oz.</li>
+        <li><strong>Course multipliers:</strong> Side 1.00x; Entree 1.60x; Party 1.20x; Tasting 0.70x.</li>
+        <li><strong>Leftovers options:</strong> No; plus 10 percent; plus 20 percent.</li>
+        <li><strong>Rounding:</strong> Tubs and trays to whole units; pounds to one decimal; cups to whole numbers.</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm with your grocer or caterer and adjust for your crowd.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Calculator logic -->
+  <script>
+  (function(){
+    const $=id=>document.getElementById(id);
+    const N=(v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+    const money=n=>(isFinite(n)&&n>=0)?"$"+n.toFixed(2):"$—";
+    const courseMult=c=>(c==="side"?1.00:c==="entree"?1.60:c==="party"?1.20:0.70);
+    const lenMult=v=>(v==1.15?1.15:v==1.08?1.08:v==0.95?0.95:1.00);
+
+    function compute(){
+      const A=N($("A").value,0), T=N($("T").value,0), C=N($("C").value,0);
+      const guests=A+T+C;
+      const appetite=N($("appetite").value,1.0);
+      const leftovers=N($("leftovers").value,1.0);
+      const length=N($("length").value,1.0);
+      const course=$("course").value;
+      const style=$("style").value;
+
+      // base oz per person (side)
+      const base={adult:6, teen:7, child:4};
+      let ounces=(A*base.adult + T*base.teen + C*base.child);
+      ounces*=courseMult(course)*appetite*lenMult(length)*leftovers;
+
+      const ozRounded=Math.ceil(Math.max(0,ounces));
+      const cups = Math.round(ozRounded / 5); // about 5 oz per cup of mixed fruit
+      const pounds = ozRounded/16.0;
+      const poundsDisp = Math.round(pounds*10)/10;
+
+      const tubOz=N($("tub").value,32);
+      const trayLb=N($("tray").value,8);
+      const tubs = ozRounded>0 ? Math.ceil(ozRounded/tubOz) : 0;
+      const trays = pounds>0 ? Math.ceil(pounds/trayLb) : 0;
+
+      // pricing
+      const mode=(document.getElementById("priceMode")||{}).value||"tub";
+      const price=N($("priceUnit").value,0), tax=N($("taxPct").value,0)/100, fees=N($("fees").value,0);
+      let subtotal=0;
+      if(price>0){
+        if(mode==="tub" && tubs>0){ subtotal = tubs*price; }
+        else if(mode==="lb" && pounds>0){ subtotal = pounds*price; }
+        else if(mode==="tray" && trays>0){ subtotal = trays*price; }
+      }
+      const adds=subtotal*tax + (fees>0?fees:0);
+      const total=subtotal+adds;
+      const ppp=(guests>0 && total>0)?total/guests:NaN;
+
+      return {guests, ozRounded, cups, poundsDisp, tubs, trays, subtotal, adds, total, ppp, style};
+    }
+
+    function render(){
+      const s=compute();
+      $("outGuests").textContent = s.guests>0 ? String(s.guests) : "—";
+      $("outOz").textContent     = s.guests>0 ? String(s.ozRounded) : "—";
+      $("outCups").textContent   = s.guests>0 ? (s.style==="salad" ? String(s.cups) : "—") : "—";
+      $("outLb").textContent     = s.guests>0 ? s.poundsDisp.toFixed(1).replace(/\.0$/,'')+" lb" : "—";
+      $("outTubs").textContent   = s.guests>0 ? (s.style==="salad" ? (s.tubs>0?String(s.tubs):"—") : "—") : "—";
+      $("outTrays").textContent  = s.guests>0 ? (s.style==="tray"  ? (s.trays>0?String(s.trays):"—") : "—") : "—";
+      $("outSubtotal").textContent = s.subtotal>0 ? money(s.subtotal) : "$—";
+      $("outAdds").textContent     = s.subtotal>0 ? money(s.adds) : "$—";
+      $("outTotal").textContent    = s.subtotal>0 ? money(s.total) : "$—";
+      $("outPPP").textContent      = (s.total>0 && s.guests>0) ? money(s.ppp) : "$—";
+      $("outExplain").textContent  = s.guests>0 ? "Auto-calculated from guests, course, appetite, event length, leftovers, and serving style with package or tray size." : "Enter your guest mix to calculate.";
+    }
+
+    ["A","T","C","course","length","leftovers","appetite","style","tub","tray","priceMode","priceUnit","taxPct","fees"].forEach(id=>{
+      const el=document.getElementById(id); if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }
+    });
+
+    // toggle tub/tray controls by style
+    function togglePackaging(){
+      const style=document.getElementById("style").value;
+      document.getElementById("tubWrap").classList.toggle("hidden", style!=="salad");
+      document.getElementById("trayWrap").classList.toggle("hidden", style!=="tray");
+    }
+    document.getElementById("style").addEventListener("change", ()=>{togglePackaging(); render();});
+    togglePackaging();
+
+    document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+      btn.addEventListener("click",()=>{const n=parseInt(btn.getAttribute("data-people"),10)||0;document.getElementById("A").value=n;document.getElementById("T").value=0;document.getElementById("C").value=0;render();});
+    });
+
+    (function attachReset(){
+      const btn=document.getElementById("dmReset"); if(!btn) return;
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("input, select").forEach(el=>{
+          if(el.tagName==="SELECT"){
+            const i=Array.from(el.options).findIndex(o=>o.defaultSelected);
+            el.selectedIndex = i>=0 ? i : 0;
+          } else { el.value = el.defaultValue; }
+        });
+        document.querySelectorAll("input, select").forEach(el=>{
+          el.dispatchEvent(new Event("input",{bubbles:true}));
+          el.dispatchEvent(new Event("change",{bubbles:true}));
+        });
+        togglePackaging();
+        render();
+      });
+    })();
+
+    render();
+  })();
+  </script>
+
+  <!-- Structured data: FAQPage, HowTo, WebApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": "https://comesail.github.io/dinnermath-calcs/fruit-salad-tray.html#faqs",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much fruit per person?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "As a side, plan about 6 oz per adult, about 7 oz for teens, and about 4 oz for children. Entree portions are heavier; tasting flights are lighter. Appetite, event length, and leftovers adjust the estimate."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Fruit salad vs fruit tray — what changes?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Fruit salad shows cups and tubs; fruit tray uses pounds and trays. The total fruit estimate is the same for both, but the packaging units differ."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What do the package and tray sizes mean?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Fruit salad tubs are common retail sizes: 16 oz, 32 oz, and 48 oz. Fruit trays are common platters and pans: round 12 inch about 5 lb, round 16 inch about 8 lb, half steam pan 12x10x2.5 in about 12 lb, full steam pan 20x12x2.5 in about 20 lb."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does pricing work here?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Subtotal equals the unit price applied to the rounded quantity for your mode: per tub, per pound, or per tray. Then we add your tax and any extra fees to estimate total and per-person cost."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you round up?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tubs and trays round up to whole units; pounds display to one decimal; cups are whole numbers. Use leftovers of plus 10 percent or plus 20 percent for buffer."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "@id": "https://comesail.github.io/dinnermath-calcs/fruit-salad-tray.html#howto",
+    "name": "How to estimate fruit salad or fruit trays for your event",
+    "description": "Use the DinnerMath Fruit Salad and Fruit Tray calculator to estimate about ounces, cups, pounds, tubs or trays, and cost.",
+    "supply": [
+      { "@type": "HowToSupply", "name": "Guest counts and event details" }
+    ],
+    "tool": [
+      { "@type": "HowToTool", "name": "Fruit Salad / Fruit Tray calculator" }
+    ],
+    "step": [
+      { "@type": "HowToStep", "name": "Enter guests", "text": "Enter Adults, Teens, and Children or use a quick preset." },
+      { "@type": "HowToStep", "name": "Set context", "text": "Pick Course mode, Event length, Leftovers, and Appetite." },
+      { "@type": "HowToStep", "name": "Choose serving style and size", "text": "Select Fruit salad or Fruit tray, then a package or tray size." },
+      { "@type": "HowToStep", "name": "Add pricing", "text": "Choose per tub, per pound, or per tray, enter price, tax percent, and fees to estimate total cost." },
+      { "@type": "HowToStep", "name": "Review results", "text": "See about ounces, about cups, about pounds, about tubs or trays, subtotal, tax and fees, total, and per-person cost." }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "DinnerMath — Fruit Salad / Fruit Tray Calculator",
+    "url": "https://comesail.github.io/dinnermath-calcs/fruit-salad-tray.html",
+    "applicationCategory": "Calculator",
+    "operatingSystem": "Web",
+    "browserRequirements": "Requires a modern web browser",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "publisher": { "@type": "Organization", "name": "DinnerMath" }
+  }
+  </script>
+
+</body>
+</html>
