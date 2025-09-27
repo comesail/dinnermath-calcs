@@ -1,168 +1,276 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="description" content="Enter guests and slice size—DinnerMath estimates sheet cake slices needed and suggests quarter, half, and full sheet pans.">
-<title>Sheet Cake Quantity Calculator — How Many Slices per Person (Quarter, Half, Full)</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DinnerMath — Sheet Cake by Slice Quantity Calculator</title>
+<meta name="description" content="How much sheet cake per person? Select quarter, half, or full sheet pan and estimate about slices, about how many cakes, and cake pounds for pricing.">
+<meta name="robots" content="index,follow">
 <style>
-*,*::before,*::after{box-sizing:border-box}
-html,body{margin:0;padding:0;overflow-x:hidden;background:#eaf6fb;color:#0b2a3a;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-.wrap{width:100%;max-width:480px;margin:0 auto;padding:16px}
-@media(min-width:640px){.wrap{max-width:720px;padding:20px}}
-@media(min-width:980px){.wrap{max-width:980px;padding:28px 16px 56px}}
-:root{--ink2:#13506a;--paper:#fff;--line:#d7e8ef;--accent:#2f8db3;--shadow:0 6px 20px rgba(11,42,58,.08);--radius:18px}
-header{margin:0 0 18px}
-header h1{font-size:clamp(22px,3.2vw,34px);margin:0 0 8px;color:var(--ink2)}
-header p{margin:0;color:#274757}
-.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-.stack{display:grid;gap:14px}
-h2{font-size:clamp(18px,2.5vw,22px);margin:0 0 8px;color:var(--ink2)}
-.grid{display:grid;gap:12px}
-@media(min-width:760px){.grid{grid-template-columns:repeat(12,1fr)}}
-.field{display:flex;flex-direction:column;gap:6px;background:#f7fbfd;border:1px solid var(--line);border-radius:12px;padding:10px}
-label{font-weight:600;font-size:.95rem}
-input[type=number],select{border:1px solid #cfe3eb;border-radius:10px;padding:9px 10px;background:#fff;font-size:1rem}
-.row-4{grid-column:span 12}@media(min-width:760px){.row-4{grid-column:span 4}}
-.row-6{grid-column:span 12}@media(min-width:760px){.row-6{grid-column:span 6}}
-.row-12{grid-column:span 12}
-.btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer}
-.btn.secondary{background:#fff;color:var(--accent)}
-.result{display:grid;gap:10px;background:#f6fbfe;border:1px dashed #b7d7e6;border-radius:16px;padding:14px}
-.kv{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:12px}
-.kv b{font-size:1.05rem}
-.muted{color:#4c6b7a;font-size:.9rem}
+:root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--bg:#f8fafc;--pill:#374151;--card:#ffffff;--accent:#111827}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{background:var(--bg);font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;color:var(--ink)}
+.wrap{max-width:820px;margin:24px auto;padding:0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+.outline{border:2px solid var(--ink)}
+h1{font-size:22px;margin:0 0 8px}.lede{color:var(--muted);margin:0 0 16px}
+h2{font-size:20px;margin:16px 0 8px}h3{font-size:18px;margin:0 0 12px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
+input[type=number],select{width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px;font-size:14px;background:#fff;color:var(--ink)}
+.muted{color:var(--muted);font-size:12px}.fine{font-size:13px;color:#374151}
+.inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+.preset:hover{background:#f3f4f6}
+.pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:#374151;background:#fff}
+.results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+.kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+.kv + .kv{margin-top:8px}.kv b{font-size:1.05rem}
+.finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
+@media (max-width:720px){.row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <h1>Sheet Cake Quantity Calculator — How Many Slices per Person (Quarter, Half, Full)</h1>
-    <p>Enter your guest mix and slice size. DinnerMath estimates total sheet-cake slices and suggests quarter, half, and full sheet pan counts—scaled for appetite, event length, and leftovers.</p>
-  </header>
 
-  <section class="card stack" id="inputs">
-    <h2>Inputs</h2>
-    <div class="grid">
-      <div class="field row-4"><label for="adults">Adults</label><input id="adults" type="number" min="0" step="1" value="50"></div>
-      <div class="field row-4"><label for="teens">Teens</label><input id="teens" type="number" min="0" step="1" value="6"></div>
-      <div class="field row-4"><label for="kids">Kids</label><input id="kids" type="number" min="0" step="1" value="8"></div>
+<div class="card" role="region" aria-label="Header">
+  <h1>Sheet Cake by Slice — Quantity Calculator</h1>
+  <p class="lede">Enter guests and settings (or tap a quick preset). Choose a sheet pan size and we estimate <strong>about slices</strong>, <strong>about how many cakes</strong>, and <strong>cake pounds (for pricing)</strong>.</p>
+</div>
 
-      <div class="field row-6">
-        <label for="slice">Slice size (approx.)</label>
-        <select id="slice">
-          <option value="party" data-q="q24,h54,f96" selected>Party 1.5″×2″ (higher yield)</option>
-          <option value="event" data-q="q18,h36,f54">Event 2″×2″ (standard squares)</option>
-          <option value="generous" data-q="q12,h24,f36">Generous 2″×3″ (larger pieces)</option>
-        </select>
-        <div class="help">Determines slices per sheet: quarter / half / full.</div>
-      </div>
-
-      <div class="field row-6">
-        <label for="appetite">Appetite</label>
-        <select id="appetite"><option value="0.9">Light</option><option value="1.0" selected>Typical</option><option value="1.15">Sweet tooth</option></select>
-      </div>
-
-      <div class="field row-6">
-        <label for="length">Event length</label>
-        <select id="length"><option value="0.95">≤2 hours</option><option value="1.0" selected>2–3 hours</option><option value="1.05">3–4 hours</option><option value="1.1">4–5 hours</option></select>
-      </div>
-
-      <div class="field row-6">
-        <label for="leftovers">Leftovers</label>
-        <select id="leftovers"><option value="1.0" selected>No</option><option value="1.07">Some leftovers</option><option value="1.12">Extra leftovers</option></select>
-      </div>
-
-      <div class="field row-12"><label for="notes">Notes (optional)</label><input id="notes" type="text" placeholder="e.g., other desserts, cupcake add-on, to-go boxes"></div>
+<div class="card" role="region" aria-label="Inputs">
+  <h3>Inputs</h3>
+  <div class="row" aria-label="Guests">
+    <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="10"></div>
+    <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="0"></div>
+    <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="0"></div>
+    <div>
+      <label for="course">Course mode</label>
+      <select id="course">
+        <option value="dessert" selected>Dessert table</option>
+        <option value="party">Party main dessert (bigger slices)</option>
+        <option value="wedding">Wedding slivers</option>
+        <option value="coffee">Coffee break</option>
+      </select>
     </div>
-    <div class="actions"><button class="btn" id="calcBtn">Calculate</button><button class="btn secondary" id="resetBtn" type="button">Reset</button></div>
-  </section>
+  </div>
 
-  <section class="card stack" id="results" aria-live="polite">
-    <h2>Results</h2>
-    <div class="result">
-      <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
-      <div class="kv"><span>Total slices needed</span><b id="outSlices">—</b></div>
-      <div class="kv"><span>Suggested pans (quarter / half / full)</span><b id="outPans">—</b></div>
-      <div class="muted" id="explain">Enter details and click Calculate.</div>
+  <div class="row" aria-label="Context">
+    <div>
+      <label for="length">Event length</label>
+      <select id="length">
+        <option value="0.95">Short — about 1 to 2 hours</option>
+        <option value="1.00" selected>Standard — about 2 to 3 hours</option>
+        <option value="1.08">Long — about 3 to 4 hours</option>
+        <option value="1.15">Extended — about 4 to 5 hours</option>
+      </select>
     </div>
-    <div class="footnote">Dessert AE factors: teens = 0.8 adult; kids = 0.6 adult.</div>
-  </section>
+    <div>
+      <label for="leftovers">Add leftovers</label>
+      <select id="leftovers">
+        <option value="1.00" selected>No</option>
+        <option value="1.10">+10%</option>
+        <option value="1.20">+20%</option>
+      </select>
+    </div>
+    <div>
+      <label for="appetite">Appetite</label>
+      <select id="appetite">
+        <option value="0.90">Light</option>
+        <option value="1.00" selected>Typical</option>
+        <option value="1.20">Hearty</option>
+      </select>
+    </div>
+    <div>
+      <label for="pan">Sheet pan size (approx slices per cake)</label>
+      <select id="pan">
+        <option value="24|9x13">Quarter sheet — 9x13 in (about 24 slices)</option>
+        <option value="48|12x18" selected>Half sheet — 12x18 in (about 48 slices)</option>
+        <option value="96|18x24">Full sheet — 18x24 in (about 96 slices)</option>
+      </select>
+      <div class="muted">We convert needed slices to about how many sheet cakes using your pan size.</div>
+    </div>
+  </div>
 
-  <section class="card stack">
-    <h2>Quick Notes</h2>
-    <ul style="margin:0;padding-left:18px">
-      <li><b>Baseline:</b> ~1 slice per adult-equivalent for desserts.</li>
-      <li><b>Approximate yields per sheet (quarter / half / full):</b>
-        <div class="muted">Party 1.5″×2″ → 24 / 54 / 96 • Event 2″×2″ → 18 / 36 / 54 • Generous 2″×3″ → 12 / 24 / 36</div>
-      </li>
-      <li><b>Round up:</b> It is safer to have a few extra slices than to run short.</li>
-    </ul>
-    <div class="disclaimer">Estimates only for planning — pan dimensions and cake height vary by bakery.</div>
-  </section>
+  <div class="inline" style="margin-top:8px">
+    <span class="muted">Quick presets:</span>
+    <button class="preset" data-people="10" type="button">10</button>
+    <button class="preset" data-people="25" type="button">25</button>
+    <button class="preset" data-people="50" type="button">50</button>
+    <button class="preset" data-people="100" type="button">100</button>
+    <span class="muted">Presets set all as adults — tweak Teens/Children if needed.</span>
+    <div style="flex:1"></div>
+    <button id="dmReset" type="button" class="preset">Reset</button>
+  </div>
+</div>
 
-  <section class="card stack">
-    <h2>FAQs</h2>
-    <details><summary>What size is a full / half / quarter sheet?</summary><div class="ans">Bakeries vary, but a common guide is Full ≈ 18″×24″, Half ≈ 13″×18″, Quarter ≈ 9″×13″. Yields above are based on typical cuts.</div></details>
-    <details><summary>How do you choose slice size?</summary><div class="ans">Party slices are smaller for big groups; generous slices suit intimate events. Pick the option that fits your crowd.</div></details>
-    <details><summary>Should I add cupcakes?</summary><div class="ans">If you’re short by 6–12 slices, cupcakes are an easy top-off instead of another whole pan.</div></details>
-  </section>
+<div class="card" role="region" aria-label="Pricing">
+  <h3>Pricing (optional)</h3>
+  <div class="row">
+    <div>
+      <label for="priceMode">Pricing mode</label>
+      <select id="priceMode">
+        <option value="cake" selected>Per cake</option>
+        <option value="slice">Per slice</option>
+      </select>
+    </div>
+    <div>
+      <label for="priceUnit">Unit price</label>
+      <input id="priceUnit" type="number" min="0" step="0.01" placeholder="e.g., 49.00">
+      <div class="muted">If "Per cake": dollars per sheet cake (uses your selected pan). If "Per slice": dollars per slice.</div>
+    </div>
+    <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="e.g., 7.5"></div>
+    <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="e.g., 12.00"></div>
+  </div>
+  <div class="muted">Cost = unit price applied to rounded quantity for your mode + tax + extra fees.</div>
+</div>
+
+<div class="card outline" role="region" aria-label="Results" aria-live="polite">
+  <h3 class="results-title">Results</h3>
+  <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
+  <div class="kv"><span>Slices needed (about)</span><b id="outSlices">—</b></div>
+  <div class="kv"><span>About how many sheet cakes</span><b id="outCakes">—</b></div>
+  <div class="kv"><span>Cake pounds (about)</span><b id="outPounds">—</b></div>
+  <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$—</b></div>
+  <div class="kv"><span>Tax and fees</span><b id="outAdds">$—</b></div>
+  <div class="kv"><span>Estimated total</span><b id="outTotal">$—</b></div>
+  <div class="kv"><span>Cost per person</span><b id="outPPP">$—</b></div>
+  <p class="muted" id="outExplain">Enter your guest mix to calculate.</p>
+</div>
+
+<div class="card finder" role="region" aria-label="Find near me">
+  <div class="inline">
+    <a class="preset" href="#" onclick="try{window.open('https://www.google.com/maps/search/sheet+cake+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/sheet+cake+near+me';}return false;">Find sheet cake near me</a>
+    <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/bakery','_blank');}catch(e){location.href='https://www.google.com/maps/search/bakery';}return false;">Bakeries</a>
+    <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/catering','_blank');}catch(e){location.href='https://www.google.com/maps/search/catering';}return false;">Catering</a>
+  </div>
+  <div class="muted" style="margin-top:8px">DinnerMath v1.7 (auto-calc)</div>
+</div>
+
+<div class="card" role="region" aria-label="FAQs">
+  <h2>FAQs</h2>
+  <details open>
+    <summary>How many sheet cake slices per person?</summary>
+    <div class="fine">Plan about <strong>1 slice per adult</strong>, about <strong>1.25 for teens</strong>, and about <strong>0.5 for children</strong> as a dessert.</div>
+  </details>
+  <details>
+    <summary>What do the sheet pan sizes mean?</summary>
+    <div class="fine"><strong>Quarter sheet 9x13 in</strong> ~ <strong>24 slices</strong> (2x2 in portions); <strong>Half sheet 12x18 in</strong> ~ <strong>48 slices</strong>; <strong>Full sheet 18x24 in</strong> ~ <strong>96 slices</strong>. We use these to convert needed slices to about how many cakes.</div>
+  </details>
+  <details>
+    <summary>Dessert table, party main dessert, or coffee break — what changes?</summary>
+    <div class="fine">Course multipliers: Dessert 1.00x, Party main dessert 1.20x, Coffee break 0.75x, Wedding slivers 0.65x. Combine with appetite, event length, and leftovers to fit your crowd.</div>
+  </details>
+  <details>
+    <summary>How are cake pounds estimated?</summary>
+    <div class="fine">We assume about <strong>4.0 oz per dessert slice</strong> on average (party servings more, coffee-break slivers less), and convert slices to cake pounds for pricing. Pounds round to the nearest 1/4 lb.</div>
+  </details>
+  <details>
+    <summary>How does pricing work here?</summary>
+    <div class="fine">Subtotal = <em>rounded cake pounds × unit price per pound</em>. Then we add your tax and any extra fees to estimate a total and per-person cost. If your bakery prices per sheet or per slice, enter an equivalent per-pound price from your quote.</div>
+  </details>
+</div>
+
+<div class="card" role="region" aria-label="Quick notes">
+  <h3>Quick notes</h3>
+  <ul class="fine" style="margin:0 0 0 18px;padding:0">
+    <li><strong>Base portions (by slice):</strong> Adults about 1; Teens about 1.25; Children about 0.5.</li>
+    <li><strong>Course multipliers:</strong> Dessert 1.00x; Party main dessert 1.20x; Coffee 0.75x; Wedding slivers 0.65x.</li>
+    <li><strong>Sheet pan sizes (approx slices):</strong> Quarter 9x13 in ~ 24; Half 12x18 in ~ 48; Full 18x24 in ~ 96.</li>
+    <li><strong>Context multipliers:</strong> Appetite (0.90 / 1.00 / 1.20); Event length (0.95 / 1.00 / 1.08 / 1.15); Leftovers (No / +10% / +20%).</li>
+    <li><strong>Rounding:</strong> Cakes round up to whole cakes. Cake pounds round to the nearest 1/4 lb.</li>
+    <li><strong>Disclaimer:</strong> Estimates only; confirm with your bakery/caterer and adjust for your crowd.</li>
+  </ul>
+</div>
+
 </div>
 
 <script>
 (function(){
-  const $=s=>document.querySelector(s);
-  const N=(s,d=0)=>{const x=parseFloat($(s).value);return isFinite(x)?x:d;};
-  const TEEN=0.8, KID=0.6;
+  const $=id=>document.getElementById(id);
+  const N=(v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+  const money=n=>(isFinite(n)&&n>=0)?"$"+n.toFixed(2):"$—";
+  const roundQuarter=n=>Math.round(n*4)/4;
+  const courseMult=c=>(c==="dessert"?1.00:c==="party"?1.20:c==="wedding"?0.65:0.75);
+  const lenMult=v=>(v==1.15?1.15:v==1.08?1.08:v==0.95?0.95:1.00);
 
-  function parseYields(){
-    // data-q format: q<number>,h<number>,f<number>
-    const q = $('#slice').selectedOptions[0].dataset.q;
-    const parts = Object.fromEntries(q.split(',').map(p=>[p[0], parseInt(p.slice(1),10)]));
-    return { Q:parts.q, H:parts.h, F:parts.f };
-  }
+  function compute(){
+    const A=N($("A").value,0), T=N($("T").value,0), C=N($("C").value,0);
+    const guests=A+T+C;
+    const appetite=N($("appetite").value,1.0);
+    const leftovers=N($("leftovers").value,1.0);
+    const length=N($("length").value,1.0);
+    const course=$("course").value;
 
-  function needSlices(){
-    const A=N('#adults'), T=N('#teens'), K=N('#kids');
-    const AE = A + TEEN*T + KID*K;
-    const appetite=N('#appetite',1), length=N('#length',1), leftovers=N('#leftovers',1);
-    const guests = A+T+K;
-    const slices = Math.ceil(AE * 1.0 * appetite * length * leftovers);
-    return { guests, slices };
-  }
+    const base={adult:1.0, teen:1.25, child:0.5};
+    let slices=(A*base.adult + T*base.teen + C*base.child);
+    slices*=courseMult(course)*appetite*lenMult(length)*leftovers;
 
-  function sheetsGreedy(n, y){
-    // Greedy: use full -> half -> quarter to reach/exceed n
-    let rem=n, F=0,H=0,Q=0;
-    while(rem>0){
-      if(rem>=y.F){F++; rem-=y.F;}
-      else if(rem>=y.H){H++; rem-=y.H;}
-      else {Q++; rem-=y.Q;}
+    const panVal=($("pan").value||"48|12x18").split("|");
+    const slicesPerCake=N(panVal[0],48);
+
+    const slicesRounded=Math.ceil(Math.max(0,slices));
+    const cakes=slicesRounded>0?Math.ceil(slicesRounded/slicesPerCake):0;
+
+    const ozPerSlice=4.0;
+    const pounds=(slicesRounded*ozPerSlice)/16.0;
+    const poundsRounded=roundQuarter(Math.max(0,pounds));
+
+    const mode=(document.getElementById("priceMode")||{}).value||"cake";
+    const price=N($("priceUnit").value,0), tax=N($("taxPct").value,0)/100, fees=N($("fees").value,0);
+    let subtotal=0;
+    if(price>0){
+      if(mode==="cake" && cakes>0){ subtotal = cakes*price; }
+      else if(mode==="slice" && slicesRounded>0){ subtotal = slicesRounded*price; }
     }
-    return {F,H,Q};
+    const adds=subtotal*tax + (fees>0?fees:0);
+    const total=subtotal+adds;
+    const ppp=(guests>0 && total>0)?total/guests:NaN;
+
+    return {guests,slicesRounded,cakes,poundsRounded,subtotal,adds,total,ppp};
   }
 
-  function calc(){
-    const {guests,slices}=needSlices();
-    const y=parseYields();
-    const s = sheetsGreedy(slices,y);
-    const text = `${s.Q}×Quarter, ${s.H}×Half, ${s.F}×Full`.replace(/(^|, )0×[^,]+/g,'').replace(/^, /,'') || '—';
-    $('#outGuests').textContent = guests.toFixed(0);
-    $('#outSlices').textContent = slices.toFixed(0);
-    $('#outPans').textContent   = text;
-    $('#explain').textContent   = `Based on ${$('#slice').selectedOptions[0].text} yields.`;
+  function render(){
+    const s=compute();
+    $("outGuests").textContent=s.guests>0?String(s.guests):"—";
+    $("outSlices").textContent=s.guests>0?String(s.slicesRounded):"—";
+    $("outCakes").textContent=s.guests>0?String(s.cakes):"—";
+    $("outPounds").textContent=s.guests>0?(s.poundsRounded.toFixed(2).replace(/\.00$/,''))+" lb":"—";
+    $("outSubtotal").textContent=s.subtotal>0?money(s.subtotal):"$—";
+    $("outAdds").textContent=s.subtotal>0?money(s.adds):"$—";
+    $("outTotal").textContent=s.subtotal>0?money(s.total):"$—";
+    $("outPPP").textContent=(s.total>0 && s.guests>0)?money(s.ppp):"$—";
+    $("outExplain").textContent=s.guests>0?"Auto-calculated from guests, course, pan size, appetite, event length, and leftovers.":"Enter your guest mix to calculate.";
   }
 
-  $('#calcBtn').addEventListener('click',calc);
-  $('#resetBtn').addEventListener('click',()=>{ 
-    $('#adults').value='50';$('#teens').value='6';$('#kids').value='8';
-    $('#slice').value='party';$('#appetite').value='1.0';$('#length').value='1.0';$('#leftovers').value='1.0';
-    $('#notes').value='';
-    calc();
+  ["A","T","C","course","length","leftovers","appetite","pan","priceMode","priceUnit","taxPct","fees"].forEach(id=>{
+    const el=$(id); if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }
   });
 
-  calc();
+  document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+    btn.addEventListener("click",()=>{const n=parseInt(btn.getAttribute("data-people"),10)||0;$("A").value=n;$("T").value=0;$("C").value=0;render();});
+  });
+
+  (function attachReset(){
+    const btn=$("dmReset"); if(!btn) return;
+    btn.addEventListener("click", ()=>{
+      document.querySelectorAll("input, select").forEach(el=>{
+        if(el.tagName==="SELECT"){
+          const i=Array.from(el.options).findIndex(o=>o.defaultSelected);
+          el.selectedIndex = i>=0 ? i : 0;
+        } else { el.value = el.defaultValue; }
+      });
+      document.querySelectorAll("input, select").forEach(el=>{
+        el.dispatchEvent(new Event("input",{bubbles:true}));
+        el.dispatchEvent(new Event("change",{bubbles:true}));
+      });
+      render();
+    });
+  })();
+
+  render();
 })();
 </script>
+
 </body>
 </html>
