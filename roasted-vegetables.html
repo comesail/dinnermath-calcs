@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DinnerMath - Roasted Vegetables Quantity Calculator</title>
+  <meta name="description" content="How many roasted vegetables per person? Estimate about raw pounds, cooked cups, and cost. Auto calculates with appetite, event length, leftovers, and vegetable mix style.">
+  <meta name="robots" content="index,follow">
+  <style>
+    :root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--bg:#f8fafc;--card:#ffffff;--accent:#111827}
+    *{box-sizing:border-box}html,body{margin:0;padding:0}
+    body{background:var(--bg);font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;color:var(--ink)}
+    .wrap{max-width:860px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+    .outline{border:2px solid var(--ink)}
+    h1{font-size:22px;margin:0 0 8px}.lede{color:var(--muted);margin:0 0 16px}
+    h2{font-size:20px;margin:16px 0 8px}h3{font-size:18px;margin:0 0 12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
+    input[type="number"],select{width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px;font-size:14px;background:#fff;color:var(--ink)}
+    .muted{color:var(--muted);font-size:12px}.fine{font-size:13px;color:#374151}
+    .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .preset:hover{background:#f3f4f6}
+    .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:#374151;background:#fff}
+    .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+    .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .kv + .kv{margin-top:8px}.kv b{font-size:1.05rem}
+    .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
+    @media (max-width:720px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- Header -->
+    <div class="card" role="region" aria-label="Header">
+      <h1>Roasted Vegetables - Quantity Calculator</h1>
+      <p class="lede">
+        Enter guests and choose a vegetable mix style. We estimate about raw pounds,
+        about cooked cups, and cost with tax and fees.
+      </p>
+    </div>
+
+    <!-- Inputs -->
+    <div class="card" role="region" aria-label="Inputs">
+      <h3>Inputs</h3>
+
+      <div class="row" aria-label="Guests">
+        <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="10"></div>
+        <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="0"></div>
+        <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="0"></div>
+        <div>
+          <label for="course">Course mode</label>
+          <select id="course">
+            <option value="side" selected>Side</option>
+            <option value="buffet">Buffet or grazing</option>
+            <option value="vegmain">Vegetarian main</option>
+            <option value="tasting">Tasting plate</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" aria-label="Context">
+        <div>
+          <label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">Short - about 1 to 2 hours</option>
+            <option value="1.00" selected>Standard - about 2 to 3 hours</option>
+            <option value="1.08">Long - about 3 to 4 hours</option>
+            <option value="1.15">Extended - about 4 to 5 hours</option>
+          </select>
+        </div>
+        <div>
+          <label for="leftovers">Leftovers</label>
+          <select id="leftovers">
+            <option value="1.00" selected>No</option>
+            <option value="1.10">+10 percent</option>
+            <option value="1.20">+20 percent</option>
+          </select>
+        </div>
+        <div>
+          <label for="appetite">Appetite</label>
+          <select id="appetite">
+            <option value="0.90">Light</option>
+            <option value="1.00" selected>Typical</option>
+            <option value="1.20">Hearty</option>
+          </select>
+        </div>
+
+        <!-- Item-specific AFTER Appetite -->
+        <div>
+          <label for="mix">Vegetable mix style</label>
+          <select id="mix">
+            <option value="1.00" selected>Mixed medley</option>
+            <option value="1.10">Root heavy</option>
+            <option value="0.90">Light greens</option>
+          </select>
+          <div class="muted">Mix style lightly nudges portions up or down.</div>
+        </div>
+      </div>
+
+      <!-- Presets + Reset -->
+      <div class="inline" style="margin-top:8px">
+        <span class="muted">Quick presets:</span>
+        <button class="preset" data-people="10" type="button">10</button>
+        <button class="preset" data-people="25" type="button">25</button>
+        <button class="preset" data-people="50" type="button">50</button>
+        <button class="preset" data-people="100" type="button">100</button>
+        <span class="muted">Presets set all as adults. Tweak Teens or Children if needed.</span>
+        <div style="flex:1"></div>
+        <button id="dmReset" type="button" class="preset">Reset</button>
+      </div>
+    </div>
+
+    <!-- Pricing -->
+    <div class="card" role="region" aria-label="Pricing">
+      <h3>Pricing (optional)</h3>
+      <div class="row">
+        <div>
+          <label for="priceUnit">Unit price - per pound raw (US dollars)</label>
+          <input id="priceUnit" type="number" min="0" step="0.01" placeholder="example: 2.29">
+        </div>
+        <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="example: 7.5"></div>
+        <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="example: 10.00"></div>
+      </div>
+      <div class="muted">Subtotal equals rounded raw pounds times unit price. Then we add sales tax and fees.</div>
+    </div>
+
+    <!-- Results -->
+    <div class="card outline" role="region" aria-label="Results" aria-live="polite">
+      <h3 class="results-title">Results</h3>
+      <div class="kv"><span>Total guests counted</span><b id="outGuests">-</b></div>
+      <div class="kv"><span>Buy about</span><b id="outRaw">- lb raw vegetables</b></div>
+      <div class="kv"><span>Or about</span><b id="outCups">- cups cooked</b></div>
+      <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$-</b></div>
+      <div class="kv"><span>Tax and fees</span><b id="outAdds">$-</b></div>
+      <div class="kv"><span>Estimated total</span><b id="outTotal">$-</b></div>
+      <div class="kv"><span>Cost per person</span><b id="outPPP">$-</b></div>
+      <p class="muted" id="outExplain">Auto calculated from guests, course, appetite, event length, leftovers, and vegetable mix style.</p>
+    </div>
+
+    <!-- Finder -->
+    <div class="card finder" role="region" aria-label="Find near me">
+      <div class="inline">
+        <a class="preset" href="#" onclick="try{window.open('https://www.google.com/maps/search/vegetables+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/vegetables+near+me';}return false;">Find vegetables near me</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/produce+market','_blank');}catch(e){location.href='https://www.google.com/maps/search/produce+market';}return false;">Produce markets</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/grocery+store','_blank');}catch(e){location.href='https://www.google.com/maps/search/grocery+store';}return false;">Grocery stores</a>
+      </div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.7 - auto calculate</div>
+    </div>
+
+    <!-- FAQs -->
+    <div class="card" role="region" aria-label="FAQs">
+      <h2>FAQs</h2>
+      <details open>
+        <summary>How many roasted vegetables per person?</summary>
+        <div class="fine">
+          For a side, plan about 4 ounces cooked per adult or teen and about 3 ounces per child.
+          For buffet or grazing, plan about 4 to 5 ounces per adult or teen and 3 to 4 ounces per child.
+          For a vegetarian main, plan about 8 to 10 ounces per adult or teen and 6 to 8 ounces per child.
+          Use Appetite, Event length, Leftovers, and Mix style to adjust.
+        </div>
+      </details>
+      <details>
+        <summary>What does Vegetable mix style do?</summary>
+        <div class="fine">
+          Mixed medley uses the baseline. Root heavy nudges portions up by about 10 percent since roots are denser and more filling.
+          Light greens nudges portions down by about 10 percent since they are lighter.
+        </div>
+      </details>
+      <details>
+        <summary>How do appetite, event length, and leftovers work?</summary>
+        <div class="fine">
+          Appetite applies 0.90 Light, 1.00 Typical, or 1.20 Hearty. Event length applies 0.95, 1.00, 1.08, or 1.15.
+          Leftovers adds 0 percent, +10 percent, or +20 percent to the final rounded amount.
+        </div>
+      </details>
+      <details>
+        <summary>How do you convert pounds to cups?</summary>
+        <div class="fine">
+          We convert cooked pounds to cups at about 2.5 cups per pound. This is a planning estimate, not a precise kitchen measure,
+          and it varies by vegetable cut and roast level.
+        </div>
+      </details>
+      <details>
+        <summary>How is price calculated?</summary>
+        <div class="fine">
+          Subtotal equals rounded raw pounds times your unit price per pound. We then add sales tax and any fees to estimate a total and cost per person.
+        </div>
+      </details>
+    </div>
+
+    <!-- Quick notes -->
+    <div class="card" role="region" aria-label="Quick notes">
+      <h3>Quick notes</h3>
+      <ul class="fine" style="margin:0 0 0 18px;padding:0">
+        <li><strong>Baseline per person - cooked weight:</strong> Side about 4 oz adults or teens and 3 oz children. Vegetarian main about 8 to 10 oz adults or teens and 6 to 8 oz children.</li>
+        <li><strong>Course multipliers:</strong> Side 1.00x, Buffet or grazing 1.15x, Vegetarian main 1.60x, Tasting plate 0.70x.</li>
+        <li><strong>Mix style options:</strong> Mixed medley 1.00x, Root heavy 1.10x, Light greens 0.90x.</li>
+        <li><strong>Cook loss and cups:</strong> We assume about 0.80 cooked yield from raw weight and about 2.5 cups per cooked pound.</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm with your grocer or caterer and adjust for your crowd.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Calculator logic -->
+  <script>
+  (function(){
+    const $=id=>document.getElementById(id);
+    const N=(v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+    const money=n=>(isFinite(n)&&n>=0)?"$"+n.toFixed(2):"$-";
+
+    function courseMult(c){
+      if(c==="buffet") return 1.15;
+      if(c==="vegmain") return 1.60;
+      if(c==="tasting") return 0.70;
+      return 1.00; // side default
+    }
+    function lenMult(v){return (v==1.15?1.15:(v==1.08?1.08:(v==0.95?0.95:1.00)));}
+    function mixMult(v){return (v==1.10?1.10:(v==0.90?0.90:1.00));}
+
+    function perPersonCooked(){
+      const c = $("course").value;
+      // ounces cooked per person baseline
+      let adult = 4, child = 3; // side
+      if(c==="buffet"){ adult = 4.5; child = 3.5; }
+      if(c==="vegmain"){ adult = 9; child = 7; }
+      if(c==="tasting"){ adult = 3; child = 2; }
+      const teen = adult;
+      return {adult, teen, child};
+    }
+
+    function compute(){
+      const A=N($("A").value,0), T=N($("T").value,0), C=N($("C").value,0);
+      const guests=A+T+C;
+
+      const appet=N($("appetite").value,1.0);
+      const length=N($("length").value,1.0);
+      const leftover=N($("leftovers").value,1.0);
+      const mix=N($("mix").value,1.0);
+
+      const pp = perPersonCooked();
+      // cooked ounces total
+      let cookedOz = (A*pp.adult + T*pp.teen + C*pp.child);
+      cookedOz *= appet * courseMult($("course").value) * lenMult(length) * mix;
+      // apply leftovers
+      cookedOz *= leftover;
+
+      const cookedLb = cookedOz/16;
+      const cups = cookedLb * 2.5;
+
+      // raw pounds from cooked using yield 0.80
+      const rawLb = cookedLb / 0.80;
+
+      const roundedRaw = Math.ceil(Math.max(0, rawLb));
+      const price = N($("priceUnit").value,0);
+      const tax = N($("taxPct").value,0)/100;
+      const fees = N($("fees").value,0);
+
+      const subtotal = roundedRaw * price;
+      const adds = subtotal*tax + (fees>0?fees:0);
+      const total = subtotal + adds;
+      const ppp = (guests>0 && total>0) ? total/guests : NaN;
+
+      return {guests, roundedRaw, cups, subtotal, adds, total, ppp};
+    }
+
+    function render(){
+      const s=compute();
+      $("outGuests").textContent  = s.guests>0 ? String(s.guests) : "-";
+      $("outRaw").textContent     = s.guests>0 ? String(s.roundedRaw)+" lb raw vegetables" : "- lb raw vegetables";
+      $("outCups").textContent    = s.guests>0 ? String(Math.ceil(s.cups))+" cups cooked" : "- cups cooked";
+      $("outSubtotal").textContent = s.subtotal>0 ? money(s.subtotal) : "$-";
+      $("outAdds").textContent     = s.subtotal>0 ? money(s.adds) : "$-";
+      $("outTotal").textContent    = s.subtotal>0 ? money(s.total) : "$-";
+      $("outPPP").textContent      = (s.total>0 && s.guests>0) ? money(s.ppp) : "$-";
+    }
+
+    ["A","T","C","course","length","leftovers","appetite","mix","priceUnit","taxPct","fees"].forEach(id=>{
+      const el=document.getElementById(id); if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }
+    });
+
+    document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const n=parseInt(btn.getAttribute("data-people"),10)||0;
+        document.getElementById("A").value=n;
+        document.getElementById("T").value=0;
+        document.getElementById("C").value=0;
+        render();
+      });
+    });
+
+    (function attachReset(){
+      const btn=document.getElementById("dmReset"); if(!btn) return;
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("input, select").forEach(el=>{
+          if(el.tagName==="SELECT"){
+            const i=Array.from(el.options).findIndex(o=>o.defaultSelected);
+            el.selectedIndex = i>=0 ? i : 0;
+          } else { el.value = el.defaultValue; }
+        });
+        document.querySelectorAll("input, select").forEach(el=>{
+          el.dispatchEvent(new Event("input",{bubbles:true}));
+          el.dispatchEvent(new Event("change",{bubbles:true}));
+        });
+        render();
+      });
+    })();
+
+    render();
+  })();
+  </script>
+
+</body>
+</html>
