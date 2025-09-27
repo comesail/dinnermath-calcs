@@ -1,213 +1,277 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="description" content="Enter guests and serving style—DinnerMath estimates total ice cream scoops and pints/quarts/half-gallons/gallons to buy, scaled for appetite, event length, and leftovers.">
-<title>Ice Cream Quantity Calculator — How Many Scoops per Person (Pints, Quarts, Half-Gallons, Gallons)</title>
-<style>
-*,*::before,*::after{box-sizing:border-box}
-html,body{margin:0;padding:0;overflow-x:hidden;background:#eaf6fb;color:#0b2a3a;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-.wrap{width:100%;max-width:480px;margin:0 auto;padding:16px}
-@media(min-width:640px){.wrap{max-width:720px;padding:20px}}
-@media(min-width:980px){.wrap{max-width:980px;padding:28px 16px 56px}}
-:root{--ink2:#13506a;--paper:#fff;--line:#d7e8ef;--accent:#2f8db3;--shadow:0 6px 20px rgba(11,42,58,.08);--radius:18px}
-header{margin:0 0 18px}
-header h1{font-size:clamp(22px,3.2vw,34px);margin:0 0 8px;color:var(--ink2)}
-header p{margin:0;color:#274757}
-.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-.stack{display:grid;gap:14px}
-h2{font-size:clamp(18px,2.5vw,22px);margin:0 0 8px;color:var(--ink2)}
-.grid{display:grid;gap:12px}
-@media(min-width:760px){.grid{grid-template-columns:repeat(12,1fr)}}
-.field{display:flex;flex-direction:column;gap:6px;background:#f7fbfd;border:1px solid var(--line);border-radius:12px;padding:10px}
-label{font-weight:600;font-size:.95rem}
-input[type=number],select{border:1px solid #cfe3eb;border-radius:10px;padding:9px 10px;background:#fff;font-size:1rem}
-.row-4{grid-column:span 12}@media(min-width:760px){.row-4{grid-column:span 4}}
-.row-6{grid-column:span 12}@media(min-width:760px){.row-6{grid-column:span 6}}
-.row-12{grid-column:span 12}
-.btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer}
-.btn.secondary{background:#fff;color:var(--accent)}
-.result{display:grid;gap:10px;background:#f6fbfe;border:1px dashed #b7d7e6;border-radius:16px;padding:14px}
-.kv{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:12px}
-.kv b{font-size:1.05rem}
-.muted{color:#4c6b7a;font-size:.9rem}
-details{border:1px solid var(--line);border-radius:12px;background:#fff;margin:10px 0}
-summary{cursor:pointer;padding:10px 14px;font-weight:700;color:#13506a}
-details[open] summary{border-bottom:1px solid var(--line)}
-details .ans{padding:10px 14px 12px;color:#2a4b5a}
-/* Mobile embed height ~4827px via Wix container; hide the “KEEP PLANNING” label on mobile in Wix per v1.4. */
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DinnerMath - Ice Cream Quantity Calculator</title>
+  <meta name="description" content="How much ice cream per person? Estimate about scoops, cups, containers, and cost. Auto calculates with appetite, event length, leftovers, serving type, and pack size.">
+  <meta name="robots" content="index,follow">
+  <style>
+    :root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--bg:#f8fafc;--card:#ffffff;--accent:#111827}
+    *{box-sizing:border-box}html,body{margin:0;padding:0}
+    body{background:var(--bg);font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;color:var(--ink)}
+    .wrap{max-width:860px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+    .outline{border:2px solid var(--ink)}
+    h1{font-size:22px;margin:0 0 8px}.lede{color:var(--muted);margin:0 0 16px}
+    h2{font-size:20px;margin:16px 0 8px}h3{font-size:18px;margin:0 0 12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
+    input[type="number"],select{width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px;font-size:14px;background:#fff;color:var(--ink)}
+    .muted{color:var(--muted);font-size:12px}.fine{font-size:13px;color:#374151}
+    .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .preset:hover{background:#f3f4f6}
+    .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:#374151;background:#fff}
+    .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+    .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .kv + .kv{margin-top:8px}.kv b{font-size:1.05rem}
+    .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
+    @media (max-width:720px){.row{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>Ice Cream Quantity Calculator — How Many Scoops per Person (Pints, Quarts, Half-Gallons, Gallons)</h1>
-    <p>Enter your guest mix and serving style. DinnerMath estimates total scoops and suggests how many pints, quarts, half-gallons, or gallons to buy—adjusted for appetite, event length, and leftovers.</p>
-  </header>
+  <div class="wrap">
 
-  <!-- INPUTS -->
-  <section class="card stack" id="inputs">
-    <h2>Inputs</h2>
-    <div class="grid">
-      <div class="field row-4"><label for="adults">Adults</label><input id="adults" type="number" min="0" step="1" value="60"></div>
-      <div class="field row-4"><label for="teens">Teens</label><input id="teens" type="number" min="0" step="1" value="8"></div>
-      <div class="field row-4"><label for="kids">Kids</label><input id="kids" type="number" min="0" step="1" value="10"></div>
-
-      <div class="field row-6">
-        <label for="style">Serving style (scoops per adult-equivalent)</label>
-        <select id="style">
-          <option value="1.0">Tasting (small scoops)</option>
-          <option value="1.3" selected>Single scoop (standard)</option>
-          <option value="1.6">Heaping single</option>
-          <option value="2.0">Double scoop</option>
-        </select>
-        <div class="help">Baseline ~1.3 scoops per adult-equivalent for a standard serving.</div>
-      </div>
-
-      <div class="field row-6">
-        <label for="container">Container plan</label>
-        <select id="container">
-          <option value="pint" data-scoops="4">Pints (~4 scoops)</option>
-          <option value="quart" data-scoops="8" selected>Quarts (~8 scoops)</option>
-          <option value="halfgal" data-scoops="16">Half-gallons (~16 scoops)</option>
-          <option value="gallon" data-scoops="32">Gallons (~32 scoops)</option>
-        </select>
-        <div class="help">Assumes ~½-cup scoops (~4 fl oz).</div>
-      </div>
-
-      <div class="field row-6">
-        <label for="appetite">Appetite</label>
-        <select id="appetite"><option value="0.9">Light</option><option value="1.0" selected>Typical</option><option value="1.15">Sweet tooth</option></select>
-      </div>
-
-      <div class="field row-6">
-        <label for="length">Event length</label>
-        <select id="length"><option value="0.95">≤2 hours</option><option value="1.0" selected>2–3 hours</option><option value="1.05">3–4 hours</option><option value="1.1">4–5 hours</option></select>
-      </div>
-
-      <div class="field row-6">
-        <label for="leftovers">Leftovers</label>
-        <select id="leftovers"><option value="1.0" selected>No</option><option value="1.07">Some leftovers</option><option value="1.12">Extra leftovers</option></select>
-      </div>
-
-      <div class="field row-12"><label for="notes">Notes (optional)</label><input id="notes" type="text" placeholder="e.g., sundae bar, cones vs cups, other desserts"></div>
+    <!-- Header -->
+    <div class="card">
+      <h1>Ice Cream - Quantity Calculator</h1>
+      <p class="lede">Enter guests and choose serving type and pack size. We estimate about scoops, cups, containers, and cost.</p>
     </div>
-    <div class="actions"><button class="btn" id="calcBtn">Calculate</button><button class="btn secondary" id="resetBtn" type="button">Reset</button></div>
-  </section>
 
-  <!-- RESULTS -->
-  <section class="card stack" id="results" aria-live="polite">
-    <h2>Results</h2>
-    <div class="result">
-      <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
-      <div class="kv"><span>Total scoops needed</span><b id="outScoops">—</b></div>
-      <div class="kv"><span>Suggested tubs</span><b id="outTubs">—</b></div>
-      <div class="muted" id="explain">Enter details and click Calculate.</div>
+    <!-- Inputs -->
+    <div class="card">
+      <h3>Inputs</h3>
+      <div class="row">
+        <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="10"></div>
+        <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="0"></div>
+        <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="0"></div>
+        <div>
+          <label for="course">Course mode</label>
+          <select id="course">
+            <option value="dessert" selected>Dessert</option>
+            <option value="buffet">Sweets table</option>
+            <option value="tasting">Tasting</option>
+            <option value="favor">Party favor</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">Short - about 1 to 2 hours</option>
+            <option value="1.00" selected>Standard - about 2 to 3 hours</option>
+            <option value="1.08">Long - about 3 to 4 hours</option>
+            <option value="1.15">Extended - about 4 to 5 hours</option>
+          </select>
+        </div>
+        <div>
+          <label for="leftovers">Leftovers</label>
+          <select id="leftovers">
+            <option value="1.00" selected>No</option>
+            <option value="1.10">+10 percent</option>
+            <option value="1.20">+20 percent</option>
+          </select>
+        </div>
+        <div>
+          <label for="appetite">Appetite</label>
+          <select id="appetite">
+            <option value="0.90">Light</option>
+            <option value="1.00" selected>Typical</option>
+            <option value="1.20">Hearty</option>
+          </select>
+        </div>
+        <div>
+          <label for="serving">Serving type</label>
+          <select id="serving">
+            <option value="1.10">Cone</option>
+            <option value="1.00" selected>Cup</option>
+            <option value="1.40">Sundae</option>
+            <option value="0.90">Buffet scoops</option>
+          </select>
+        </div>
+        <div>
+          <label for="pack">Pack size</label>
+          <select id="pack">
+            <option value="16">Pint (16 oz, about 4 scoops)</option>
+            <option value="32" selected>Quart (32 oz, about 8 scoops)</option>
+            <option value="64">Half gallon (64 oz, about 16 scoops)</option>
+            <option value="128">Gallon (128 oz, about 32 scoops)</option>
+          </select>
+        </div>
+      </div>
+      <div class="inline" style="margin-top:8px">
+        <span class="muted">Quick presets:</span>
+        <button class="preset" data-people="10" type="button">10</button>
+        <button class="preset" data-people="25" type="button">25</button>
+        <button class="preset" data-people="50" type="button">50</button>
+        <button class="preset" data-people="100" type="button">100</button>
+        <div style="flex:1"></div>
+        <button id="dmReset" type="button" class="preset">Reset</button>
+      </div>
     </div>
-    <div class="footnote">Dessert adult-equivalent factors: teens = 0.8 adult; kids = 0.6 adult.</div>
-  </section>
 
-  <!-- QUICK NOTES -->
-  <section class="card stack" id="notesBlock">
-    <h2>Quick Notes</h2>
-    <ul class="stack" style="margin:0;padding-left:18px">
-      <li><b>Typical scoop:</b> ~½ cup (~4 fl oz). Pint ≈ 4 scoops • Quart ≈ 8 • Half-gallon ≈ 16 • Gallon ≈ 32.</li>
-      <li><b>Baseline:</b> ~1.3 scoops per adult-equivalent for a standard “single.” Use Double for hearty servings.</li>
-      <li><b>Sundae bars:</b> Extras disappear quickly—consider “Some leftovers.”</li>
-      <li><b>Variety:</b> Split tubs across flavors; a small buffer helps keep every flavor available.</li>
-    </ul>
-    <div class="disclaimer">Estimates only for planning — scoop size and overrun vary by brand/shop.</div>
-  </section>
+    <!-- Pricing -->
+    <div class="card">
+      <h3>Pricing (optional)</h3>
+      <div class="row">
+        <div>
+          <label for="priceMode">Pricing mode</label>
+          <select id="priceMode">
+            <option value="scoop" selected>Per scoop</option>
+            <option value="container">Per container</option>
+          </select>
+        </div>
+        <div>
+          <label for="priceUnit">Unit price</label>
+          <input id="priceUnit" type="number" min="0" step="0.01" placeholder="example: 1.25">
+        </div>
+        <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="example: 7.5"></div>
+        <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="example: 10.00"></div>
+      </div>
+      <div class="muted">Subtotal equals rounded scoops or containers times unit price. Then we add sales tax and fees.</div>
+    </div>
 
-  <!-- FAQS -->
-  <section class="card stack" id="faqs">
-    <h2>FAQs</h2>
-    <details><summary>How many scoops per person?</summary><div class="ans">Plan about <b>1.3 scoops per adult-equivalent</b> for a standard single; select Double (2.0) for generous servings.</div></details>
-    <details><summary>How many pints/quarts/gallons do I need?</summary><div class="ans">We convert total scoops to containers using typical yields: Pint ≈ 4, Quart ≈ 8, Half-gallon ≈ 16, Gallon ≈ 32 scoops.</div></details>
-    <details><summary>What about many flavors or toppings?</summary><div class="ans">Add a small buffer (Leftovers: Some) so each flavor lasts through the event and sundae bars don’t run short.</div></details>
-  </section>
-</div>
+    <!-- Results -->
+    <div class="card outline">
+      <h3 class="results-title">Results</h3>
+      <div class="kv"><span>Total guests counted</span><b id="outGuests">-</b></div>
+      <div class="kv"><span>Buy about</span><b id="outScoops">- scoops</b></div>
+      <div class="kv"><span>Or about</span><b id="outCups">- cups</b></div>
+      <div class="kv"><span>Or about</span><b id="outContainers">- containers</b></div>
+      <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$-</b></div>
+      <div class="kv"><span>Tax and fees</span><b id="outAdds">$-</b></div>
+      <div class="kv"><span>Estimated total</span><b id="outTotal">$-</b></div>
+      <div class="kv"><span>Cost per person</span><b id="outPPP">$-</b></div>
+    </div>
 
-<script>
-(function(){
-  const $=s=>document.querySelector(s);
-  const N=(s,d=0)=>{const x=parseFloat($(s).value);return isFinite(x)?x:d;};
-  const TEEN=0.8, KID=0.6; // dessert adult-equivalents
+    <!-- Finder -->
+    <div class="card finder">
+      <div class="inline">
+        <a class="preset" href="#" onclick="window.open('https://www.google.com/maps/search/ice+cream+near+me','_blank');return false;">Find ice cream near me</a>
+        <a class="pill" href="#" onclick="window.open('https://www.google.com/maps/search/ice+cream+shop','_blank');return false;">Ice cream shops</a>
+        <a class="pill" href="#" onclick="window.open('https://www.google.com/maps/search/grocery+store','_blank');return false;">Grocery stores</a>
+      </div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.7 - auto calculate</div>
+    </div>
 
-  function scoopsNeeded(){
-    const A=N('#adults'), T=N('#teens'), K=N('#kids');
-    const AE = A + TEEN*T + KID*K;
-    const perAE = N('#style',1.3);
-    const appetite=N('#appetite',1), length=N('#length',1), leftovers=N('#leftovers',1);
-    const total = Math.ceil(AE * perAE * appetite * length * leftovers);
-    return { guests: A+T+K, total };
-  }
+    <!-- FAQs -->
+    <div class="card">
+      <h2>FAQs</h2>
+      <details open><summary>How many scoops per person?</summary>
+        <div class="fine">Dessert baseline is about 1.5 scoops per adult, 1.75 per teen, and 1 per child. Adjust with Course mode, Serving type, Appetite, Event length, and Leftovers.</div>
+      </details>
+      <details><summary>What does Serving type change?</summary>
+        <div class="fine">Cone nudges up scoops, Cup is baseline, Sundae nudges portions up about 40 percent, Buffet scoops nudges down about 10 percent.</div>
+      </details>
+      <details><summary>What do Pack sizes mean?</summary>
+        <div class="fine">We convert ounces to containers: Pint 16 oz about 4 scoops, Quart 32 oz about 8 scoops, Half gallon 64 oz about 16 scoops, Gallon 128 oz about 32 scoops.</div>
+      </details>
+      <details><summary>How does pricing work?</summary>
+        <div class="fine">Per scoop uses rounded scoops. Per container uses rounded containers. Subtotal = quantity x unit price, then add tax and fees.</div>
+      </details>
+      <details><summary>Do you round up?</summary>
+        <div class="fine">We round scoops, cups, and containers up for convenience and show results as about. Use +10 percent or +20 percent leftovers for buffer.</div>
+      </details>
+    </div>
 
-  function containerScoops(){
-    const opt = $('#container').selectedOptions[0];
-    return parseInt(opt.dataset.scoops,10) || 8; // default quart
-  }
+    <!-- Quick notes -->
+    <div class="card">
+      <h3>Quick notes</h3>
+      <ul class="fine" style="margin:0 0 0 18px;padding:0">
+        <li><strong>Baseline per person:</strong> Adults 1.5 scoops, Teens 1.75, Children 1.</li>
+        <li><strong>Course multipliers:</strong> Dessert 1.00x, Sweets table 1.20x, Tasting 0.70x, Favor 0.60x.</li>
+        <li><strong>Serving type multipliers:</strong> Cone 1.10x, Cup 1.00x, Sundae 1.40x, Buffet scoops 0.90x.</li>
+        <li><strong>Pack sizes:</strong> Pint 16 oz 4 scoops, Quart 32 oz 8 scoops, Half gallon 64 oz 16 scoops, Gallon 128 oz 32 scoops.</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm with your grocer or caterer and adjust for your crowd.</li>
+      </ul>
+    </div>
 
-  function tubsGreedy(n, unit){
-    // Offer a friendly breakdown in chosen unit plus smaller ones for leftovers.
-    // Map: gallon=32, half-gal=16, quart=8, pint=4
-    const sizes = [
-      {name:'Gallons', scoops:32},
-      {name:'Half-gallons', scoops:16},
-      {name:'Quarts', scoops:8},
-      {name:'Pints', scoops:4},
-    ];
-    let rem=n, out={g:0,h:0,q:0,p:0};
-    for(const s of sizes){
-      const count = Math.floor(rem / s.scoops);
-      if(count>0){
-        if(s.scoops===32) out.g=count;
-        if(s.scoops===16) out.h=count;
-        if(s.scoops===8)  out.q=count;
-        if(s.scoops===4)  out.p=count;
-        rem -= count*s.scoops;
+  </div>
+
+  <script>
+  (function(){
+    const $=id=>document.getElementById(id);
+    const N=(v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+    const money=n=>(isFinite(n)&&n>=0)?"$"+n.toFixed(2):"$-";
+
+    function courseMult(c){
+      if(c==="buffet") return 1.20;
+      if(c==="tasting") return 0.70;
+      if(c==="favor") return 0.60;
+      return 1.00;
+    }
+
+    function compute(){
+      const A=N($("A").value,0),T=N($("T").value,0),C=N($("C").value,0);
+      const guests=A+T+C;
+      const appetite=N($("appetite").value,1.0);
+      const length=N($("length").value,1.0);
+      const leftover=N($("leftovers").value,1.0);
+      const serving=N($("serving").value,1.0);
+      const pack=N($("pack").value,32);
+
+      const baseAdult=1.5, baseTeen=1.75, baseChild=1.0;
+      let scoops=(A*baseAdult+T*baseTeen+C*baseChild);
+      scoops*=courseMult($("course").value)*appetite*length*leftover*serving;
+
+      const roundedScoops=Math.ceil(Math.max(0,scoops));
+      const cups=Math.ceil(roundedScoops*0.5);
+      const ounces=roundedScoops*4;
+      const containers=Math.ceil(ounces/pack);
+
+      const price=N($("priceUnit").value,0), tax=N($("taxPct").value,0)/100, fees=N($("fees").value,0);
+      let subtotal=0;
+      if(price>0){
+        if($("priceMode").value==="scoop"){ subtotal=roundedScoops*price; }
+        else { subtotal=containers*price; }
       }
+      const adds=subtotal*tax+(fees>0?fees:0);
+      const total=subtotal+adds;
+      const ppp=(guests>0&&total>0)?total/guests:NaN;
+
+      return {guests,roundedScoops,cups,containers,subtotal,adds,total,ppp};
     }
-    if(rem>0){
-      // top-off with one more of the selected container unit
-      const top = unit;
-      if(top===32) out.g += 1;
-      else if(top===16) out.h += 1;
-      else if(top===8) out.q += 1;
-      else out.p += 1;
-      rem = 0;
+
+    function render(){
+      const s=compute();
+      $("outGuests").textContent=s.guests>0?String(s.guests):"-";
+      $("outScoops").textContent=s.guests>0?String(s.roundedScoops)+" scoops":"- scoops";
+      $("outCups").textContent=s.guests>0?String(s.cups)+" cups":"- cups";
+      $("outContainers").textContent=s.guests>0?String(s.containers)+" containers":"- containers";
+      $("outSubtotal").textContent=s.subtotal>0?money(s.subtotal):"$-";
+      $("outAdds").textContent=s.subtotal>0?money(s.adds):"$-";
+      $("outTotal").textContent=s.subtotal>0?money(s.total):"$-";
+      $("outPPP").textContent=(s.total>0&&s.guests>0)?money(s.ppp):"$-";
     }
-    const parts=[];
-    if(out.g) parts.push(`${out.g}×Gallons`);
-    if(out.h) parts.push(`${out.h}×Half-gallons`);
-    if(out.q) parts.push(`${out.q}×Quarts`);
-    if(out.p) parts.push(`${out.p}×Pints`);
-    return parts.join(', ') || '—';
-  }
 
-  function calc(){
-    const {guests,total} = scoopsNeeded();
-    const perContainer = containerScoops();
-    const tubsText = tubsGreedy(total, perContainer);
+    ["A","T","C","course","length","leftovers","appetite","serving","pack","priceMode","priceUnit","taxPct","fees"].forEach(id=>{
+      const el=$(id); if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }
+    });
 
-    $('#outGuests').textContent = guests.toFixed(0);
-    $('#outScoops').textContent = total.toFixed(0);
-    $('#outTubs').textContent   = tubsText;
-    $('#explain').textContent   = `Assuming ~½-cup scoops and ${perContainer} scoops per selected container.`;
-  }
+    document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const n=parseInt(btn.getAttribute("data-people"),10)||0;
+        $("A").value=n;$("T").value=0;$("C").value=0;render();
+      });
+    });
 
-  $('#calcBtn').addEventListener('click',calc);
-  $('#resetBtn').addEventListener('click',()=>{
-    $('#adults').value='60';$('#teens').value='8';$('#kids').value='10';
-    $('#style').value='1.3';$('#container').value='quart';
-    $('#appetite').value='1.0';$('#length').value='1.0';$('#leftovers').value='1.0';
-    $('#notes').value='';
-    calc();
-  });
+    (function attachReset(){
+      const btn=$("dmReset"); if(!btn)return;
+      btn.addEventListener("click",()=>{
+        document.querySelectorAll("input,select").forEach(el=>{
+          if(el.tagName==="SELECT"){ el.selectedIndex=[...el.options].findIndex(o=>o.defaultSelected); }
+          else { el.value=el.defaultValue; }
+        });
+        render();
+      });
+    })();
 
-  calc();
-})();
-</script>
+    render();
+  })();
+  </script>
+
 </body>
 </html>
