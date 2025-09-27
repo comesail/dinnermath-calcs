@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DinnerMath — Salad Dressing Quantity Calculator</title>
+  <meta name="description" content="How much salad dressing per person? Choose homemade or bottled, pick a bottle size and style, and estimate about ounces, cups, quarts, and bottles. Pricing per bottle or per ounce.">
+  <meta name="robots" content="index,follow">
+  <style>
+    :root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--bg:#f8fafc;--card:#ffffff;--accent:#111827}
+    *{box-sizing:border-box}html,body{margin:0;padding:0}
+    body{background:var(--bg);font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;color:var(--ink)}
+    .wrap{max-width:860px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+    .outline{border:2px solid var(--ink)}
+    h1{font-size:22px;margin:0 0 8px}.lede{color:var(--muted);margin:0 0 16px}
+    h2{font-size:20px;margin:16px 0 8px}h3{font-size:18px;margin:0 0 12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
+    input[type="number"],select{width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px;font-size:14px;background:#fff;color:var(--ink)}
+    .muted{color:var(--muted);font-size:12px}.fine{font-size:13px;color:#374151}
+    .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .preset:hover{background:#f3f4f6}
+    .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:#374151;background:#fff}
+    .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+    .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .kv + .kv{margin-top:8px}.kv b{font-size:1.05rem}
+    .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
+    @media (max-width:720px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- Header -->
+    <div class="card" role="region" aria-label="Header">
+      <h1>Salad Dressing — Quantity Calculator</h1>
+      <p class="lede">
+        Choose homemade or bottled and a dressing style. We estimate <strong>about ounces</strong>,
+        <strong>about cups</strong>, <strong>about quarts</strong>, and <strong>about bottles</strong> when bottled.
+      </p>
+    </div>
+
+    <!-- Inputs -->
+    <div class="card" role="region" aria-label="Inputs">
+      <h3>Inputs</h3>
+
+      <div class="row" aria-label="Guests">
+        <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="10"></div>
+        <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="0"></div>
+        <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="0"></div>
+        <div>
+          <label for="course">Course mode</label>
+          <select id="course">
+            <option value="side" selected>Side salad</option>
+            <option value="entree">Entree salad</option>
+            <option value="dip">Dip station</option>
+            <option value="tasting">Tasting flight</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" aria-label="Context">
+        <div>
+          <label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">Short — about 1 to 2 hours</option>
+            <option value="1.00" selected>Standard — about 2 to 3 hours</option>
+            <option value="1.08">Long — about 3 to 4 hours</option>
+            <option value="1.15">Extended — about 4 to 5 hours</option>
+          </select>
+        </div>
+        <div>
+          <label for="leftovers">Add leftovers</label>
+          <select id="leftovers">
+            <option value="1.00" selected>No</option>
+            <option value="1.10">+10%</option>
+            <option value="1.20">+20%</option>
+          </select>
+        </div>
+        <div>
+          <label for="appetite">Appetite</label>
+          <select id="appetite">
+            <option value="0.90">Light</option>
+            <option value="1.00" selected>Typical</option>
+            <option value="1.20">Hearty</option>
+          </select>
+        </div>
+
+        <!-- Item-specific controls AFTER Appetite -->
+        <div>
+          <label for="prep">Preparation</label>
+          <select id="prep">
+            <option value="homemade" selected>Homemade</option>
+            <option value="bottled">Bottled</option>
+          </select>
+          <div class="muted">Pick Bottled to choose common bottle sizes below.</div>
+        </div>
+      </div>
+
+      <div class="row" aria-label="Item specifics">
+        <div>
+          <label for="style">Dressing style</label>
+          <select id="style">
+            <option value="0.90">Vinaigrette or thin</option>
+            <option value="1.00" selected>Creamy</option>
+            <option value="1.20">Thick or chunky</option>
+          </select>
+          <div class="muted">We nudge portion size based on style.</div>
+        </div>
+        <div id="bottleWrap">
+          <label for="bottle">Bottle size class</label>
+          <select id="bottle">
+            <option value="8">Small bottle — about 8 oz</option>
+            <option value="12" selected>Average bottle — about 12 oz</option>
+            <option value="16">Large bottle — about 16 oz</option>
+            <option value="32">Jumbo bottle — about 32 oz</option>
+          </select>
+          <div class="muted">We convert total ounces into about how many bottles.</div>
+        </div>
+      </div>
+
+      <!-- Presets + Reset -->
+      <div class="inline" style="margin-top:8px">
+        <span class="muted">Quick presets:</span>
+        <button class="preset" data-people="10" type="button">10</button>
+        <button class="preset" data-people="25" type="button">25</button>
+        <button class="preset" data-people="50" type="button">50</button>
+        <button class="preset" data-people="100" type="button">100</button>
+        <span class="muted">Presets set all as adults — tweak Teens/Children if needed.</span>
+        <div style="flex:1"></div>
+        <button id="dmReset" type="button" class="preset">Reset</button>
+      </div>
+    </div>
+
+    <!-- Pricing -->
+    <div class="card" role="region" aria-label="Pricing">
+      <h3>Pricing (optional)</h3>
+      <div class="row">
+        <div>
+          <label for="priceMode">Pricing mode</label>
+          <select id="priceMode">
+            <option value="bottle" selected>Per bottle</option>
+            <option value="ounce">Per ounce</option>
+          </select>
+        </div>
+        <div>
+          <label for="priceUnit">Unit price</label>
+          <input id="priceUnit" type="number" min="0" step="0.01" placeholder="e.g., 3.99">
+          <div class="muted">If Per bottle: dollars per bottle (uses your bottle size). If Per ounce: dollars per ounce.</div>
+        </div>
+        <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="e.g., 7.5"></div>
+        <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="e.g., 6.00"></div>
+      </div>
+      <div class="muted">Cost = unit price applied to the rounded quantity for your mode + tax + extra fees.</div>
+    </div>
+
+    <!-- Results -->
+    <div class="card outline" role="region" aria-label="Results" aria-live="polite">
+      <h3 class="results-title">Results</h3>
+      <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
+      <div class="kv"><span>Dressing (about ounces)</span><b id="outOz">—</b></div>
+      <div class="kv"><span>About cups</span><b id="outCups">—</b></div>
+      <div class="kv"><span>About quarts</span><b id="outQuarts">—</b></div>
+      <div class="kv"><span>About bottles</span><b id="outBottles">—</b></div>
+      <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$—</b></div>
+      <div class="kv"><span>Tax and fees</span><b id="outAdds">$—</b></div>
+      <div class="kv"><span>Estimated total</span><b id="outTotal">$—</b></div>
+      <div class="kv"><span>Cost per person</span><b id="outPPP">$—</b></div>
+      <p class="muted" id="outExplain">Enter your guest mix to calculate.</p>
+    </div>
+
+    <!-- Finder -->
+    <div class="card finder" role="region" aria-label="Find near me">
+      <div class="inline">
+        <a class="preset" href="#" onclick="try{window.open('https://www.google.com/maps/search/salad+dressing+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/salad+dressing+near+me';}return false;">Find salad dressing near me</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/grocery+store','_blank');}catch(e){location.href='https://www.google.com/maps/search/grocery+store';}return false;">Grocery stores</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/deli','_blank');}catch(e){location.href='https://www.google.com/maps/search/deli';}return false;">Deli</a>
+      </div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.7 (auto-calc)</div>
+    </div>
+
+    <!-- FAQs -->
+    <div class="card" role="region" aria-label="FAQs">
+      <h2>FAQs</h2>
+
+      <details open>
+        <summary>How much salad dressing per person?</summary>
+        <div class="fine">
+          Side salad about <strong>1.5 oz per adult</strong>, about <strong>1.75 oz for teens</strong>, and about <strong>1.0 oz for children</strong>.
+          Entree salads run heavier; tasting flights run lighter. We also nudge for style (vinaigrette vs creamy vs thick).
+        </div>
+      </details>
+
+      <details>
+        <summary>Homemade vs bottled — what changes?</summary>
+        <div class="fine">
+          <em>Bottled</em> lets you pick a common bottle size (8, 12, 16, 32 oz) and shows about bottles needed. <em>Homemade</em> focuses on total ounces, cups, and quarts for batching.
+        </div>
+      </details>
+
+      <details>
+        <summary>How do the style options affect portions?</summary>
+        <div class="fine">
+          Vinaigrette or thin about 0.90x, Creamy baseline 1.00x, Thick or chunky about 1.20x. This multiplies the base per-person needs.
+        </div>
+      </details>
+
+      <details>
+        <summary>How does pricing work here?</summary>
+        <div class="fine">
+          Subtotal = unit price applied to the rounded quantity for your mode: <em>per bottle</em> (rounded bottles × price per bottle) or <em>per ounce</em> (rounded ounces × price per ounce). Then we add your tax and any extra fees to estimate a total and per-person cost.
+        </div>
+      </details>
+
+      <details>
+        <summary>Do you round up?</summary>
+        <div class="fine">
+          Bottles round up to whole bottles. Ounces round to the nearest whole ounce for display; cups and quarts are shown as about values.
+          Use leftovers +10 percent or +20 percent if you want extra buffer.
+        </div>
+      </details>
+    </div>
+
+    <!-- Quick notes -->
+    <div class="card" role="region" aria-label="Quick notes">
+      <h3>Quick notes</h3>
+      <ul class="fine" style="margin:0 0 0 18px;padding:0">
+        <li><strong>Base per-person (side salad):</strong> Adults 1.5 oz; Teens 1.75 oz; Children 1.0 oz.</li>
+        <li><strong>Course multipliers:</strong> Side 1.00x; Entree 1.60x; Dip 1.30x; Tasting 0.70x.</li>
+        <li><strong>Style multipliers:</strong> Vinaigrette 0.90x; Creamy 1.00x; Thick 1.20x.</li>
+        <li><strong>Leftovers options:</strong> No, plus 10 percent, plus 20 percent.</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm with your grocer or caterer and adjust for your crowd.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <script>
+  (function(){
+    const $=id=>document.getElementById(id);
+    const N=(v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+    const money=n=>(isFinite(n)&&n>=0)?"$"+n.toFixed(2):"$—";
+
+    const courseMult=c=>(c==="side"?1.00:c==="entree"?1.60:c==="dip"?1.30:0.70);
+    const lenMult=v=>(v==1.15?1.15:v==1.08?1.08:v==0.95?0.95:1.00);
+
+    function toggleBottle(){
+      const prep=($("prep")||{}).value||"homemade";
+      $("bottleWrap").style.display = prep==="bottled" ? "block" : "none";
+    }
+
+    function compute(){
+      const A=N($("A").value,0), T=N($("T").value,0), C=N($("C").value,0);
+      const guests=A+T+C;
+      const appetite=N($("appetite").value,1.0);
+      const leftovers=N($("leftovers").value,1.0);
+      const length=N($("length").value,1.0);
+      const course=$("course").value;
+      const style=N($("style").value,1.0);
+      const prep=($("prep")||{}).value||"homemade";
+
+      // base ounces per person
+      const base={adult:1.5, teen:1.75, child:1.0};
+      let ounces=(A*base.adult + T*base.teen + C*base.child);
+      ounces*= courseMult(course) * appetite * lenMult(length) * leftovers * style;
+
+      const ozRounded = Math.ceil(Math.max(0, ounces));
+      const cups = ozRounded / 8.0;
+      const quarts = ozRounded / 32.0;
+
+      // bottles if bottled
+      let bottles = 0;
+      const ozPerBottle = N(($("bottle").value||"12"),12);
+      if(prep==="bottled" && ozRounded>0){ bottles = Math.ceil(ozRounded / ozPerBottle); }
+
+      // pricing
+      const mode=(document.getElementById("priceMode")||{}).value||"bottle";
+      const price=N($("priceUnit").value,0), tax=N($("taxPct").value,0)/100, fees=N($("fees").value,0);
+      let subtotal=0;
+      if(price>0){
+        if(mode==="bottle" && bottles>0){ subtotal = bottles*price; }
+        else if(mode==="ounce" && ozRounded>0){ subtotal = ozRounded*price; }
+      }
+      const adds = subtotal*tax + (fees>0?fees:0);
+      const total = subtotal + adds;
+      const ppp = (guests>0 && total>0) ? total/guests : NaN;
+
+      return {guests, ozRounded, cups, quarts, bottles, subtotal, adds, total, ppp, prep};
+    }
+
+    function render(){
+      toggleBottle();
+      const s=compute();
+      $("outGuests").textContent = s.guests>0 ? String(s.guests) : "—";
+      $("outOz").textContent     = s.guests>0 ? String(s.ozRounded) : "—";
+      $("outCups").textContent   = s.guests>0 ? (Math.round(s.cups*10)/10).toString() : "—";
+      $("outQuarts").textContent = s.guests>0 ? (Math.round(s.quarts*100)/100).toString() : "—";
+      $("outBottles").textContent= (s.prep==="bottled" && s.bottles>0) ? String(s.bottles) : "—";
+      $("outSubtotal").textContent= s.subtotal>0 ? money(s.subtotal) : "$—";
+      $("outAdds").textContent    = s.subtotal>0 ? money(s.adds) : "$—";
+      $("outTotal").textContent   = s.subtotal>0 ? money(s.total) : "$—";
+      $("outPPP").textContent     = (s.total>0 && s.guests>0) ? money(s.ppp) : "$—";
+      $("outExplain").textContent = s.guests>0
+        ? "Auto-calculated from guests, course, style, appetite, event length, leftovers, and your homemade vs bottled choice."
+        : "Enter your guest mix to calculate.";
+    }
+
+    ["A","T","C","course","length","leftovers","appetite","prep","style","bottle","priceMode","priceUnit","taxPct","fees"].forEach(id=>{
+      const el=document.getElementById(id); if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }
+    });
+
+    document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+      btn.addEventListener("click",()=>{const n=parseInt(btn.getAttribute("data-people"),10)||0;document.getElementById("A").value=n;document.getElementById("T").value=0;document.getElementById("C").value=0;render();});
+    });
+
+    (function attachReset(){
+      const btn=document.getElementById("dmReset"); if(!btn) return;
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("input, select").forEach(el=>{
+          if(el.tagName==="SELECT"){
+            const i=Array.from(el.options).findIndex(o=>o.defaultSelected);
+            el.selectedIndex = i>=0 ? i : 0;
+          } else { el.value = el.defaultValue; }
+        });
+        document.querySelectorAll("input, select").forEach(el=>{
+          el.dispatchEvent(new Event("input",{bubbles:true}));
+          el.dispatchEvent(new Event("change",{bubbles:true}));
+        });
+        render();
+      });
+    })();
+
+    render();
+  })();
+  </script>
+
+</body>
+</html>
