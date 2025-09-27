@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DinnerMath — Cornbread Quantity Calculator</title>
+  <meta name="description" content="How much cornbread per person? Choose pan or muffins, pick a size class, and estimate about pieces, about pans or dozens, and cost. Auto-calculates with appetite, event length, and leftovers.">
+  <meta name="robots" content="index,follow">
+  <style>
+    :root{
+      --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc;
+      --pill:#374151; --card:#ffffff; --accent:#111827;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      background:var(--bg);
+      font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;
+      color:var(--ink);
+    }
+    .wrap{max-width:860px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+    .outline{border:2px solid var(--ink)}
+    h1{font-size:22px;margin:0 0 8px}
+    .lede{color:var(--muted);margin:0 0 16px}
+    h2{font-size:20px;margin:16px 0 8px}
+    h3{font-size:18px;margin:0 0 12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
+    input[type="number"],select{
+      width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px;
+      font-size:14px;background:#fff;color:var(--ink)
+    }
+    .muted{color:var(--muted);font-size:12px}
+    .fine{font-size:13px;color:#374151}
+    .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .preset:hover{background:#f3f4f6}
+    .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:#374151;background:#fff}
+    .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+    .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .kv + .kv{margin-top:8px}
+    .kv b{font-size:1.05rem}
+    .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
+    @media (max-width:720px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- Header -->
+    <div class="card" role="region" aria-label="Header">
+      <h1>Cornbread — Pan or Muffins</h1>
+      <p class="lede">
+        Enter guests and settings (or tap a quick preset). Choose <strong>Pan</strong> or <strong>Muffins</strong>, pick a size class, and we estimate
+        <strong>about pieces</strong>, <strong>about pans or dozens</strong>, and <strong>cost</strong>.
+      </p>
+    </div>
+
+    <!-- Inputs -->
+    <div class="card" role="region" aria-label="Inputs">
+      <h3>Inputs</h3>
+
+      <div class="row" aria-label="Guests">
+        <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="10"></div>
+        <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="0"></div>
+        <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="0"></div>
+        <div>
+          <label for="course">Course mode</label>
+          <select id="course">
+            <option value="side" selected>Side dish</option>
+            <option value="bbq">BBQ plate (heavier)</option>
+            <option value="chili">Chili night</option>
+            <option value="tasting">Tasting flight (lighter)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" aria-label="Context">
+        <div>
+          <label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">Short — about 1 to 2 hours</option>
+            <option value="1.00" selected>Standard — about 2 to 3 hours</option>
+            <option value="1.08">Long — about 3 to 4 hours</option>
+            <option value="1.15">Extended — about 4 to 5 hours</option>
+          </select>
+        </div>
+        <div>
+          <label for="leftovers">Add leftovers</label>
+          <select id="leftovers">
+            <option value="1.00" selected>No</option>
+            <option value="1.10">+10%</option>
+            <option value="1.20">+20%</option>
+          </select>
+        </div>
+        <div>
+          <label for="appetite">Appetite</label>
+          <select id="appetite">
+            <option value="0.90">Light</</option>
+            <option value="1.00" selected>Typical</option>
+            <option value="1.20">Hearty</option>
+          </select>
+        </div>
+
+        <!-- Item-specific: form factor -->
+        <div>
+          <label for="form">Form</label>
+          <select id="form">
+            <option value="pan" selected>Pan or skillet</option>
+            <option value="muffins">Muffins</option>
+          </select>
+          <div class="muted">Pick Pan for tray or cast-iron; pick Muffins for mini or jumbo.</div>
+        </div>
+      </div>
+
+      <!-- Item-specific: size classes -->
+      <div class="row" aria-label="Item specifics">
+        <div id="panWrap">
+          <label for="pan">Pan size class (approx pieces per pan)</label>
+          <select id="pan">
+            <option value="9">Square 8x8 in — about 9 pieces</option>
+            <option value="16">Square 10x10 in — about 16 pieces</option>
+            <option value="20" selected>Rectangle 9x13 in — about 20 pieces</option>
+            <option value="28">Skillet 12 in — about 28 wedges</option>
+            <option value="48">Sheet 12x18 in — about 48 pieces</option>
+          </select>
+          <div class="muted">Counts assume 2x2 in pieces for trays or even wedges in a skillet.</div>
+        </div>
+        <div id="muffinWrap">
+          <label for="muffin">Muffin size class</label>
+          <select id="muffin">
+            <option value="1.0|24">Mini — about 1.0 oz each (about 24 per standard mini pan)</option>
+            <option value="2.5|12" selected>Standard — about 2.5 oz each (about 12 per standard pan)</option>
+            <option value="4.0|6">Jumbo — about 4.0 oz each (about 6 per jumbo pan)</option>
+          </select>
+          <div class="muted">We use the per-piece weight to estimate pounds; pan cavities are noted for planning bakes.</div>
+        </div>
+      </div>
+
+      <!-- Presets + Reset -->
+      <div class="inline" style="margin-top:8px">
+        <span class="muted">Quick presets:</span>
+        <button class="preset" data-people="10" type="button">10</button>
+        <button class="preset" data-people="25" type="button">25</button>
+        <button class="preset" data-people="50" type="button">50</button>
+        <button class="preset" data-people="100" type="button">100</button>
+        <span class="muted">Presets set all as adults — tweak Teens/Children if needed.</span>
+        <div style="flex:1"></div>
+        <button id="dmReset" type="button" class="preset">Reset</button>
+      </div>
+    </div>
+
+    <!-- Pricing -->
+    <div class="card" role="region" aria-label="Pricing">
+      <h3>Pricing (optional)</h3>
+      <div class="row">
+        <div>
+          <label for="priceMode">Pricing mode</label>
+          <select id="priceMode">
+            <option value="pan" selected>Per pan</option>
+            <option value="each">Per muffin</option>
+            <option value="dozen">Per dozen muffins</option>
+          </select>
+        </div>
+        <div>
+          <label for="priceUnit">Unit price</label>
+          <input id="priceUnit" type="number" min="0" step="0.01" placeholder="e.g., 15.00">
+          <div class="muted">If Per pan: dollars per pan. If Per muffin: dollars per muffin. If Per dozen: dollars per 12 muffins.</div>
+        </div>
+        <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="e.g., 7.5"></div>
+        <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="e.g., 10.00"></div>
+      </div>
+      <div class="muted">Cost = unit price applied to the rounded quantity for your mode + tax + extra fees.</div>
+    </div>
+
+    <!-- Results -->
+    <div class="card outline" role="region" aria-label="Results" aria-live="polite">
+      <h3 class="results-title">Results</h3>
+      <div class="kv"><span>Total guests counted</span><b id="outGuests">—</b></div>
+      <div class="kv"><span>Pieces needed (about)</span><b id="outPieces">—</b></div>
+      <div class="kv"><span>About how many pans</span><b id="outPans">—</b></div>
+      <div class="kv"><span>About how many dozens of muffins</span><b id="outDozens">—</b></div>
+      <div class="kv"><span>Cornbread pounds (about)</span><b id="outPounds">—</b></div>
+      <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$—</b></div>
+      <div class="kv"><span>Tax and fees</span><b id="outAdds">$—</b></div>
+      <div class="kv"><span>Estimated total</span><b id="outTotal">$—</b></div>
+      <div class="kv"><span>Cost per person</span><b id="outPPP">$—</b></div>
+      <p class="muted" id="outExplain">Enter your guest mix to calculate.</p>
+    </div>
+
+    <!-- Finder -->
+    <div class="card finder" role="region" aria-label="Find near me">
+      <div class="inline">
+        <a class="preset" href="#" onclick="try{window.open('https://www.google.com/maps/search/cornbread+near+me','_blank');}catch(e){location.href='https://www.google.com/maps/search/cornbread+near+me';}return false;">Find cornbread near me</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/grocery+store','_blank');}catch(e){location.href='https://www.google.com/maps/search/grocery+store';}return false;">Grocery stores</a>
+        <a class="pill" href="#" onclick="try{window.open('https://www.google.com/maps/search/soul+food','_blank');}catch(e){location.href='https://www.google.com/maps/search/soul+food';}return false;">Soul food</a>
+      </div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.7 (auto-calc)</div>
+    </div>
+
+    <!-- FAQs (5) -->
+    <div class="card" role="region" aria-label="FAQs">
+      <h2>FAQs</h2>
+
+      <details open>
+        <summary>How much cornbread per person?</summary>
+        <div class="fine">
+          As a side, plan about <strong>1 piece per adult</strong>, about <strong>1.25 for teens</strong>,
+          and about <strong>0.5 for children</strong>. BBQ plates or chili nights tend to run heavier.
+        </div>
+      </details>
+
+      <details>
+        <summary>What do the pan sizes mean?</summary>
+        <div class="fine">
+          <strong>8x8 in square</strong> ~ <strong>9 pieces</strong>; <strong>10x10 in square</strong> ~ <strong>16</strong>;
+          <strong>9x13 in rectangle</strong> ~ <strong>20</strong>; <strong>12 in skillet</strong> ~ <strong>28 wedges</strong>;
+          <strong>12x18 in sheet</strong> ~ <strong>48</strong>. We use these to convert pieces into about how many pans.
+        </div>
+      </details>
+
+      <details>
+        <summary>How do muffin sizes work?</summary>
+        <div class="fine">
+          <strong>Mini</strong> about 1.0 oz each (about 24 per mini pan); <strong>Standard</strong> about 2.5 oz each (about 12 per pan);
+          <strong>Jumbo</strong> about 4.0 oz each (about 6 per pan). We convert needed pieces to about dozens and pounds.
+        </div>
+      </details>
+
+      <details>
+        <summary>How does pricing work here?</summary>
+        <div class="fine">
+          Subtotal = unit price applied to the rounded quantity for your mode: <em>per pan</em> (rounded pans × price per pan), <em>per muffin</em> (rounded muffins × price per muffin), or <em>per dozen muffins</em> (rounded dozens × price per dozen). Then we add your tax and any extra fees to estimate a total and per-person cost.
+        </div>
+      </details>
+
+      <details>
+        <summary>Do you round up?</summary>
+        <div class="fine">
+          Pans round up to whole pans; dozens round up to whole dozens; pounds round to the nearest 1/4 lb for planning. Use leftovers +10% or +20% for extra buffer.
+        </div>
+      </details>
+    </div>
+
+    <!-- Quick notes -->
+    <div class="card" role="region" aria-label="Quick notes">
+      <h3>Quick notes</h3>
+      <ul class="fine" style="margin:0 0 0 18px;padding:0">
+        <li><strong>Base portions (as side):</strong> Adults about 1 piece; Teens about 1.25; Children about 0.5.</li>
+        <li><strong>Course multipliers:</strong> Side 1.00x; BBQ plate 1.20x; Chili 1.10x; Tasting 0.75x.</li>
+        <li><strong>Pan classes (approx pieces):</strong> 8x8 in 9; 10x10 in 16; 9x13 in 20; 12 in skillet 28; 12x18 in 48.</li>
+        <li><strong>Muffin classes:</strong> Mini 1.0 oz; Standard 2.5 oz; Jumbo 4.0 oz.</li>
+        <li><strong>Context multipliers:</strong> Appetite (0.90 / 1.00 / 1.20); Event length (0.95 / 1.00 / 1.08 / 1.15); Leftovers (No / +10% / +20%).</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm with your bakery/caterer and adjust for your crowd.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Calculator logic -->
+  <script>
+  (function(){
+    const $ = id => document.getElementById(id);
+    const N = (v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+    const money = n => (isFinite(n)&&n>=0) ? "$"+n.toFixed(2) : "$—";
+    const roundQuarter = n => Math.round(n*4)/4;
+
+    const courseMult = c => (c==="side"?1.00:c==="bbq"?1.20:c==="chili"?1.10:0.75);
+    const lenMult = v => (v==1.15?1.15:v==1.08?1.08:v==0.95?0.95:1.00);
+
+    function toggleForm(){
+      const form = ($("form")||{}).value || "pan";
+      $("panWrap").style.display = form==="pan" ? "block" : "none";
+      $("muffinWrap").style.display = form==="muffins" ? "block" : "none";
+    }
+
+    function compute(){
+      const A=N($("A").value,0), T=N($("T").value,0), C=N($("C").value,0);
+      const guests = A+T+C;
+      const appetite=N($("appetite").value,1.0);
+      const leftovers=N($("leftovers").value,1.0);
+      const length=N($("length").value,1.0);
+      const course=$("course").value;
+      const form = ($("form")||{}).value || "pan";
+
+      // base pieces per person
+      const base={adult:1.0, teen:1.25, child:0.5};
+      let pieces = (A*base.adult + T*base.teen + C*base.child);
+      pieces *= courseMult(course) * appetite * lenMult(length) * leftovers;
+
+      const piecesRounded = Math.ceil(Math.max(0,pieces));
+
+      // convert to pans or dozens
+      let pans = 0, dozens = 0;
+      if(form==="pan"){
+        const perPan = N(($("pan").value||"20"), 20);
+        pans = piecesRounded>0 ? Math.ceil(piecesRounded / perPan) : 0;
+      } else { // muffins
+        dozens = piecesRounded>0 ? Math.ceil(piecesRounded / 12) : 0;
+      }
+
+      // pounds estimation (simple): assume ~2.5 oz per muffin standard, 1.0 mini, 4.0 jumbo
+      let ozPerPiece = 2.5;
+      if(form==="muffins"){
+        ozPerPiece = N(($("muffin").value||"2.5|12").split("|")[0],2.5);
+      } else {
+        // for pan pieces, assume ~2.5 oz per 2x2 in square or wedge
+        ozPerPiece = 2.5;
+      }
+      const pounds = (piecesRounded * ozPerPiece) / 16.0;
+      const poundsRounded = roundQuarter(Math.max(0,pounds));
+
+      // Pricing
+      const mode=(document.getElementById("priceMode")||{}).value||"pan";
+      const price=N($("priceUnit").value,0), tax=N($("taxPct").value,0)/100, fees=N($("fees").value,0);
+      let subtotal=0;
+      if(price>0){
+        if(mode==="pan" && pans>0){ subtotal = pans*price; }
+        else if(mode==="each" && piecesRounded>0 && form==="muffins"){ subtotal = piecesRounded*price; }
+        else if(mode==="dozen" && dozens>0 && form==="muffins"){ subtotal = dozens*price; }
+      }
+      const adds = subtotal*tax + (fees>0?fees:0);
+      const total = subtotal + adds;
+      const ppp = (guests>0 && total>0) ? total/guests : NaN;
+
+      return {guests, piecesRounded, pans, dozens, poundsRounded, subtotal, adds, total, ppp, form};
+    }
+
+    function render(){
+      toggleForm();
+      const s=compute();
+      $("outGuests").textContent = s.guests>0 ? s.guests.toString() : "—";
+      $("outPieces").textContent = s.guests>0 ? s.piecesRounded.toString() : "—";
+      $("outPans").textContent   = s.form==="pan" && s.pans>0 ? s.pans.toString() : "—";
+      $("outDozens").textContent = s.form==="muffins" && s.dozens>0 ? s.dozens.toString() : "—";
+      $("outPounds").textContent = s.guests>0 ? (s.poundsRounded.toFixed(2).replace(/\.00$/,''))+" lb" : "—";
+      $("outSubtotal").textContent = s.subtotal>0 ? money(s.subtotal) : "$—";
+      $("outAdds").textContent     = s.subtotal>0 ? money(s.adds) : "$—";
+      $("outTotal").textContent    = s.subtotal>0 ? money(s.total) : "$—";
+      $("outPPP").textContent      = (s.total>0 && s.guests>0) ? money(s.ppp) : "$—";
+      $("outExplain").textContent  = s.guests>0
+        ? "Auto-calculated from guests, course, form and size class, appetite, event length, and leftovers."
+        : "Enter your guest mix to calculate.";
+    }
+
+    ["A","T","C","course","length","leftovers","appetite","form","pan","muffin","priceMode","priceUnit","taxPct","fees"]
+      .forEach(id=>{const el=$(id); if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }});
+
+    document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+      btn.addEventListener("click",()=>{const n=parseInt(btn.getAttribute("data-people"),10)||0;$("A").value=n;$("T").value=0;$("C").value=0;render();});
+    });
+
+    (function attachReset(){
+      const btn=$("dmReset"); if(!btn) return;
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("input, select").forEach(el=>{
+          if(el.tagName==="SELECT"){
+            const i=Array.from(el.options).findIndex(o=>o.defaultSelected);
+            el.selectedIndex = i>=0 ? i : 0;
+          } else { el.value = el.defaultValue; }
+        });
+        document.querySelectorAll("input, select").forEach(el=>{
+          el.dispatchEvent(new Event("input",{bubbles:true}));
+          el.dispatchEvent(new Event("change",{bubbles:true}));
+        });
+        render();
+      });
+    })();
+
+    render();
+  })();
+  </script>
+
+</body>
+</html>
