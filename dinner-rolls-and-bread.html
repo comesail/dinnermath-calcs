@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DinnerMath - Dinner Rolls and Bread Quantity Calculator</title>
+  <meta name="description" content="How many dinner rolls or bread slices per person? Estimate about rolls or slices, dozens or loaves, and cost. Auto calculates with appetite, event length, leftovers, course mode, roll size, or loaf pack slices per loaf.">
+  <meta name="robots" content="index,follow">
+  <style>
+    :root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--bg:#f8fafc;--card:#ffffff;--accent:#111827}
+    *{box-sizing:border-box}html,body{margin:0;padding:0}
+    body{background:var(--bg);font-family:"Brandon Grotesque","BrandonGrotesque","brandon-grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;color:var(--ink)}
+    .wrap{max-width:860px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px;margin:12px 0}
+    .outline{border:2px solid var(--ink)}
+    h1{font-size:22px;margin:0 0 8px}.lede{color:var(--muted);margin:0 0 16px}
+    h2{font-size:20px;margin:16px 0 8px}h3{font-size:18px;margin:0 0 12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{font-size:12px;color:#374151;display:block;margin:0 0 6px;font-weight:600}
+    input[type="number"],select{width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px 12px;font-size:14px;background:#fff;color:var(--ink)}
+    .muted{color:var(--muted);font-size:12px}.fine{font-size:13px;color:#374151}
+    .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .preset{border:1.5px solid var(--accent);background:#fff;border-radius:999px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .preset:hover{background:#f3f4f6}
+    .pill{font-size:11px;border:1px solid #d1d5db;border-radius:999px;padding:4px 8px;color:#374151;background:#fff}
+    .results-title{font-size:22px;font-weight:800;margin:0 0 8px}
+    .kv{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .kv + .kv{margin-top:8px}.kv b{font-size:1.05rem}
+    .finder{padding:14px;border-radius:16px;border:2px solid var(--ink);background:#fff}
+    .hide{display:none}
+    @media (max-width:720px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- Header -->
+    <div class="card" role="region" aria-label="Header">
+      <h1>Dinner Rolls and Bread - Quantity Calculator</h1>
+      <p class="lede">Enter guests and choose bread form. We estimate about rolls or slices, dozens or loaves, and cost with tax and fees.</p>
+    </div>
+
+    <!-- Inputs -->
+    <div class="card" role="region" aria-label="Inputs">
+      <h3>Inputs</h3>
+
+      <div class="row" aria-label="Guests">
+        <div><label for="A">Adults</label><input id="A" type="number" min="0" step="1" value="10"></div>
+        <div><label for="T">Teens</label><input id="T" type="number" min="0" step="1" value="0"></div>
+        <div><label for="C">Children</label><input id="C" type="number" min="0" step="1" value="0"></div>
+        <div>
+          <label for="course">Course mode</label>
+          <select id="course">
+            <option value="meal" selected>Side with meal</option>
+            <option value="basket">Bread basket or buffet</option>
+            <option value="sandwich">Sandwich bar</option>
+            <option value="tasting">Tasting</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" aria-label="Context">
+        <div>
+          <label for="length">Event length</label>
+          <select id="length">
+            <option value="0.95">Short - about 1 to 2 hours</option>
+            <option value="1.00" selected>Standard - about 2 to 3 hours</option>
+            <option value="1.08">Long - about 3 to 4 hours</option>
+            <option value="1.15">Extended - about 4 to 5 hours</option>
+          </select>
+        </div>
+        <div>
+          <label for="leftovers">Leftovers</label>
+          <select id="leftovers">
+            <option value="1.00" selected>No</option>
+            <option value="1.10">+10 percent</option>
+            <option value="1.20">+20 percent</option>
+          </select>
+        </div>
+        <div>
+          <label for="appetite">Appetite</label>
+          <select id="appetite">
+            <option value="0.90">Light</option>
+            <option value="1.00" selected>Typical</option>
+            <option value="1.20">Hearty</option>
+          </select>
+        </div>
+
+        <!-- Item-specific AFTER Appetite -->
+        <div>
+          <label for="form">Bread form</label>
+          <select id="form">
+            <option value="rolls" selected>Rolls</option>
+            <option value="sliced">Sliced bread</option>
+          </select>
+        </div>
+
+        <!-- Rolls-only -->
+        <div id="rollSizeWrap">
+          <label for="size">Roll size</label>
+          <select id="size">
+            <option value="1.20">Small - about 2.5 inch diameter</option>
+            <option value="1.00" selected>Average - about 3.0 inch diameter</option>
+            <option value="0.85">Large - about 3.5 inch diameter</option>
+            <option value="0.75">Jumbo - about 4.0 inch diameter</option>
+          </select>
+          <div class="muted">Diameter guidance helps align portion feel.</div>
+        </div>
+
+        <!-- Sliced-only: Loaf pack -->
+        <div id="loafWrap" class="hide">
+          <label for="loafpack">Loaf pack - slices per loaf</label>
+          <select id="loafpack">
+            <option value="20" selected>Standard sandwich loaf - about 20 slices (9 to 10 inch, medium)</option>
+            <option value="16">Small sandwich loaf - about 16 slices (about 8 inch, medium)</option>
+            <option value="24">Family or long loaf - about 24 slices (11 to 12 inch, thin)</option>
+            <option value="12">Texas toast loaf - about 12 slices (thick)</option>
+          </select>
+          <div class="muted">Used to convert slices to loaves. Loaf counts are rounded up.</div>
+        </div>
+      </div>
+
+      <!-- Presets + Reset -->
+      <div class="inline" style="margin-top:8px">
+        <span class="muted">Quick presets:</span>
+        <button class="preset" data-people="10" type="button">10</button>
+        <button class="preset" data-people="25" type="button">25</button>
+        <button class="preset" data-people="50" type="button">50</button>
+        <button class="preset" data-people="100" type="button">100</button>
+        <span class="muted">Presets set all as adults. Tweak Teens or Children if needed.</span>
+        <div style="flex:1"></div>
+        <button id="dmReset" type="button" class="preset">Reset</button>
+      </div>
+    </div>
+
+    <!-- Pricing -->
+    <div class="card" role="region" aria-label="Pricing">
+      <h3>Pricing (optional)</h3>
+      <div class="row">
+        <div>
+          <label for="priceMode">Pricing mode</label>
+          <select id="priceMode">
+            <option value="piece" selected>Per piece</option>
+            <option value="pack">Per pack</option>
+          </select>
+          <div class="muted">Per piece uses rolls or slices. Per pack uses dozens for rolls or loaves for sliced bread.</div>
+        </div>
+        <div>
+          <label for="priceUnit">Unit price</label>
+          <input id="priceUnit" type="number" min="0" step="0.01" placeholder="example: 0.60">
+        </div>
+        <div><label for="taxPct">Sales tax (percent)</label><input id="taxPct" type="number" min="0" step="0.1" placeholder="example: 7.5"></div>
+        <div><label for="fees">Extra fees (US dollars)</label><input id="fees" type="number" min="0" step="0.01" placeholder="example: 10.00"></div>
+      </div>
+      <div class="muted">Subtotal equals rounded quantity for your mode times unit price. Then we add sales tax and fees.</div>
+    </div>
+
+    <!-- Results -->
+    <div class="card outline" role="region" aria-label="Results" aria-live="polite">
+      <h3 class="results-title">Results</h3>
+      <div class="kv"><span>Total guests counted</span><b id="outGuests">-</b></div>
+      <div class="kv"><span>Buy about</span><b id="outPieces">- pieces</b></div>
+      <div class="kv"><span>Or about</span><b id="outPacks">- packs</b></div>
+      <div class="kv"><span>Cost estimate (subtotal)</span><b id="outSubtotal">$-</b></div>
+      <div class="kv"><span>Tax and fees</span><b id="outAdds">$-</b></div>
+      <div class="kv"><span>Estimated total</span><b id="outTotal">$-</b></div>
+      <div class="kv"><span>Cost per person</span><b id="outPPP">$-</b></div>
+      <p class="muted" id="outExplain">Auto calculated from guests, course, appetite, event length, leftovers, and bread form.</p>
+    </div>
+
+    <!-- Finder -->
+    <div class="card finder" role="region" aria-label="Finder">
+      <div class="inline">
+        <a class="preset" href="#" onclick="window.open('https://www.google.com/maps/search/bakery+near+me','_blank');return false;">Find bakeries near me</a>
+        <a class="pill" href="#" onclick="window.open('https://www.google.com/maps/search/grocery+store','_blank');return false;">Grocery stores</a>
+        <a class="pill" href="#" onclick="window.open('https://www.google.com/maps/search/wholesale+bakery','_blank');return false;">Wholesale bakeries</a>
+      </div>
+      <div class="muted" style="margin-top:8px">DinnerMath v1.7 - auto calculate</div>
+    </div>
+
+    <!-- FAQs -->
+    <div class="card" role="region" aria-label="FAQs">
+      <h2>FAQs</h2>
+      <details open>
+        <summary>How many rolls or bread slices per person?</summary>
+        <div class="fine">
+          Side with meal - about 1.5 pieces per adult or teen and about 1 piece per child.
+          Bread basket or buffet - about 2 per adult or teen and 1 to 1.5 per child.
+          Sandwich bar - plan about 2 to 3 rolls per person or about 2 sandwiches, which is about 4 slices per person.
+          Tasting - about 1 each. Adjust with Appetite, Event length, and Leftovers.
+        </div>
+      </details>
+      <details>
+        <summary>What do Roll sizes and Loaf packs mean?</summary>
+        <div class="fine">
+          Roll sizes use diameter guidance: Small about 2.5 inches, Average about 3.0 inches, Large about 3.5 inches, Jumbo about 4.0 inches.
+          Loaf packs describe typical retail loaves by slices per loaf with length and thickness hints: Standard about 20 slices (9 to 10 inch, medium), Small about 16 slices (about 8 inch, medium), Family or long about 24 slices (11 to 12 inch, thin), Texas toast about 12 slices (thick).
+        </div>
+      </details>
+      <details>
+        <summary>How do the multipliers work?</summary>
+        <div class="fine">
+          Appetite applies 0.90 Light, 1.00 Typical, or 1.20 Hearty. Event length applies 0.95, 1.00, 1.08, or 1.15.
+          Leftovers adds 0 percent, +10 percent, or +20 percent to the final rounded amount.
+        </div>
+      </details>
+      <details>
+        <summary>How does pricing work?</summary>
+        <div class="fine">
+          Per piece uses rounded rolls or slices. Per pack uses dozens for rolls or loaves for sliced bread.
+          We then add your sales tax and any fees to estimate a total and cost per person.
+        </div>
+      </details>
+      <details>
+        <summary>Do you round up?</summary>
+        <div class="fine">
+          We round to whole pieces and whole packs and show results as about.
+        </div>
+      </details>
+    </div>
+
+    <!-- Quick notes -->
+    <div class="card" role="region" aria-label="Quick notes">
+      <h3>Quick notes</h3>
+      <ul class="fine" style="margin:0 0 0 18px;padding:0">
+        <li><strong>Baseline per person:</strong> Side about 1.5 pieces adults or teens and 1 piece children.</li>
+        <li><strong>Course multipliers:</strong> Side with meal 1.00x, Bread basket 1.20x, Sandwich bar 1.60x, Tasting 0.70x.</li>
+        <li><strong>Roll sizes:</strong> Small 1.20x (about 2.5 inch), Average 1.00x (about 3.0 inch), Large 0.85x (about 3.5 inch), Jumbo 0.75x (about 4.0 inch).</li>
+        <li><strong>Loaf packs:</strong> Standard 20 slices, Small 16, Family or long 24, Texas toast 12 per loaf.</li>
+        <li><strong>Butter helper:</strong> Plan about 1 pat per roll for seated meals or 0.5 pat for baskets. 8 pats per stick, 4 sticks per lb.</li>
+        <li><strong>Leftovers:</strong> No, +10 percent, +20 percent.</li>
+        <li><strong>Disclaimer:</strong> Estimates only; confirm with your baker or caterer and adjust for your crowd.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Calculator logic -->
+  <script>
+  (function(){
+    const $=id=>document.getElementById(id);
+    const N=(v,d=0)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+    const money=n=>(isFinite(n)&&n>=0)?"$"+n.toFixed(2):"$-";
+
+    function courseMult(c){
+      if(c==="basket") return 1.20;
+      if(c==="sandwich") return 1.60;
+      if(c==="tasting") return 0.70;
+      return 1.00; // side with meal
+    }
+    function lenMult(v){return v==1.15?1.15:(v==1.08?1.08:(v==0.95?0.95:1.00));}
+
+    function perPersonPieces(form, course){
+      let adult=1.5, child=1.0;
+      if(course==="basket"){ adult=2.0; child=1.2; }
+      if(course==="sandwich"){ adult = form==="sliced" ? 4.0 : 2.5; child = form==="sliced" ? 3.0 : 1.8; }
+      if(course==="tasting"){ adult=1.0; child=0.8; }
+      const teen=adult;
+      return {adult, teen, child};
+    }
+
+    function compute(){
+      const A=N($("A").value,0), T=N($("T").value,0), C=N($("C").value,0);
+      const guests=A+T+C;
+      const appet=N($("appetite").value,1.0);
+      const length=N($("length").value,1.0);
+      const left=N($("leftovers").value,1.0);
+      const course=$("course").value;
+      const form=$("form").value;
+
+      const base=perPersonPieces(form, course);
+      let pieces=(A*base.adult + T*base.teen + C*base.child);
+      pieces*=courseMult(course)*appet*lenMult(length);
+
+      if(form==="rolls"){
+        const size=N($("size").value,1.0);
+        pieces*=size;
+      }
+      pieces*=left;
+
+      // Packs: dozens if rolls, loaves if sliced
+      let packs=0;
+      let pieceLabel=form==="rolls"?"rolls":"slices";
+      let packLabel=form==="rolls"?"dozens":"loaves";
+
+      if(form==="rolls"){
+        packs = Math.ceil(Math.ceil(pieces)/12);
+      } else {
+        const perLoaf = N($("loafpack").value,20);
+        packs = Math.ceil(Math.ceil(pieces)/perLoaf);
+      }
+
+      const roundedPieces = Math.ceil(Math.max(0,pieces));
+
+      // Pricing
+      const mode=$("priceMode").value;
+      const price=N($("priceUnit").value,0), tax=N($("taxPct").value,0)/100, fees=N($("fees").value,0);
+      let subtotal=0;
+      if(price>0){
+        if(mode==="piece"){ subtotal = roundedPieces*price; }
+        else { subtotal = packs*price; }
+      }
+      const adds=subtotal*tax + (fees>0?fees:0);
+      const total=subtotal+adds;
+      const ppp=(guests>0 && total>0)?total/guests:NaN;
+
+      return {guests, roundedPieces, packs, pieceLabel, packLabel, subtotal, adds, total, ppp};
+    }
+
+    function syncVisibility(){
+      const form = $("form").value;
+      $("rollSizeWrap").classList.toggle("hide", form!=="rolls");
+      $("loafWrap").classList.toggle("hide", form!=="sliced");
+    }
+
+    function render(){
+      syncVisibility();
+      const s=compute();
+      $("outGuests").textContent = s.guests>0?String(s.guests):"-";
+      $("outPieces").textContent = s.guests>0?String(s.roundedPieces)+" "+s.pieceLabel:"- pieces";
+      $("outPacks").textContent  = s.guests>0?String(s.packs)+" "+s.packLabel:"- packs";
+      $("outSubtotal").textContent = s.subtotal>0?money(s.subtotal):"$-";
+      $("outAdds").textContent = s.subtotal>0?money(s.adds):"$-";
+      $("outTotal").textContent = s.subtotal>0?money(s.total):"$-";
+      $("outPPP").textContent = (s.total>0&&s.guests>0)?money(s.ppp):"$-";
+    }
+
+    ["A","T","C","course","length","leftovers","appetite","form","size","loafpack","priceMode","priceUnit","taxPct","fees"].forEach(id=>{
+      const el=document.getElementById(id); if(el){ el.addEventListener("input",render); el.addEventListener("change",render); }
+    });
+
+    document.querySelectorAll(".preset[data-people]").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const n=parseInt(btn.getAttribute("data-people"),10)||0;
+        document.getElementById("A").value=n;
+        document.getElementById("T").value=0;
+        document.getElementById("C").value=0;
+        render();
+      });
+    });
+
+    (function attachReset(){
+      const btn=document.getElementById("dmReset"); if(!btn) return;
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("input, select").forEach(el=>{
+          if(el.tagName==="SELECT"){
+            const i=Array.from(el.options).findIndex(o=>o.defaultSelected);
+            el.selectedIndex = i>=0 ? i : 0;
+          } else { el.value = el.defaultValue; }
+        });
+        ["input","change"].forEach(evt=>document.querySelectorAll("input,select").forEach(el=>el.dispatchEvent(new Event(evt,{bubbles:true}))));
+        render();
+      });
+    })();
+
+    render();
+  })();
+  </script>
+
+</body>
+</html>
